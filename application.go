@@ -43,6 +43,10 @@ type Application struct {
 	// be forwarded).
 	inputCapture func(event *tcell.EventKey) *tcell.EventKey
 
+	// An optional callback function which is invoked when the application's
+	// window is initialized, and when the application's window size changes.
+	afterResize func(screen tcell.Screen)
+
 	// An optional callback function which is invoked just before the root
 	// primitive is drawn.
 	beforeDraw func(screen tcell.Screen) bool
@@ -241,6 +245,12 @@ EventLoop:
 				a.RLock()
 				screen := a.screen
 				a.RUnlock()
+
+				// Call afterResize handler if there is one.
+				if a.afterResize != nil {
+					a.afterResize(screen)
+				}
+
 				if screen == nil {
 					continue
 				}
@@ -437,6 +447,22 @@ func (a *Application) ResizeToFullScreen(p Primitive) *Application {
 	a.RUnlock()
 	p.SetRect(0, 0, width, height)
 	return a
+}
+
+// SetAfterResizeFunc installs a callback function which is invoked when the
+// application's window is initialized, and when the application's window size
+// changes.
+//
+// Provide nil to uninstall the callback function.
+func (a *Application) SetAfterResizeFunc(handler func(screen tcell.Screen)) *Application {
+	a.afterResize = handler
+	return a
+}
+
+// GetAfterResizeFunc returns the callback function installed with
+// SetAfterResizeFunc() or nil if none has been installed.
+func (a *Application) GetAfterResizeFunc() func(screen tcell.Screen) {
+	return a.afterResize
 }
 
 // SetFocus sets the focus on a new primitive. All key events will be redirected
