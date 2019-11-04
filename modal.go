@@ -175,3 +175,7 @@ func (m *Modal) Draw(screen tcell.Screen) {
 	m.frame.SetRect(x, y, width, height)
 	m.frame.Draw(screen)
 }
+
+func (m *Modal) GetChildren() []Primitive {
+	return []Primitive{m.frame}
+}

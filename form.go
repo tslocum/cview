@@ -606,3 +606,17 @@ func (f *Form) focusIndex() int {
 	}
 	return -1
 }
+
+func (f *Form) GetChildren() []Primitive {
+	children := make([]Primitive, len(f.items)+len(f.buttons))
+	i := 0
+	for _, item := range f.items {
+		children[i] = item
+		i++
+	}
+	for _, button := range f.buttons {
+		children[i] = button
+		i++
+	}
+	return children
+}
