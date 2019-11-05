@@ -83,7 +83,7 @@ type Application struct {
 	// An optional capture function which receives a mouse event and returns the
 	// event to be forwarded to the default mouse handler (nil if nothing should
 	// be forwarded).
-	mouseCapture func(event EventMouse) EventMouse
+	mouseCapture func(event *EventMouse) *EventMouse
 
 	lastMouseX, lastMouseY int
 	lastMouseBtn           tcell.ButtonMask
@@ -163,7 +163,7 @@ func (a *Application) SetMouseCapture(capture func(event EventMouse) EventMouse)
 
 // GetMouseCapture returns the function installed with SetMouseCapture() or nil
 // if no such function has been installed.
-func (a *Application) GetMouseCapture() func(event EventMouse) EventMouse {
+func (a *Application) GetMouseCapture() func(event *EventMouse) *EventMouse {
 	return a.mouseCapture
 }
 
@@ -401,12 +401,12 @@ EventLoop:
 					a.lastMouseBtn = btn
 				}
 
-				event2 := EventMouse{event, ptarget, a, act}
+				event2 := NewEventMouse(event, ptarget, a, act)
 
 				// Intercept event.
 				if mouseCapture != nil {
 					event2 = mouseCapture(event2)
-					if event2.IsZero() {
+					if event2 == nil {
 						a.draw()
 						continue // Don't forward event.
 					}
