@@ -264,6 +264,7 @@ EventLoop:
 			inputCapture := a.inputCapture
 			mouseCapture := a.mouseCapture
 			screen := a.screen
+			root := a.root
 			a.RUnlock()
 
 			switch event := event.(type) {
@@ -327,15 +328,20 @@ EventLoop:
 				atX, atY := event.Position()
 				btn := event.Buttons()
 
+				pstack := a.appendStackAtPoint(nil, atX, atY)
+				var punderMouse Primitive
+				if len(pstack) > 0 {
+					punderMouse = pstack[len(pstack)-1]
+				}
 				var ptarget Primitive
 				if a.lastMouseBtn != 0 {
 					// While a button is down, the same primitive gets events.
 					ptarget = a.lastMouseTarget
 				}
 				if ptarget == nil {
-					ptarget = a.GetPrimitiveAtPoint(atX, atY) // p under mouse.
+					ptarget = punderMouse
 					if ptarget == nil {
-						ptarget = p // Fallback to focused.
+						ptarget = root // Fallback to root.
 					}
 				}
 				a.lastMouseTarget = ptarget
@@ -356,7 +362,7 @@ EventLoop:
 						act |= MouseUp
 					}
 					if a.lastMouseBtn == tcell.Button1 && btn == 0 {
-						if ptarget == a.GetPrimitiveAtPoint(atX, atY) {
+						if ptarget == punderMouse {
 							// Only if Button1 and mouse up over same p.
 							act |= MouseClick
 						}
@@ -372,6 +378,18 @@ EventLoop:
 					if event2 == nil {
 						a.draw()
 						continue // Don't forward event.
+					}
+				}
+
+				if ptarget == punderMouse {
+					// Observe mouse events inward ("capture")
+					for _, pp := range pstack {
+						// If the primitive has this ObserveMouseEvent func.
+						if pp, ok := pp.(interface {
+							ObserveMouseEvent(*EventMouse)
+						}); ok {
+							pp.ObserveMouseEvent(event2)
+						}
 					}
 				}
 
@@ -394,7 +412,7 @@ EventLoop:
 	return nil
 }
 
-func findAtPoint(atX, atY int, p Primitive) Primitive {
+func findAtPoint(atX, atY int, p Primitive, capture func(p Primitive)) Primitive {
 	x, y, w, h := p.GetRect()
 	if atX < x || atY < y {
 		return nil
@@ -402,9 +420,12 @@ func findAtPoint(atX, atY int, p Primitive) Primitive {
 	if atX >= x+w || atY >= y+h {
 		return nil
 	}
+	if capture != nil {
+		capture(p)
+	}
 	bestp := p
 	for _, pchild := range p.GetChildren() {
-		x := findAtPoint(atX, atY, pchild)
+		x := findAtPoint(atX, atY, pchild, capture)
 		if x != nil {
 			// Always overwrite if we find another one,
 			// this is because if any overlap, the last one is "on top".
@@ -419,7 +440,18 @@ func findAtPoint(atX, atY int, p Primitive) Primitive {
 func (a *Application) GetPrimitiveAtPoint(atX, atY int) Primitive {
 	a.RLock()
 	defer a.RUnlock()
-	return findAtPoint(atX, atY, a.root)
+	return findAtPoint(atX, atY, a.root, nil)
+}
+
+// The last element appended to buf is the primitive clicked,
+// the preceeding are its parents.
+func (a *Application) appendStackAtPoint(buf []Primitive, atX, atY int) []Primitive {
+	a.RLock()
+	defer a.RUnlock()
+	findAtPoint(atX, atY, a.root, func(p Primitive) {
+		buf = append(buf, p)
+	})
+	return buf
 }
 
 // Stop stops the application, causing Run() to return.
