@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gdamore/tcell"
-	"github.com/rivo/tview"
+	"git.sr.ht/~tslocum/cview"
 )
 
 const logo = `
@@ -18,12 +18,12 @@ const logo = `
 `
 
 const (
-	subtitle   = `tview - Rich Widgets for Terminal UIs`
+	subtitle   = `cview - Rich Widgets for Terminal UIs`
 	navigation = `Ctrl-N: Next slide    Ctrl-P: Previous slide    Ctrl-C: Exit`
 )
 
 // Cover returns the cover page.
-func Cover(nextSlide func()) (title string, content tview.Primitive) {
+func Cover(nextSlide func()) (title string, content cview.Primitive) {
 	// What's the size of the logo?
 	lines := strings.Split(logo, "\n")
 	logoWidth := 0
@@ -33,7 +33,7 @@ func Cover(nextSlide func()) (title string, content tview.Primitive) {
 			logoWidth = len(line)
 		}
 	}
-	logoBox := tview.NewTextView().
+	logoBox := cview.NewTextView().
 		SetTextColor(tcell.ColorGreen).
 		SetDoneFunc(func(key tcell.Key) {
 			nextSlide()
@@ -41,20 +41,20 @@ func Cover(nextSlide func()) (title string, content tview.Primitive) {
 	fmt.Fprint(logoBox, logo)
 
 	// Create a frame for the subtitle and navigation infos.
-	frame := tview.NewFrame(tview.NewBox()).
+	frame := cview.NewFrame(cview.NewBox()).
 		SetBorders(0, 0, 0, 0, 0, 0).
-		AddText(subtitle, true, tview.AlignCenter, tcell.ColorWhite).
-		AddText("", true, tview.AlignCenter, tcell.ColorWhite).
-		AddText(navigation, true, tview.AlignCenter, tcell.ColorDarkMagenta)
+		AddText(subtitle, true, cview.AlignCenter, tcell.ColorWhite).
+		AddText("", true, cview.AlignCenter, tcell.ColorWhite).
+		AddText(navigation, true, cview.AlignCenter, tcell.ColorDarkMagenta)
 
 	// Create a Flex layout that centers the logo and subtitle.
-	flex := tview.NewFlex().
-		SetDirection(tview.FlexRow).
-		AddItem(tview.NewBox(), 0, 7, false).
-		AddItem(tview.NewFlex().
-			AddItem(tview.NewBox(), 0, 1, false).
+	flex := cview.NewFlex().
+		SetDirection(cview.FlexRow).
+		AddItem(cview.NewBox(), 0, 7, false).
+		AddItem(cview.NewFlex().
+			AddItem(cview.NewBox(), 0, 1, false).
 			AddItem(logoBox, logoWidth, 1, true).
-			AddItem(tview.NewBox(), 0, 1, false), logoHeight, 1, true).
+			AddItem(cview.NewBox(), 0, 1, false), logoHeight, 1, true).
 		AddItem(frame, 0, 10, false)
 
 	return "Start", flex

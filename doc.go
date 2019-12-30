@@ -1,5 +1,5 @@
 /*
-Package tview implements rich widgets for terminal based user interfaces. The
+Package cview implements rich widgets for terminal based user interfaces. The
 widgets provided with this package are useful for data exploration and data
 entry.
 
@@ -36,12 +36,12 @@ world!":
   package main
 
   import (
-  	"github.com/rivo/tview"
+  	"git.sr.ht/~tslocum/cview"
   )
 
   func main() {
-  	box := tview.NewBox().SetBorder(true).SetTitle("Hello, world!")
-  	if err := tview.NewApplication().SetRoot(box, true).Run(); err != nil {
+  	box := cview.NewBox().SetBorder(true).SetTitle("Hello, world!")
+  	if err := cview.NewApplication().SetRoot(box, true).Run(); err != nil {
   		panic(err)
   	}
   }
@@ -59,7 +59,7 @@ actions performed on them.
 More Demos
 
 You will find more demos in the "demos" subdirectory. It also contains a
-presentation (written using tview) which gives an overview of the different
+presentation (written using cview) which gives an overview of the different
 widgets and how they can be used.
 
 Colors
@@ -172,9 +172,9 @@ therefore available for all widgets, too.
 All widgets also implement the Primitive interface. There is also the Focusable
 interface which is used to override functions in subclassing types.
 
-The tview package is based on https://github.com/gdamore/tcell. It uses types
+The cview package is based on https://github.com/gdamore/tcell. It uses types
 and constants from that package (e.g. colors and keyboard values).
 
 This package does not process mouse input (yet).
 */
-package tview
+package cview

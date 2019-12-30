@@ -3,16 +3,16 @@ package main
 
 import (
 	"github.com/gdamore/tcell"
-	"github.com/rivo/tview"
+	"git.sr.ht/~tslocum/cview"
 )
 
 func main() {
-	app := tview.NewApplication()
-	inputField := tview.NewInputField().
+	app := cview.NewApplication()
+	inputField := cview.NewInputField().
 		SetLabel("Enter a number: ").
 		SetPlaceholder("E.g. 1234").
 		SetFieldWidth(10).
-		SetAcceptanceFunc(tview.InputFieldInteger).
+		SetAcceptanceFunc(cview.InputFieldInteger).
 		SetDoneFunc(func(key tcell.Key) {
 			app.Stop()
 		})

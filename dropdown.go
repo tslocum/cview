@@ -1,4 +1,4 @@
-package tview
+package cview
 
 import (
 	"strings"
@@ -15,7 +15,7 @@ type dropDownOption struct {
 // DropDown implements a selection widget whose options become visible in a
 // drop-down list when activated.
 //
-// See https://github.com/rivo/tview/wiki/DropDown for an example.
+// See https://git.sr.ht/~tslocum/cview/wiki/DropDown for an example.
 type DropDown struct {
 	*Box
 

@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/gdamore/tcell"
-	"github.com/rivo/tview"
+	"git.sr.ht/~tslocum/cview"
 )
 
 type company struct {
@@ -16,8 +16,8 @@ type company struct {
 }
 
 func main() {
-	app := tview.NewApplication()
-	inputField := tview.NewInputField().
+	app := cview.NewApplication()
+	inputField := cview.NewInputField().
 		SetLabel("Enter a company name: ").
 		SetFieldWidth(30).
 		SetDoneFunc(func(key tcell.Key) {

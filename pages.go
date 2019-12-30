@@ -1,4 +1,4 @@
-package tview
+package cview
 
 import (
 	"github.com/gdamore/tcell"
@@ -16,7 +16,7 @@ type page struct {
 // root primitive. It allows to easily switch the visibility of the contained
 // primitives.
 //
-// See https://github.com/rivo/tview/wiki/Pages for an example.
+// See https://git.sr.ht/~tslocum/cview/wiki/Pages for an example.
 type Pages struct {
 	*Box
 

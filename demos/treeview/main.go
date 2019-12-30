@@ -6,27 +6,27 @@ import (
 	"path/filepath"
 
 	"github.com/gdamore/tcell"
-	"github.com/rivo/tview"
+	"git.sr.ht/~tslocum/cview"
 )
 
 // Show a navigable tree view of the current directory.
 func main() {
 	rootDir := "."
-	root := tview.NewTreeNode(rootDir).
+	root := cview.NewTreeNode(rootDir).
 		SetColor(tcell.ColorRed)
-	tree := tview.NewTreeView().
+	tree := cview.NewTreeView().
 		SetRoot(root).
 		SetCurrentNode(root)
 
 	// A helper function which adds the files and directories of the given path
 	// to the given target node.
-	add := func(target *tview.TreeNode, path string) {
+	add := func(target *cview.TreeNode, path string) {
 		files, err := ioutil.ReadDir(path)
 		if err != nil {
 			panic(err)
 		}
 		for _, file := range files {
-			node := tview.NewTreeNode(file.Name()).
+			node := cview.NewTreeNode(file.Name()).
 				SetReference(filepath.Join(path, file.Name())).
 				SetSelectable(file.IsDir())
 			if file.IsDir() {
@@ -40,7 +40,7 @@ func main() {
 	add(root, rootDir)
 
 	// If a directory was selected, open it.
-	tree.SetSelectedFunc(func(node *tview.TreeNode) {
+	tree.SetSelectedFunc(func(node *cview.TreeNode) {
 		reference := node.GetReference()
 		if reference == nil {
 			return // Selecting the root node does nothing.
@@ -56,7 +56,7 @@ func main() {
 		}
 	})
 
-	if err := tview.NewApplication().SetRoot(tree, true).Run(); err != nil {
+	if err := cview.NewApplication().SetRoot(tree, true).Run(); err != nil {
 		panic(err)
 	}
 }

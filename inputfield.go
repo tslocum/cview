@@ -1,4 +1,4 @@
-package tview
+package cview
 
 import (
 	"math"
@@ -29,7 +29,7 @@ import (
 //   - Ctrl-W: Delete the last word before the cursor.
 //   - Ctrl-U: Delete the entire line.
 //
-// See https://github.com/rivo/tview/wiki/InputField for an example.
+// See https://git.sr.ht/~tslocum/cview/wiki/InputField for an example.
 type InputField struct {
 	*Box
 

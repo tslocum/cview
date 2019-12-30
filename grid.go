@@ -1,4 +1,4 @@
-package tview
+package cview
 
 import (
 	"math"
@@ -27,7 +27,7 @@ type gridItem struct {
 // and "l" keys) while the grid has focus and none of its contained primitives
 // do.
 //
-// See https://github.com/rivo/tview/wiki/Grid for an example.
+// See https://git.sr.ht/~tslocum/cview/wiki/Grid for an example.
 type Grid struct {
 	*Box
 
@@ -65,7 +65,7 @@ type Grid struct {
 // their background unchanged. To clear a Grid's background before any items are
 // drawn, set it to the desired color:
 //
-//   grid.SetBackgroundColor(tview.Styles.PrimitiveBackgroundColor)
+//   grid.SetBackgroundColor(cview.Styles.PrimitiveBackgroundColor)
 func NewGrid() *Grid {
 	g := &Grid{
 		Box:          NewBox().SetBackgroundColor(tcell.ColorDefault),

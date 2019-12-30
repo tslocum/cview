@@ -1,4 +1,4 @@
-package tview
+package cview
 
 import (
 	"sort"
@@ -208,7 +208,7 @@ func (c *TableCell) GetLastPosition() (x, y, width int) {
 //
 // Use SetInputCapture() to override or modify keyboard input.
 //
-// See https://github.com/rivo/tview/wiki/Table for an example.
+// See https://git.sr.ht/~tslocum/cview/wiki/Table for an example.
 type Table struct {
 	*Box
 

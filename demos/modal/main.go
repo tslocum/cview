@@ -2,12 +2,12 @@
 package main
 
 import (
-	"github.com/rivo/tview"
+	"git.sr.ht/~tslocum/cview"
 )
 
 func main() {
-	app := tview.NewApplication()
-	modal := tview.NewModal().
+	app := cview.NewApplication()
+	modal := cview.NewModal().
 		SetText("Do you want to quit the application?").
 		AddButtons([]string{"Quit", "Cancel"}).
 		SetDoneFunc(func(buttonIndex int, buttonLabel string) {

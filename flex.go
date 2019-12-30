@@ -1,4 +1,4 @@
-package tview
+package cview
 
 import (
 	"github.com/gdamore/tcell"
@@ -23,7 +23,7 @@ type flexItem struct {
 // distributed along that dimension depends on their layout settings, which is
 // either a fixed length or a proportional length. See AddItem() for details.
 //
-// See https://github.com/rivo/tview/wiki/Flex for an example.
+// See https://git.sr.ht/~tslocum/cview/wiki/Flex for an example.
 type Flex struct {
 	*Box
 
@@ -47,7 +47,7 @@ type Flex struct {
 // To clear a Flex's background before any items are drawn, set it to the
 // desired color:
 //
-//   flex.SetBackgroundColor(tview.Styles.PrimitiveBackgroundColor)
+//   flex.SetBackgroundColor(cview.Styles.PrimitiveBackgroundColor)
 func NewFlex() *Flex {
 	f := &Flex{
 		Box:       NewBox().SetBackgroundColor(tcell.ColorDefault),

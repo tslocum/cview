@@ -2,20 +2,20 @@
 package main
 
 import (
-	"github.com/rivo/tview"
+	"git.sr.ht/~tslocum/cview"
 )
 
 func main() {
-	newPrimitive := func(text string) tview.Primitive {
-		return tview.NewTextView().
-			SetTextAlign(tview.AlignCenter).
+	newPrimitive := func(text string) cview.Primitive {
+		return cview.NewTextView().
+			SetTextAlign(cview.AlignCenter).
 			SetText(text)
 	}
 	menu := newPrimitive("Menu")
 	main := newPrimitive("Main content")
 	sideBar := newPrimitive("Side Bar")
 
-	grid := tview.NewGrid().
+	grid := cview.NewGrid().
 		SetRows(3, 0, 3).
 		SetColumns(30, 0, 30).
 		SetBorders(true).
@@ -32,7 +32,7 @@ func main() {
 		AddItem(main, 1, 1, 1, 1, 0, 100, false).
 		AddItem(sideBar, 1, 2, 1, 1, 0, 100, false)
 
-	if err := tview.NewApplication().SetRoot(grid, true).Run(); err != nil {
+	if err := cview.NewApplication().SetRoot(grid, true).Run(); err != nil {
 		panic(err)
 	}
 }

@@ -1,4 +1,4 @@
-package tview
+package cview
 
 import (
 	"sync"
@@ -18,7 +18,7 @@ const queueSize = 100
 // The following command displays a primitive p on the screen until Ctrl-C is
 // pressed:
 //
-//   if err := tview.NewApplication().SetRoot(p, true).Run(); err != nil {
+//   if err := cview.NewApplication().SetRoot(p, true).Run(); err != nil {
 //       panic(err)
 //   }
 type Application struct {

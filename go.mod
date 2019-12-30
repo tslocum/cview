@@ -1,4 +1,4 @@
-module github.com/rivo/tview
+module git.sr.ht/~tslocum/cview
 
 go 1.12
 

@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/gdamore/tcell"
-	"github.com/rivo/tview"
+	"git.sr.ht/~tslocum/cview"
 )
 
 // 1,000 most common English words.
@@ -12,8 +12,8 @@ const wordList = "ability,able,about,above,accept,according,account,across,act,a
 
 func main() {
 	words := strings.Split(wordList, ",")
-	app := tview.NewApplication()
-	inputField := tview.NewInputField().
+	app := cview.NewApplication()
+	inputField := cview.NewInputField().
 		SetLabel("Enter a word: ").
 		SetFieldWidth(30).
 		SetDoneFunc(func(key tcell.Key) {

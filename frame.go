@@ -1,4 +1,4 @@
-package tview
+package cview
 
 import (
 	"github.com/gdamore/tcell"
@@ -15,7 +15,7 @@ type frameText struct {
 // Frame is a wrapper which adds a border around another primitive. The top area
 // (header) and the bottom area (footer) may also contain text.
 //
-// See https://github.com/rivo/tview/wiki/Frame for an example.
+// See https://git.sr.ht/~tslocum/cview/wiki/Frame for an example.
 type Frame struct {
 	*Box
 

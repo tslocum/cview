@@ -1,17 +1,17 @@
 package main
 
 import (
-	"github.com/rivo/tview"
+	"git.sr.ht/~tslocum/cview"
 )
 
 const form = `[green]package[white] main
 
 [green]import[white] (
-    [red]"github.com/rivo/tview"[white]
+    [red]"git.sr.ht/~tslocum/cview"[white]
 )
 
 [green]func[white] [yellow]main[white]() {
-    form := tview.[yellow]NewForm[white]().
+    form := cview.[yellow]NewForm[white]().
         [yellow]AddInputField[white]([red]"First name:"[white], [red]""[white], [red]20[white], nil, nil).
         [yellow]AddInputField[white]([red]"Last name:"[white], [red]""[white], [red]20[white], nil, nil).
         [yellow]AddDropDown[white]([red]"Role:"[white], [][green]string[white]{
@@ -23,14 +23,14 @@ const form = `[green]package[white] main
         [yellow]AddPasswordField[white]([red]"Password:"[white], [red]""[white], [red]10[white], [red]'*'[white], nil).
         [yellow]AddButton[white]([red]"Save"[white], [yellow]func[white]() { [blue]/* Save data */[white] }).
         [yellow]AddButton[white]([red]"Cancel"[white], [yellow]func[white]() { [blue]/* Cancel */[white] })
-    tview.[yellow]NewApplication[white]().
+    cview.[yellow]NewApplication[white]().
         [yellow]SetRoot[white](form, true).
         [yellow]Run[white]()
 }`
 
 // Form demonstrates forms.
-func Form(nextSlide func()) (title string, content tview.Primitive) {
-	f := tview.NewForm().
+func Form(nextSlide func()) (title string, content cview.Primitive) {
+	f := cview.NewForm().
 		AddInputField("First name:", "", 20, nil, nil).
 		AddInputField("Last name:", "", 20, nil, nil).
 		AddDropDown("Role:", []string{"Engineer", "Manager", "Administration"}, 0, nil).

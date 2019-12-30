@@ -1,4 +1,4 @@
-package tview
+package cview
 
 import (
 	"github.com/gdamore/tcell"
@@ -238,7 +238,7 @@ func (n *TreeNode) SetIndent(indent int) *TreeNode {
 // using SetPrefixes() for different levels, for example to display hierarchical
 // bullet point lists.
 //
-// See https://github.com/rivo/tview/wiki/TreeView for an example.
+// See https://git.sr.ht/~tslocum/cview/wiki/TreeView for an example.
 type TreeView struct {
 	*Box
 

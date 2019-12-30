@@ -1,4 +1,4 @@
-package tview
+package cview
 
 import (
 	"github.com/gdamore/tcell"
@@ -6,7 +6,7 @@ import (
 
 // Button is labeled box that triggers an action when selected.
 //
-// See https://github.com/rivo/tview/wiki/Button for an example.
+// See https://git.sr.ht/~tslocum/cview/wiki/Button for an example.
 type Button struct {
 	*Box
 

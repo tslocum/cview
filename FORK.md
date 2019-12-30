@@ -1,0 +1,28 @@
+This document explains why [tview](https://github.com/rivo/tview) was forked to
+create [cview](https://git.sr.ht/~tslocum/cview).  It also tracks which
+tview pull requests have been merged into cview.
+
+# Why fork?
+
+[rivo](https://github.com/rivo), the creator and sole maintainer of tview,
+explains his reviewing and merging process in a [a GitHub comment](https://github.com/rivo/tview/pull/298#issuecomment-559373851).
+
+He states that he does not have the necessary time or interest to review,
+discuss and merge pull requests:
+
+>this project is quite low in priority. It doesn't generate any income for me
+>and, unfortunately, reviewing issues and PRs is also not much "fun".
+
+>But some other people submitted large PRs which will cost me many hours to
+>review. (I had to chuckle a bit when I saw [this comment](https://github.com/rivo/tview/pull/363#issuecomment-555484734).)
+
+>Lastly, I'm the one who ends up maintaining this code. I have to be 100%
+>behind it, understand it 100%, and be able to make changes to it later if
+> necessary.
+
+cview aims to solve these issues by increasing the number of project
+maintainers and allowing code changes which may be outside of tview's scope.
+
+# Merged pull requests
+
+*Coming soon*

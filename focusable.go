@@ -1,4 +1,4 @@
-package tview
+package cview
 
 // Focusable provides a method which determines if a primitive has focus.
 // Composed primitives may be focused based on the focused state of their

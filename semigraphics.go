@@ -1,4 +1,4 @@
-package tview
+package cview
 
 import "github.com/gdamore/tcell"
 

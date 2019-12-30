@@ -2,12 +2,12 @@
 package main
 
 import (
-	"github.com/rivo/tview"
+	"git.sr.ht/~tslocum/cview"
 )
 
 func main() {
-	app := tview.NewApplication()
-	list := tview.NewList().
+	app := cview.NewApplication()
+	list := cview.NewList().
 		AddItem("List item 1", "Some explanatory text", 'a', nil).
 		AddItem("List item 2", "Some explanatory text", 'b', nil).
 		AddItem("List item 3", "Some explanatory text", 'c', nil).

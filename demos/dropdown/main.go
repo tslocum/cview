@@ -1,11 +1,11 @@
 // Demo code for the DropDown primitive.
 package main
 
-import "github.com/rivo/tview"
+import "git.sr.ht/~tslocum/cview"
 
 func main() {
-	app := tview.NewApplication()
-	dropdown := tview.NewDropDown().
+	app := cview.NewApplication()
+	dropdown := cview.NewDropDown().
 		SetLabel("Select an option (hit Enter): ").
 		SetOptions([]string{"First", "Second", "Third", "Fourth", "Fifth"}, nil)
 	if err := app.SetRoot(dropdown, true).Run(); err != nil {
