@@ -52,6 +52,9 @@ var (
 
 // Package initialization.
 func init() {
+	// Disable East Asian width. When enabled, runes may have ambiguous widths.
+	runewidth.EastAsianWidth = false
+
 	// We'll use zero width joiners.
 	runewidth.ZeroWidthJoiner = true
 

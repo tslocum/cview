@@ -1,6 +1,6 @@
 This document explains why [tview](https://github.com/rivo/tview) was forked to
-create [cview](https://git.sr.ht/~tslocum/cview).  It also tracks which
-tview pull requests have been merged into cview.
+create [cview](https://git.sr.ht/~tslocum/cview) and tracks which tview pull
+requests have been merged into cview.
 
 # Why fork?
 
@@ -25,4 +25,7 @@ maintainers and allowing code changes which may be outside of tview's scope.
 
 # Merged pull requests
 
-*Coming soon*
+The following tview pull requests have been merged into cview:
+
+- [#378 Throttle resize handling](https://github.com/rivo/tview/pull/378)
+- [#353 Add window size change handler](https://github.com/rivo/tview/pull/353)
