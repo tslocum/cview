@@ -2,12 +2,16 @@ package cview
 
 import (
 	"sync"
+	"time"
 
 	"github.com/gdamore/tcell"
 )
 
 // The size of the event/update/redraw channels.
 const queueSize = 100
+
+// The minimum duration between resize event callbacks.
+const ResizeEventThrottle = 200 * time.Millisecond
 
 // Application represents the top node of an application.
 //
@@ -42,6 +46,12 @@ type Application struct {
 	// event to be forwarded to the default input handler (nil if nothing should
 	// be forwarded).
 	inputCapture func(event *tcell.EventKey) *tcell.EventKey
+
+	// Time a resize event was last processed.
+	lastResize time.Time
+
+	// Timer limiting how quickly resize events are processed.
+	throttleResize *time.Timer
 
 	// An optional callback function which is invoked when the application's
 	// window is initialized, and when the application's window size changes.
@@ -242,9 +252,30 @@ EventLoop:
 					}
 				}
 			case *tcell.EventResize:
+				if time.Since(a.lastResize) < ResizeEventThrottle {
+					// Stop timer
+					if a.throttleResize != nil && !a.throttleResize.Stop() {
+						select {
+						case <-a.throttleResize.C:
+						default:
+						}
+					}
+
+					event := event // Capture
+
+					// Start timer
+					a.throttleResize = time.AfterFunc(ResizeEventThrottle, func() {
+						a.events <- event
+					})
+
+					continue
+				}
+
 				a.RLock()
 				screen := a.screen
 				a.RUnlock()
+
+				a.lastResize = time.Now()
 
 				// Call afterResize handler if there is one.
 				if a.afterResize != nil {
