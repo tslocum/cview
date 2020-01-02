@@ -29,3 +29,4 @@ The following tview pull requests have been merged into cview:
 
 - [#378 Throttle resize handling](https://github.com/rivo/tview/pull/378)
 - [#353 Add window size change handler](https://github.com/rivo/tview/pull/353)
+- [#296 Fixed TextView's reset %5B-%5D setting the wrong color](https://github.com/rivo/tview/pull/296)
