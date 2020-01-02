@@ -90,39 +90,6 @@ type Application struct {
 	lastMouseTarget        Primitive // nil if none
 }
 
-// EventKey is the key input event info. This exists for some consistency with
-// EventMouse, even though it's just an alias to *tcell.EventKey for backwards
-// compatibility.
-type EventKey = *tcell.EventKey
-
-// MouseAction are bit flags indicating what the mouse is logically doing.
-type MouseAction int
-
-const (
-	MouseDown MouseAction = 1 << iota
-	MouseUp
-	MouseClick // Button1 only.
-	MouseMove  // The mouse position changed.
-)
-
-// EventMouse is the mouse event info.
-type EventMouse struct {
-	*tcell.EventMouse
-	Target      Primitive
-	Application *Application
-	Action      MouseAction
-}
-
-// IsZero returns true if this is a zero object.
-func (e EventMouse) IsZero() bool {
-	return e == EventMouse{}
-}
-
-// SetFocus will set focus to the primitive.
-func (e EventMouse) SetFocus(p Primitive) {
-	e.Application.SetFocus(p)
-}
-
 // NewApplication creates and returns a new application.
 func NewApplication() *Application {
 	return &Application{
@@ -156,7 +123,7 @@ func (a *Application) GetInputCapture() func(event *tcell.EventKey) *tcell.Event
 // forwarded to the appropriate mouse event handler. This function can then
 // choose to forward that event (or a different one) by returning it or stop
 // the event processing by returning nil.
-func (a *Application) SetMouseCapture(capture func(event EventMouse) EventMouse) *Application {
+func (a *Application) SetMouseCapture(capture func(event *EventMouse) *EventMouse) *Application {
 	a.mouseCapture = capture
 	return a
 }
@@ -343,10 +310,6 @@ EventLoop:
 
 					continue
 				}
-
-				a.RLock()
-				screen := a.screen
-				a.RUnlock()
 
 				a.lastResize = time.Now()
 
