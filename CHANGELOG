@@ -1,3 +1,10 @@
+v0.2.1 (WIP)
+- Add window size change handler
+- Fix resetting TextView color with [-]
+- Fix adding unnecessary padding to some runes
+- Fix handling ANSI color escape codes 39 (default foreground) and 49 (default
+background)
+
 v0.2.0 (2019-12-30)
 - Fork tview as cview
 
