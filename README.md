@@ -5,7 +5,7 @@
 This package is a [fork](https://man.sr.ht/~tslocum/cview/FORK.md) of [tview](https://github.com/rivo/tview).
 It allows the creation of rich terminal-based user interfaces.
 
-![Screenshot](https://git.sr.ht/~tslocum/cview/blob/master/cview.gif)
+[![Screenshot of presentation demo](https://git.sr.ht/~tslocum/cview/blob/master/cview.gif)](https://git.sr.ht/~tslocum/cview/tree/master/demos/presentation)
 
 Available widgets:
 
@@ -23,7 +23,7 @@ Widgets may be customized and extended to suit any application.
 ## Installation
 
 ```bash
-go get git.sr.ht/~tslocum/cview@latest
+go get git.sr.ht/~tslocum/cview
 ```
 
 ## Hello World
