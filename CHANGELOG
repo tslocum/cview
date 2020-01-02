@@ -1,4 +1,5 @@
-v0.2.1 (WIP)
+v0.2.1 (2020-01-01)
+- Add initial mouse support (some widgets are unsupported)
 - Add window size change handler
 - Fix resetting TextView color with [-]
 - Fix adding unnecessary padding to some runes

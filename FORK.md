@@ -28,6 +28,7 @@ maintainers and allowing code changes which may be outside of tview's scope.
 The following tview pull requests have been merged into cview:
 
 - [#378 Throttle resize handling](https://github.com/rivo/tview/pull/378)
+- [#363 Mouse support](https://github.com/rivo/tview/pull/363)
 - [#353 Add window size change handler](https://github.com/rivo/tview/pull/353)
 - [#347 Handle ANSI code 39 and 49](https://github.com/rivo/tview/pull/347)
 - [#296 Fixed TextView's reset &#x5B;-&#x5D; setting the wrong color](https://github.com/rivo/tview/pull/296)
