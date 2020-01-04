@@ -16,8 +16,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/gdamore/tcell"
 	"git.sr.ht/~tslocum/cview"
+	"github.com/gdamore/tcell"
 )
 
 // Slide is a function which returns the slide's main primitive and its title.
@@ -69,10 +69,17 @@ func main() {
 			ScrollToHighlight()
 		pages.SwitchToPage(strconv.Itoa(currentSlide))
 	}
+
+	cursor := 0
+	var slideRegions []int
 	for index, slide := range slides {
+		slideRegions = append(slideRegions, cursor)
+
 		title, primitive := slide(nextSlide)
 		pages.AddPage(strconv.Itoa(index), primitive, true, index == currentSlide)
 		fmt.Fprintf(info, `%d ["%d"][darkcyan]%s[white][""]  `, index+1, index, title)
+
+		cursor += len(title) + 4
 	}
 
 	// Create the main layout.
@@ -92,6 +99,33 @@ func main() {
 	})
 
 	app.EnableMouse()
+
+	var screenHeight int
+
+	app.SetAfterResizeFunc(func(screen tcell.Screen) {
+		_, screenHeight = screen.Size()
+	})
+
+	app.SetMouseCapture(func(event *cview.EventMouse) *cview.EventMouse {
+		atX, atY := event.Position()
+		if event.Action()&cview.MouseClick != 0 && atY == screenHeight-1 {
+			slideClicked := -1
+			for i, region := range slideRegions {
+				if atX >= region {
+					slideClicked = i
+				}
+			}
+			if slideClicked >= 0 {
+				currentSlide = slideClicked
+				info.Highlight(strconv.Itoa(currentSlide)).
+					ScrollToHighlight()
+				pages.SwitchToPage(strconv.Itoa(currentSlide))
+			}
+			return nil
+		}
+
+		return event
+	})
 
 	// Start the application.
 	if err := app.SetRoot(layout, true).Run(); err != nil {
