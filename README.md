@@ -7,6 +7,8 @@ It allows the creation of rich terminal-based user interfaces.
 
 [![Screenshot of presentation demo](https://git.sr.ht/~tslocum/cview/blob/master/cview.gif)](https://git.sr.ht/~tslocum/cview/tree/master/demos/presentation)
 
+Try the cview presentation demo: ```ssh rocketnine.space -p 20000```
+
 Available widgets:
 
 - __Input forms__ (including __input/password fields__, __drop-down selections__, __checkboxes__, and __buttons__)
