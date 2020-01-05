@@ -1,13 +1,19 @@
-# Terminal-based user interface toolkit
+# cview
 [![GoDoc](https://godoc.org/git.sr.ht/~tslocum/cview?status.svg)](https://godoc.org/git.sr.ht/~tslocum/cview)
 [![builds.sr.ht status](https://builds.sr.ht/~tslocum/cview.svg)](https://builds.sr.ht/~tslocum/cview)
 
-This package is a [fork](https://man.sr.ht/~tslocum/cview/FORK.md) of [tview](https://github.com/rivo/tview).
-It allows the creation of rich terminal-based user interfaces.
+Terminal-based user interface toolkit
 
-[![Screenshot of presentation demo](https://git.sr.ht/~tslocum/cview/blob/master/cview.gif)](https://git.sr.ht/~tslocum/cview/tree/master/demos/presentation)
+This package is a fork of [tview](https://github.com/rivo/tview).
+See [FORK.md](https://man.sr.ht/~tslocum/cview/FORK.md) for more information.
 
-Try the cview presentation demo: ```ssh rocketnine.space -p 20000```
+## Demo
+
+Try the demo: ```ssh cview.rocketnine.space -p 20000```
+
+[![Recording of presentation demo](https://git.sr.ht/~tslocum/cview/blob/master/cview.gif)](https://git.sr.ht/~tslocum/cview/tree/master/demos/presentation)
+
+## Features
 
 Available widgets:
 
@@ -21,6 +27,8 @@ Available widgets:
 - An __application__ wrapper
 
 Widgets may be customized and extended to suit any application.
+
+Initial mouse support has been implemented.
 
 ## Installation
 
