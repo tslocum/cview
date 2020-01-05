@@ -85,6 +85,9 @@ type Application struct {
 	// be forwarded).
 	mouseCapture func(event *EventMouse) *EventMouse
 
+	// A temporary capture function overriding the above.
+	tempMouseCapture func(event *EventMouse) *EventMouse
+
 	lastMouseX, lastMouseY int
 	lastMouseBtn           tcell.ButtonMask
 	lastMouseTarget        Primitive // nil if none
@@ -124,7 +127,9 @@ func (a *Application) GetInputCapture() func(event *tcell.EventKey) *tcell.Event
 // choose to forward that event (or a different one) by returning it or stop
 // the event processing by returning nil.
 func (a *Application) SetMouseCapture(capture func(event *EventMouse) *EventMouse) *Application {
+	a.Lock()
 	a.mouseCapture = capture
+	a.Unlock()
 	return a
 }
 
@@ -132,6 +137,22 @@ func (a *Application) SetMouseCapture(capture func(event *EventMouse) *EventMous
 // if no such function has been installed.
 func (a *Application) GetMouseCapture() func(event *EventMouse) *EventMouse {
 	return a.mouseCapture
+}
+
+// SetTemporaryMouseCapture temporarily overrides the normal capture function.
+// Calling this function from anywhere other than a widget may result in
+// unexpected behavior.
+func (a *Application) SetTemporaryMouseCapture(capture func(event *EventMouse) *EventMouse) *Application {
+	a.Lock()
+	a.tempMouseCapture = capture
+	a.Unlock()
+	return a
+}
+
+// GetTemporaryMouseCapture returns the function installed with
+// SetTemporaryMouseCapture() or nil if no such function has been installed.
+func (a *Application) GetTemporaryMouseCapture() func(event *EventMouse) *EventMouse {
+	return a.tempMouseCapture
 }
 
 // SetScreen allows you to provide your own tcell.Screen object. For most
@@ -263,6 +284,7 @@ EventLoop:
 			p := a.focus
 			inputCapture := a.inputCapture
 			mouseCapture := a.mouseCapture
+			tempMouseCapture := a.tempMouseCapture
 			screen := a.screen
 			root := a.root
 			a.RUnlock()
@@ -373,6 +395,13 @@ EventLoop:
 				event2 := NewEventMouse(event, ptarget, a, act)
 
 				// Intercept event.
+				if tempMouseCapture != nil {
+					event2 = tempMouseCapture(event2)
+					if event2 == nil {
+						a.draw()
+						continue // Don't forward event.
+					}
+				}
 				if mouseCapture != nil {
 					event2 = mouseCapture(event2)
 					if event2 == nil {

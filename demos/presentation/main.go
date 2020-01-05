@@ -108,7 +108,7 @@ func main() {
 
 	app.SetMouseCapture(func(event *cview.EventMouse) *cview.EventMouse {
 		atX, atY := event.Position()
-		if event.Action()&cview.MouseClick != 0 && atY == screenHeight-1 {
+		if event.Action()&cview.MouseDown != 0 && atY == screenHeight-1 {
 			slideClicked := -1
 			for i, region := range slideRegions {
 				if atX >= region {

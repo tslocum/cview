@@ -440,7 +440,7 @@ func (d *DropDown) openList(setFocus func(Primitive), app *Application) {
 	d.list.SetSelectedFunc(func(index int, mainText, secondaryText string, shortcut rune) {
 		// An option was selected. Close the list again.
 		d.currentOption = index
-		d.closeList(setFocus)
+		d.closeList(setFocus, app)
 
 		// Trigger "selected" event.
 		if d.selected != nil {
@@ -461,14 +461,14 @@ func (d *DropDown) openList(setFocus func(Primitive), app *Application) {
 			d.evalPrefix()
 		} else if event.Key() == tcell.KeyEscape {
 			d.currentOption = optionBefore
-			d.closeList(setFocus)
+			d.closeList(setFocus, app)
 		} else {
 			d.prefix = ""
 		}
 		return event
 	})
 	if app != nil {
-		app.SetMouseCapture(func(event *EventMouse) *EventMouse {
+		app.SetTemporaryMouseCapture(func(event *EventMouse) *EventMouse {
 			if d.open {
 				// Forward the mouse event to the list.
 				atX, atY := event.Position()
@@ -490,8 +490,7 @@ func (d *DropDown) openList(setFocus func(Primitive), app *Application) {
 					// Mouse not within the list.
 					if event.Action()&MouseDown != 0 {
 						// If a mouse button was pressed, cancel this capture.
-						app.SetMouseCapture(nil)
-						d.closeList(event.SetFocus)
+						d.closeList(event.SetFocus, app)
 					}
 				}
 			}
@@ -501,7 +500,11 @@ func (d *DropDown) openList(setFocus func(Primitive), app *Application) {
 	setFocus(d.list)
 }
 
-func (d *DropDown) closeList(setFocus func(Primitive)) {
+func (d *DropDown) closeList(setFocus func(Primitive), app *Application) {
+	if app != nil {
+		app.SetTemporaryMouseCapture(nil)
+	}
+
 	d.open = false
 	if d.list.HasFocus() {
 		setFocus(d)
@@ -532,7 +535,7 @@ func (d *DropDown) MouseHandler() func(event *EventMouse) {
 			//d.open = !d.open
 			//event.SetFocus(d)
 			if d.open {
-				d.closeList(event.SetFocus)
+				d.closeList(event.SetFocus, event.Application())
 			} else {
 				d.openList(event.SetFocus, event.Application())
 			}
