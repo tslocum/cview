@@ -215,12 +215,13 @@ func (f *Form) AddDropDown(label string, options []string, initialOption int, se
 	return f
 }
 
-// AddCheckbox adds a checkbox to the form. It has a label, an initial state,
-// and an (optional) callback function which is invoked when the state of the
-// checkbox was changed by the user.
-func (f *Form) AddCheckbox(label string, checked bool, changed func(checked bool)) *Form {
+// AddCheckbox adds a checkbox to the form. It has a label, a message, an
+// initial state, and an (optional) callback function which is invoked when the
+// state of the checkbox was changed by the user.
+func (f *Form) AddCheckbox(label string, message string, checked bool, changed func(checked bool)) *Form {
 	f.items = append(f.items, NewCheckbox().
 		SetLabel(label).
+		SetMessage(message).
 		SetChecked(checked).
 		SetChangedFunc(changed))
 	return f

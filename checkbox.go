@@ -14,10 +14,10 @@ type Checkbox struct {
 	// Whether or not this box is checked.
 	checked bool
 
-	// The text to be displayed before the input area.
+	// The text to be displayed before the checkbox.
 	label string
 
-	// The text to be displayed after the checkbox
+	// The text to be displayed after the checkbox.
 	message string
 
 	// The screen width of the label area. A value of 0 means use the width of

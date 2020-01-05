@@ -11,8 +11,8 @@ func main() {
 		AddDropDown("Title", []string{"Mr.", "Ms.", "Mrs.", "Dr.", "Prof."}, 0, nil).
 		AddInputField("First name", "", 20, nil, nil).
 		AddInputField("Last name", "", 20, nil, nil).
-		AddCheckbox("Age 18+", false, nil).
 		AddPasswordField("Password", "", 10, '*', nil).
+		AddCheckbox("", "Age 18+", false, nil).
 		AddButton("Save", nil).
 		AddButton("Quit", func() {
 			app.Stop()

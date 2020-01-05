@@ -14,8 +14,8 @@ func main() {
 	form := cview.NewForm()
 	form.AddDropDown("称谓", []string{"先生", "女士", "博士", "老师", "师傅"}, 0, nil).
 		AddInputField("姓名", "", 20, nil, nil).
-		AddCheckbox("年龄 18+", false, nil).
 		AddPasswordField("密码", "", 10, '*', nil).
+		AddCheckbox("", "年龄 18+", false, nil).
 		AddButton("保存", func() {
 			_, title := form.GetFormItem(0).(*cview.DropDown).GetCurrentOption()
 			userName := form.GetFormItem(1).(*cview.InputField).GetText()

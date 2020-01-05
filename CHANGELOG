@@ -1,5 +1,7 @@
 v0.2.2 (WIP)
-- Fix dropdown mouse capture behavior
+- Add optional message displayed after Checkbox
+- Fix Dropdown mouse capture behavior
+- Fix TextView region highlighting on last line
 
 v0.2.1 (2020-01-01)
 - Add initial mouse support (some widgets are unsupported)
