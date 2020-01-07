@@ -138,6 +138,24 @@ Unicode Support
 
 This package supports unicode characters including wide characters.
 
+Mouse Support
+
+Mouse support may be enabled by calling Application.EnableMouse before
+Application.Run.
+
+Mouse events are passed to:
+
+The handler set with SetTemporaryMouseCapture, which is reserved for use by
+widgets to temporarily intercept mouse events, such as to close a Dropdown when
+the user clicks outside of the list.
+
+The handler set with SetMouseCapture, which is reserved for use by application
+developers to permanently intercept mouse events.
+
+The ObserveMouseEvent method of every widget under the mouse, bottom to top.
+
+Finally, the MouseHandler method of the topmost widget under the mouse.
+
 Concurrency
 
 Many functions in this package are not thread-safe. For many applications, this

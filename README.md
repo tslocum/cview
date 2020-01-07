@@ -29,7 +29,7 @@ Available widgets:
 
 Widgets may be customized and extended to suit any application.
 
-Initial mouse support has been implemented.
+[Mouse support](https://godoc.org/git.sr.ht/~tslocum/cview#hdr-Mouse_Support) is available.
 
 ## Installation
 
