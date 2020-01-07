@@ -12,13 +12,12 @@ const logo = `
  ======= ===  === === ======== ===  ===  ===
 ===      ===  === === ===      ===  ===  ===
 ===      ===  === === ======   ===  ===  ===
-===       ======  === ===       =========== 
+===       ======  === ===       ===========
  =======    ==    === ========   ==== ====
-
 `
 
 const (
-	subtitle   = `cview - Rich Widgets for Terminal UIs`
+	subtitle   = `Terminal-based user interface toolkit`
 	navigation = `Ctrl-N: Next slide    Ctrl-P: Previous slide    Ctrl-C: Exit`
 )
 

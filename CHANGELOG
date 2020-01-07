@@ -1,4 +1,4 @@
-v0.2.2 (WIP)
+v0.2.2 (2020-01-06)
 - Add optional message displayed after Checkbox
 - Fix Dropdown mouse capture behavior
 - Fix TextView region highlighting on last line

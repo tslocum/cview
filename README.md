@@ -1,6 +1,7 @@
 # cview
 [![GoDoc](https://godoc.org/git.sr.ht/~tslocum/cview?status.svg)](https://godoc.org/git.sr.ht/~tslocum/cview)
 [![builds.sr.ht status](https://builds.sr.ht/~tslocum/cview.svg)](https://builds.sr.ht/~tslocum/cview)
+[![Donate](https://img.shields.io/liberapay/receives/rocketnine.space.svg?logo=liberapay)](https://liberapay.com/rocketnine.space)
 
 Terminal-based user interface toolkit
 
