@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gdamore/tcell"
 	"git.sr.ht/~tslocum/cview"
+	"github.com/gdamore/tcell"
 )
 
 const textView1 = `[green]func[white] [yellow]main[white]() {
@@ -46,6 +46,11 @@ func TextView1(nextSlide func()) (title string, content cview.Primitive) {
 		var n int
 		for {
 			n++
+			if n > 512 {
+				n = 1
+				textView.SetText("")
+			}
+
 			fmt.Fprintf(textView, "%d ", n)
 			time.Sleep(200 * time.Millisecond)
 		}
