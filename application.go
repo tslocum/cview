@@ -58,7 +58,9 @@ type Application struct {
 
 	// An optional callback function which is invoked when the application's
 	// window is initialized, and when the application's window size changes.
-	afterResize func(screen tcell.Screen)
+	// After invoking this callback the screen is cleared and the application
+	// is drawn.
+	afterResize func(width int, height int)
 
 	// An optional callback function which is invoked just before the root
 	// primitive is drawn.
@@ -338,7 +340,8 @@ EventLoop:
 
 				// Call afterResize handler if there is one.
 				if a.afterResize != nil {
-					a.afterResize(screen)
+					width, height := screen.Size()
+					a.afterResize(width, height)
 				}
 
 				if screen == nil {
@@ -663,17 +666,18 @@ func (a *Application) ResizeToFullScreen(p Primitive) *Application {
 
 // SetAfterResizeFunc installs a callback function which is invoked when the
 // application's window is initialized, and when the application's window size
-// changes.
+// changes. After invoking this callback the screen is cleared and the
+// application is drawn.
 //
 // Provide nil to uninstall the callback function.
-func (a *Application) SetAfterResizeFunc(handler func(screen tcell.Screen)) *Application {
+func (a *Application) SetAfterResizeFunc(handler func(width int, height int)) *Application {
 	a.afterResize = handler
 	return a
 }
 
 // GetAfterResizeFunc returns the callback function installed with
 // SetAfterResizeFunc() or nil if none has been installed.
-func (a *Application) GetAfterResizeFunc() func(screen tcell.Screen) {
+func (a *Application) GetAfterResizeFunc() func(width int, height int) {
 	return a.afterResize
 }
 

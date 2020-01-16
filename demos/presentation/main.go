@@ -102,8 +102,8 @@ func main() {
 
 	var screenHeight int
 
-	app.SetAfterResizeFunc(func(screen tcell.Screen) {
-		_, screenHeight = screen.Size()
+	app.SetAfterResizeFunc(func(_ int, height int) {
+		screenHeight = height
 	})
 
 	app.SetMouseCapture(func(event *cview.EventMouse) *cview.EventMouse {
