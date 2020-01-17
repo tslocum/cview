@@ -39,6 +39,7 @@ func main() {
 		Form,
 		TextView1,
 		TextView2,
+		ProgressBar,
 		Table,
 		TreeView,
 		Flex,
