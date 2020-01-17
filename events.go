@@ -10,6 +10,7 @@ type EventKey = tcell.EventKey
 // MouseAction are bit flags indicating what the mouse is logically doing.
 type MouseAction int
 
+// All MouseActions
 const (
 	MouseDown MouseAction = 1 << iota
 	MouseUp
@@ -35,7 +36,7 @@ func (e *EventMouse) Application() *Application {
 	return e.app
 }
 
-// MouseAction gets the mouse action of this event.
+// Action gets the mouse action of this event.
 func (e *EventMouse) Action() MouseAction {
 	return e.action
 }

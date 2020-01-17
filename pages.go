@@ -279,6 +279,7 @@ func (p *Pages) Draw(screen tcell.Screen) {
 	}
 }
 
+// GetChildren returns all primitives that have been added.
 func (p *Pages) GetChildren() []Primitive {
 	var children []Primitive
 	for _, page := range p.pages {

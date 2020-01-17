@@ -129,9 +129,9 @@ func (c *Checkbox) SetFormAttributes(labelWidth int, labelColor, bgColor, fieldT
 func (c *Checkbox) GetFieldWidth() int {
 	if c.message == "" {
 		return 1
-	} else {
-		return 2 + len(c.message)
 	}
+
+	return 2 + len(c.message)
 }
 
 // SetChangedFunc sets a handler which is called when the checked state of this

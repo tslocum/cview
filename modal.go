@@ -176,6 +176,7 @@ func (m *Modal) Draw(screen tcell.Screen) {
 	m.frame.Draw(screen)
 }
 
+// GetChildren returns all primitives that have been added.
 func (m *Modal) GetChildren() []Primitive {
 	return []Primitive{m.frame}
 }

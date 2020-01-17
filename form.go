@@ -621,6 +621,7 @@ func (f *Form) focusIndex() int {
 	return -1
 }
 
+// GetChildren returns all primitives that have been added.
 func (f *Form) GetChildren() []Primitive {
 	children := make([]Primitive, len(f.items)+len(f.buttons))
 	i := 0

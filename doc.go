@@ -19,6 +19,7 @@ The package implements the following widgets:
   - DropDown: Drop-down selection fields.
   - Checkbox: Selectable checkbox for boolean values.
   - Button: Buttons which get activated when the user selects them.
+  - ProgressBar: Indicates the progress of an operation.
   - Form: Forms composed of input fields, drop down selections, checkboxes, and
     buttons.
   - Modal: A centered window with a text message and one or more buttons.
@@ -192,9 +193,8 @@ therefore available for all widgets, too.
 All widgets also implement the Primitive interface. There is also the Focusable
 interface which is used to override functions in subclassing types.
 
-The cview package is based on https://github.com/gdamore/tcell. It uses types
-and constants from that package (e.g. colors and keyboard values).
-
-This package does not process mouse input (yet).
+This package is a fork of [tview](https://github.com/rivo/tview), which is
+based on https://github.com/gdamore/tcell. It uses types and constants from
+that package (e.g. colors and keyboard values).
 */
 package cview

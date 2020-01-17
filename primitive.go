@@ -44,7 +44,7 @@ type Primitive interface {
 	// GetFocusable returns the item's Focusable.
 	GetFocusable() Focusable
 
-	// GetChildren gets the children.
+	// GetChildren returns all child primitives that have been added.
 	GetChildren() []Primitive
 
 	// MouseHandler returns a handler which receives mouse events.

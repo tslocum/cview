@@ -11,7 +11,7 @@ import (
 // The size of the event/update/redraw channels.
 const queueSize = 100
 
-// The minimum duration between resize event callbacks.
+// ResizeEventThrottle is the minimum duration between resize event callbacks.
 const ResizeEventThrottle = 200 * time.Millisecond
 
 // Application represents the top node of an application.

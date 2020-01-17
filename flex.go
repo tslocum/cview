@@ -196,6 +196,7 @@ func (f *Flex) HasFocus() bool {
 	return false
 }
 
+// GetChildren returns all primitives that have been added.
 func (f *Flex) GetChildren() []Primitive {
 	children := make([]Primitive, len(f.items))
 	for i, item := range f.items {

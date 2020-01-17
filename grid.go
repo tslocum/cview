@@ -661,6 +661,7 @@ func (g *Grid) Draw(screen tcell.Screen) {
 	}
 }
 
+// GetChildren returns all primitives that have been added.
 func (g *Grid) GetChildren() []Primitive {
 	children := make([]Primitive, len(g.items))
 	for i, item := range g.items {

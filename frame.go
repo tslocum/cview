@@ -156,6 +156,7 @@ func (f *Frame) HasFocus() bool {
 	return false
 }
 
+// GetChildren returns all primitives that have been added.
 func (f *Frame) GetChildren() []Primitive {
 	return []Primitive{f.primitive}
 }
