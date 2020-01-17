@@ -1,7 +1,8 @@
 /*
-Package cview implements rich widgets for terminal based user interfaces. The
-widgets provided with this package are useful for data exploration and data
-entry.
+Package cview implements rich widgets for terminal based user interfaces.
+
+See the demos folder and the example application provided with the
+Application.NewApplication documentation for usage examples.
 
 Widgets
 
@@ -141,7 +142,8 @@ This package supports unicode characters including wide characters.
 Mouse Support
 
 Mouse support may be enabled by calling Application.EnableMouse before
-Application.Run.
+Application.Run. See the example application provided with the
+Application.EnableMouse documentation.
 
 Mouse events are passed to:
 
