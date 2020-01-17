@@ -1,5 +1,6 @@
 v1.4.1 (WIP)
 - Add ProgressBar widget
+- Add Application.RingBell
 
 v1.4.0 (2020-01-16)
 - Bump version to resolve issues with "go get"

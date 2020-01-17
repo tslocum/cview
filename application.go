@@ -1,6 +1,7 @@
 package cview
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -744,4 +745,11 @@ func (a *Application) QueueUpdateDraw(f func()) *Application {
 func (a *Application) QueueEvent(event tcell.Event) *Application {
 	a.events <- event
 	return a
+}
+
+// RingBell sends a bell code to the terminal.
+func (a *Application) RingBell() {
+	a.Lock()
+	fmt.Print(string(byte(7)))
+	a.Unlock()
 }
