@@ -38,7 +38,7 @@ world!":
   package main
 
   import (
-  	"git.sr.ht/~tslocum/cview"
+  	"gitlab.com/tslocum/cview"
   )
 
   func main() {

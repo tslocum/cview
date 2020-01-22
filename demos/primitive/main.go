@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gdamore/tcell"
-	"git.sr.ht/~tslocum/cview"
+	"gitlab.com/tslocum/cview"
 )
 
 // RadioButtons implements a simple primitive for radio button selections.

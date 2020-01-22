@@ -1,13 +1,13 @@
 package main
 
 import (
-	"git.sr.ht/~tslocum/cview"
+	"gitlab.com/tslocum/cview"
 )
 
 const form = `[green]package[white] main
 
 [green]import[white] (
-    [red]"git.sr.ht/~tslocum/cview"[white]
+    [red]"gitlab.com/tslocum/cview"[white]
 )
 
 [green]func[white] [yellow]main[white]() {

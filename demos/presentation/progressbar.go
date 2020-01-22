@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	"git.sr.ht/~tslocum/cview"
+	"gitlab.com/tslocum/cview"
 )
 
 // ProgressBar demonstrates the ProgressBar.

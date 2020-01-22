@@ -1,6 +1,6 @@
 package main
 
-import "git.sr.ht/~tslocum/cview"
+import "gitlab.com/tslocum/cview"
 
 // Introduction returns a cview.List with the highlights of the cview package.
 func Introduction(nextSlide func()) (title string, content cview.Primitive) {

@@ -208,7 +208,7 @@ func (c *TableCell) GetLastPosition() (x, y, width int) {
 //
 // Use SetInputCapture() to override or modify keyboard input.
 //
-// See https://git.sr.ht/~tslocum/cview/wiki/Table for an example.
+// See https://gitlab.com/tslocum/cview/wiki/Table for an example.
 type Table struct {
 	*Box
 

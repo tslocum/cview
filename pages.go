@@ -16,7 +16,7 @@ type page struct {
 // root primitive. It allows to easily switch the visibility of the contained
 // primitives.
 //
-// See https://git.sr.ht/~tslocum/cview/wiki/Pages for an example.
+// See https://gitlab.com/tslocum/cview/wiki/Pages for an example.
 type Pages struct {
 	*Box
 

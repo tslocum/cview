@@ -23,7 +23,7 @@ type flexItem struct {
 // distributed along that dimension depends on their layout settings, which is
 // either a fixed length or a proportional length. See AddItem() for details.
 //
-// See https://git.sr.ht/~tslocum/cview/wiki/Flex for an example.
+// See https://gitlab.com/tslocum/cview/wiki/Flex for an example.
 type Flex struct {
 	*Box
 

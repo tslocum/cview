@@ -6,7 +6,7 @@ import (
 
 // Button is labeled box that triggers an action when selected.
 //
-// See https://git.sr.ht/~tslocum/cview/wiki/Button for an example.
+// See https://gitlab.com/tslocum/cview/wiki/Button for an example.
 type Button struct {
 	*Box
 

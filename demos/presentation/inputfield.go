@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gdamore/tcell"
-	"git.sr.ht/~tslocum/cview"
+	"gitlab.com/tslocum/cview"
 )
 
 const inputField = `[green]package[white] main
@@ -11,7 +11,7 @@ const inputField = `[green]package[white] main
     [red]"strconv"[white]
 
     [red]"github.com/gdamore/tcell"[white]
-    [red]"git.sr.ht/~tslocum/cview"[white]
+    [red]"gitlab.com/tslocum/cview"[white]
 )
 
 [green]func[white] [yellow]main[white]() {

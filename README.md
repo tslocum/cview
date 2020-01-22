@@ -1,18 +1,18 @@
 # cview
-[![GoDoc](https://godoc.org/git.sr.ht/~tslocum/cview?status.svg)](https://godoc.org/git.sr.ht/~tslocum/cview)
-[![builds.sr.ht status](https://builds.sr.ht/~tslocum/cview.svg)](https://builds.sr.ht/~tslocum/cview)
+[![GoDoc](https://godoc.org/gitlab.com/tslocum/cview?status.svg)](https://godoc.org/gitlab.com/tslocum/cview)
+[![CI status](https://gitlab.com/tslocum/cview/badges/master/pipeline.svg)](https://gitlab.com/tslocum/cview/commits/master)
 [![Donate](https://img.shields.io/liberapay/receives/rocketnine.space.svg?logo=liberapay)](https://liberapay.com/rocketnine.space)
 
 Terminal-based user interface toolkit
 
 This package is a fork of [tview](https://github.com/rivo/tview).
-See [FORK.md](https://man.sr.ht/~tslocum/cview/FORK.md) for more information.
+See [FORK.md](https://gitlab.com/tslocum/cview/blob/master/FORK.md) for more information.
 
 ## Demo
 
 Try the demo: ```ssh cview.rocketnine.space -p 20000```
 
-[![Recording of presentation demo](https://git.sr.ht/~tslocum/cview/blob/master/cview.gif)](https://git.sr.ht/~tslocum/cview/tree/master/demos/presentation)
+[![Recording of presentation demo](https://gitlab.com/tslocum/cview/blob/master/cview.gif)](https://gitlab.com/tslocum/cview/tree/master/demos/presentation)
 
 ## Features
 
@@ -29,12 +29,12 @@ Available widgets:
 
 Widgets may be customized and extended to suit any application.
 
-[Mouse support](https://godoc.org/git.sr.ht/~tslocum/cview#hdr-Mouse_Support) is available.
+[Mouse support](https://godoc.org/gitlab.com/tslocum/cview#hdr-Mouse_Support) is available.
 
 ## Installation
 
 ```bash
-go get git.sr.ht/~tslocum/cview
+go get gitlab.com/tslocum/cview
 ```
 
 ## Hello World
@@ -45,7 +45,7 @@ This basic example creates a box titled "Hello, World!" and displays it in your 
 package main
 
 import (
-	"git.sr.ht/~tslocum/cview"
+	"gitlab.com/tslocum/cview"
 )
 
 func main() {
@@ -63,7 +63,9 @@ the program in the "demos/presentation" subdirectory.
 
 ## Documentation
 
-Package documentation is available on [godoc](https://godoc.org/git.sr.ht/~tslocum/cview).
+Package documentation is available on [godoc](https://godoc.org/gitlab.com/tslocum/cview).
+
+An [introduction tutorial](https://github.com/rivo/tview) is also available.
 
 ## Dependencies
 
@@ -72,10 +74,5 @@ This package is based on [github.com/gdamore/tcell](https://github.com/gdamore/t
 
 ## Support
 
-[CONTRIBUTING.md](https://man.sr.ht/~tslocum/cview/CONTRIBUTING.md) describes how to share
+[CONTRIBUTING.md](https://gitlab.com/tslocum/cview/blob/master/CONTRIBUTING.md) describes how to share
 issues, suggestions and patches (pull requests).
-
-cview has two mailing lists:
-
-- [cview-discuss](https://lists.sr.ht/~tslocum/cview-discuss) for general discussion
-- [cview-dev](https://lists.sr.ht/~tslocum/cview-dev) for development discussion

@@ -1,4 +1,4 @@
-module git.sr.ht/~tslocum/cview
+module gitlab.com/tslocum/cview
 
 go 1.12
 

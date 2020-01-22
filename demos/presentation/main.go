@@ -16,8 +16,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"git.sr.ht/~tslocum/cview"
 	"github.com/gdamore/tcell"
+	"gitlab.com/tslocum/cview"
 )
 
 // Slide is a function which returns the slide's main primitive and its title.

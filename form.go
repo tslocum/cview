@@ -38,7 +38,7 @@ type FormItem interface {
 // Checkbox. These elements can be optionally followed by one or more buttons
 // for which you can define form-wide actions (e.g. Save, Clear, Cancel).
 //
-// See https://git.sr.ht/~tslocum/cview/wiki/Form for an example.
+// See https://gitlab.com/tslocum/cview/wiki/Form for an example.
 type Form struct {
 	*Box
 

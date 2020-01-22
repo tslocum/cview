@@ -1,5 +1,5 @@
 This document explains why [tview](https://github.com/rivo/tview) was forked to
-create [cview](https://git.sr.ht/~tslocum/cview) and tracks which tview pull
+create [cview](https://gitlab.com/tslocum/cview) and tracks which tview pull
 requests have been merged into cview.
 
 # Why fork?

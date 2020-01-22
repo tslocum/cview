@@ -21,7 +21,7 @@ func ExampleNewApplication() {
 	mainLayout.AddItem(sharedTextView, 1, 0, 1, 1, 0, 0, false)
 
 	// Create about layout using Grid.
-	aboutTextView := NewTextView().SetText("cview muti-layout application example\n\nhttps://git.sr.ht/~tslocum/cview").SetTextAlign(AlignCenter)
+	aboutTextView := NewTextView().SetText("cview muti-layout application example\n\nhttps://gitlab.com/tslocum/cview").SetTextAlign(AlignCenter)
 	aboutLayout := NewGrid()
 	aboutLayout.AddItem(aboutTextView, 0, 0, 1, 1, 0, 0, false)
 	aboutLayout.AddItem(sharedTextView, 1, 0, 1, 1, 0, 0, false)

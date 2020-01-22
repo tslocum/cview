@@ -27,7 +27,7 @@ type gridItem struct {
 // and "l" keys) while the grid has focus and none of its contained primitives
 // do.
 //
-// See https://git.sr.ht/~tslocum/cview/wiki/Grid for an example.
+// See https://gitlab.com/tslocum/cview/wiki/Grid for an example.
 type Grid struct {
 	*Box
 

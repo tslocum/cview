@@ -4,7 +4,7 @@ package main
 import (
 	"fmt"
 
-	"git.sr.ht/~tslocum/cview"
+	"gitlab.com/tslocum/cview"
 )
 
 func main() {

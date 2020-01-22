@@ -1,6 +1,6 @@
 package main
 
-import "git.sr.ht/~tslocum/cview"
+import "gitlab.com/tslocum/cview"
 
 // Center returns a new primitive which shows the provided primitive in its
 // center, given the provided primitive's size.

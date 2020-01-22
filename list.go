@@ -17,7 +17,7 @@ type listItem struct {
 
 // List displays rows of items, each of which can be selected.
 //
-// See https://git.sr.ht/~tslocum/cview/wiki/List for an example.
+// See https://gitlab.com/tslocum/cview/wiki/List for an example.
 type List struct {
 	*Box
 

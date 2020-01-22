@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/gdamore/tcell"
-	"git.sr.ht/~tslocum/cview"
+	"gitlab.com/tslocum/cview"
 )
 
 // Show a navigable tree view of the current directory.

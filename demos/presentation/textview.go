@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"git.sr.ht/~tslocum/cview"
 	"github.com/gdamore/tcell"
+	"gitlab.com/tslocum/cview"
 )
 
 const textView1 = `[green]func[white] [yellow]main[white]() {
@@ -65,7 +65,7 @@ const textView2 = `[green]package[white] main
     [red]"strconv"[white]
 
     [red]"github.com/gdamore/tcell"[white]
-    [red]"git.sr.ht/~tslocum/cview"[white]
+    [red]"gitlab.com/tslocum/cview"[white]
 )
 
 [green]func[white] [yellow]main[white]() {

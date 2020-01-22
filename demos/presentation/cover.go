@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"git.sr.ht/~tslocum/cview"
 	"github.com/gdamore/tcell"
+	"gitlab.com/tslocum/cview"
 )
 
 const logo = `
