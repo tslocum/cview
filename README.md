@@ -25,6 +25,7 @@ Available widgets:
 - Selectable __lists__
 - __Grid__, __Flexbox__ and __page layouts__
 - Modal __message windows__
+- Horizontal and vertical __progress bars__
 - An __application__ wrapper
 
 Widgets may be customized and extended to suit any application.
@@ -56,7 +57,7 @@ func main() {
 }
 ```
 
-Examples are available in the "demos" subdirectory.
+Examples are available on [godoc](https://godoc.org/gitlab.com/tslocum/cview#pkg-examples) and in the "demos" subdirectory.
 
 For a presentation highlighting the features of this package, compile and run
 the program in the "demos/presentation" subdirectory.
@@ -65,7 +66,7 @@ the program in the "demos/presentation" subdirectory.
 
 Package documentation is available on [godoc](https://godoc.org/gitlab.com/tslocum/cview).
 
-An [introduction tutorial](https://github.com/rivo/tview) is also available.
+An [introduction tutorial](https://rocketnine.space/post/tview-and-you/) is also available.
 
 ## Dependencies
 
