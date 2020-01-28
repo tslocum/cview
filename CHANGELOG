@@ -1,3 +1,8 @@
+v1.4.2 (WIP)
+- Add SetDoneFunc to TreeView
+- Fix rendering issues with TextViews which have their background color set to
+ColorDefault
+
 v1.4.1 (2020-01-23)
 - Add ProgressBar widget
 - Add Application.RingBell
