@@ -251,6 +251,12 @@ type Table struct {
 	// The number of visible rows the last time the table was drawn.
 	visibleRows int
 
+	// Whether or not to render a scroll bar.
+	showScrollBar bool
+
+	// The scroll bar color.
+	scrollBarColor tcell.Color
+
 	// The style of the selected rows. If this value is 0, selected rows are
 	// simply inverted.
 	selectedStyle tcell.Style
@@ -273,10 +279,12 @@ type Table struct {
 // NewTable returns a new table.
 func NewTable() *Table {
 	return &Table{
-		Box:          NewBox(),
-		bordersColor: Styles.GraphicsColor,
-		separator:    ' ',
-		lastColumn:   -1,
+		Box:            NewBox(),
+		showScrollBar:  true,
+		scrollBarColor: Styles.ScrollBarColor,
+		bordersColor:   Styles.GraphicsColor,
+		separator:      ' ',
+		lastColumn:     -1,
 	}
 }
 
@@ -297,6 +305,19 @@ func (t *Table) SetBorders(show bool) *Table {
 // SetBordersColor sets the color of the cell borders.
 func (t *Table) SetBordersColor(color tcell.Color) *Table {
 	t.bordersColor = color
+	return t
+}
+
+// ShowScrollBar determines whether or not to render a scroll bar when there
+// are additional rows and/or columns offscreen.
+func (t *Table) ShowScrollBar(show bool) *Table {
+	t.showScrollBar = show
+	return t
+}
+
+// SetScrollBarColor sets the color of the scroll bar.
+func (t *Table) SetScrollBarColor(color tcell.Color) *Table {
+	t.scrollBarColor = color
 	return t
 }
 
@@ -568,6 +589,11 @@ func (t *Table) Draw(screen tcell.Screen) {
 		t.visibleRows = height / 2
 	} else {
 		t.visibleRows = height
+	}
+
+	showVerticalScrollBar := t.showScrollBar && len(t.cells) > height
+	if showVerticalScrollBar {
+		width-- // Subtract space for scroll bar.
 	}
 
 	// Return the cell at the specified position (nil if it doesn't exist).
@@ -860,6 +886,19 @@ ColumnLoop:
 			drawBorder(columnX, rowY, Borders.BottomRight)
 		}
 	}
+
+	if showVerticalScrollBar {
+		// Calculate scroll bar position.
+		rows := len(t.cells)
+		cursor := int(float64(rows-t.fixedRows) * (float64(t.rowOffset) / float64(((rows-t.fixedRows)-t.visibleRows)+1)))
+
+		// Draw scroll bar.
+		for printed := 0; printed < (t.visibleRows - t.fixedRows); printed++ {
+			RenderScrollBar(screen, x+width, y+t.fixedRows+printed, t.visibleRows-t.fixedRows, rows-t.fixedRows, cursor, printed, t.hasFocus, t.scrollBarColor)
+		}
+	}
+
+	// TODO Draw horizontal scroll bar
 
 	// Helper function which colors the background of a box.
 	// backgroundColor == tcell.ColorDefault => Don't color the background.

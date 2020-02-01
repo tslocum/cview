@@ -1,4 +1,5 @@
 v1.4.2 (WIP)
+- Add scroll bar to List, DropDown, Table and TreeView
 - Add SetDoneFunc to TreeView
 - Fix rendering issues with TextViews which have their background color set to
 ColorDefault
