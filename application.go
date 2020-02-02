@@ -270,6 +270,9 @@ func (a *Application) Run() error {
 			if err := screen.Init(); err != nil {
 				panic(err)
 			}
+			if a.enableMouse {
+				screen.EnableMouse()
+			}
 			a.draw()
 		}
 	}()
@@ -507,6 +510,10 @@ func (a *Application) Stop() {
 // A return value of true indicates that the application was suspended and "f"
 // was called. If false is returned, the application was already suspended,
 // terminal UI mode was not exited, and "f" was not called.
+//
+// BUG(tslocum) First key event is lost when resuming a suspended application.
+//
+// Issue: https://github.com/gdamore/tcell/issues/194
 func (a *Application) Suspend(f func()) bool {
 	a.RLock()
 	screen := a.screen
@@ -528,7 +535,6 @@ func (a *Application) Suspend(f func()) bool {
 		panic(err)
 	}
 	a.screenReplacement <- screen
-	// One key event will get lost, see https://github.com/gdamore/tcell/issues/194
 
 	// Continue application loop.
 	return true

@@ -1,6 +1,7 @@
-v1.4.2 (WIP)
+v1.4.2 (2020-02-02)
 - Add scroll bar to List, DropDown, Table and TreeView
 - Add SetDoneFunc to TreeView
+- Fix mouse support when resuming after Application.Suspend
 - Fix rendering issues with TextViews which have their background color set to
 ColorDefault
 
