@@ -12,7 +12,7 @@ See [FORK.md](https://gitlab.com/tslocum/cview/blob/master/FORK.md) for more inf
 
 Try the demo: ```ssh cview.rocketnine.space -p 20000```
 
-[![Recording of presentation demo](https://gitlab.com/tslocum/cview/blob/master/cview.gif)](https://gitlab.com/tslocum/cview/tree/master/demos/presentation)
+[![Recording of presentation demo](https://gitlab.com/tslocum/cview/raw/master/cview.gif)](https://gitlab.com/tslocum/cview/tree/master/demos/presentation)
 
 ## Features
 

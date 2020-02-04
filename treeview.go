@@ -29,7 +29,7 @@ type TreeNode struct {
 	// The text color.
 	color tcell.Color
 
-	// Whether or not this node can be selected.
+	// Whether or not this node can be focused and selected.
 	selectable bool
 
 	// Whether or not this node's children should be displayed.
@@ -37,6 +37,9 @@ type TreeNode struct {
 
 	// The additional horizontal indent of this node's text.
 	indent int
+
+	// An optional function which is called when the user focuses this node.
+	focused func()
 
 	// An optional function which is called when the user selects this node.
 	selected func()
@@ -127,15 +130,24 @@ func (n *TreeNode) AddChild(node *TreeNode) *TreeNode {
 	return n
 }
 
-// SetSelectable sets a flag indicating whether this node can be selected by
-// the user.
+// SetSelectable sets a flag indicating whether this node can be focused and
+// selected by the user.
 func (n *TreeNode) SetSelectable(selectable bool) *TreeNode {
 	n.selectable = selectable
 	return n
 }
 
+// SetFocusedFunc sets the function which is called when the user navigates to
+// this node.
+//
+// This function is also called when the user selects this node.
+func (n *TreeNode) SetFocusedFunc(handler func()) *TreeNode {
+	n.focused = handler
+	return n
+}
+
 // SetSelectedFunc sets a function which is called when the user selects this
-// node by hitting Enter when it is selected.
+// node by hitting Enter when it is focused.
 func (n *TreeNode) SetSelectedFunc(handler func()) *TreeNode {
 	n.selected = handler
 	return n
@@ -216,7 +228,7 @@ func (n *TreeNode) SetIndent(indent int) *TreeNode {
 // TreeNode documentation for details on node attributes. (You can use
 // SetReference() to store a reference to nodes of your own tree structure.)
 //
-// Nodes can be selected by calling SetCurrentNode(). The user can navigate the
+// Nodes can be focused by calling SetCurrentNode(). The user can navigate the
 // selection or the tree by using the following keys:
 //
 //   - j, down arrow, right arrow: Move (the selection) down by one node.
@@ -245,7 +257,7 @@ type TreeView struct {
 	// The root node.
 	root *TreeNode
 
-	// The currently selected node or nil if no node is selected.
+	// The currently focused node or nil if no node is focused.
 	currentNode *TreeNode
 
 	// The movement to be performed during the call to Draw(), one of the
@@ -276,15 +288,13 @@ type TreeView struct {
 	// The scroll bar color.
 	scrollBarColor tcell.Color
 
-	// An optional function which is called when the user has navigated to a new
-	// tree node.
+	// An optional function called when the focused tree item changes.
 	changed func(node *TreeNode)
 
-	// An optional function which is called when a tree item was selected.
+	// An optional function called when a tree item is selected.
 	selected func(node *TreeNode)
 
-	// An optional function which is called when the user moves away from this
-	// primitive.
+	// An optional function called when the user moves away from this primitive.
 	done func(key tcell.Key)
 
 	// The visible nodes, top-down, as set by process().
@@ -314,13 +324,16 @@ func (t *TreeView) GetRoot() *TreeNode {
 	return t.root
 }
 
-// SetCurrentNode sets the currently selected node. Provide nil to clear all
-// selections. Selected nodes must be visible and selectable, or else the
-// selection will be changed to the top-most selectable and visible node.
+// SetCurrentNode focuses a node or, when provided with nil, clears focus.
+// Selected nodes must be visible and selectable, or else the selection will be
+// changed to the top-most selectable and visible node.
 //
 // This function does NOT trigger the "changed" callback.
 func (t *TreeView) SetCurrentNode(node *TreeNode) *TreeView {
 	t.currentNode = node
+	if t.currentNode.focused != nil {
+		t.currentNode.focused()
+	}
 	return t
 }
 
@@ -560,6 +573,9 @@ func (t *TreeView) process() {
 			if t.changed != nil {
 				t.changed(t.currentNode)
 			}
+			if t.currentNode.focused != nil {
+				t.currentNode.focused()
+			}
 		}
 		selectedIndex = newSelectedIndex
 
@@ -710,6 +726,9 @@ func (t *TreeView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 			if t.currentNode != nil {
 				if t.selected != nil {
 					t.selected(t.currentNode)
+				}
+				if t.currentNode.focused != nil {
+					t.currentNode.focused()
 				}
 				if t.currentNode.selected != nil {
 					t.currentNode.selected()
