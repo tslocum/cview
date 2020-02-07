@@ -1,5 +1,5 @@
 # cview
-[![GoDoc](https://godoc.org/gitlab.com/tslocum/cview?status.svg)](https://godoc.org/gitlab.com/tslocum/cview)
+[![GoDoc](https://gitlab.com/tslocum/godoc-static/-/raw/master/badge.svg)](https://docs.rocketnine.space/gitlab.com/tslocum/cview)
 [![CI status](https://gitlab.com/tslocum/cview/badges/master/pipeline.svg)](https://gitlab.com/tslocum/cview/commits/master)
 [![Donate](https://img.shields.io/liberapay/receives/rocketnine.space.svg?logo=liberapay)](https://liberapay.com/rocketnine.space)
 
@@ -12,7 +12,7 @@ See [FORK.md](https://gitlab.com/tslocum/cview/blob/master/FORK.md) for more inf
 
 Try the demo: ```ssh cview.rocketnine.space -p 20000```
 
-[![Recording of presentation demo](https://gitlab.com/tslocum/cview/raw/master/cview.gif)](https://gitlab.com/tslocum/cview/tree/master/demos/presentation)
+[![Recording of presentation demo](https://gitlab.com/tslocum/cview/-/raw/master/cview.gif)](https://gitlab.com/tslocum/cview/tree/master/demos/presentation)
 
 ## Features
 
@@ -30,7 +30,7 @@ Available widgets:
 
 Widgets may be customized and extended to suit any application.
 
-[Mouse support](https://godoc.org/gitlab.com/tslocum/cview#hdr-Mouse_Support) is available.
+[Mouse support](https://docs.rocketnine.space/gitlab.com/tslocum/cview#hdr-Mouse_Support) is available.
 
 ## Installation
 
@@ -57,14 +57,14 @@ func main() {
 }
 ```
 
-Examples are available on [godoc](https://godoc.org/gitlab.com/tslocum/cview#pkg-examples) and in the "demos" subdirectory.
+Examples are available via [godoc](https://docs.rocketnine.space/gitlab.com/tslocum/cview#pkg-examples) and in the "demos" subdirectory.
 
 For a presentation highlighting the features of this package, compile and run
 the program in the "demos/presentation" subdirectory.
 
 ## Documentation
 
-Package documentation is available on [godoc](https://godoc.org/gitlab.com/tslocum/cview).
+Package documentation is available via [godoc](https://docs.rocketnine.space/gitlab.com/tslocum/cview).
 
 An [introduction tutorial](https://rocketnine.space/post/tview-and-you/) is also available.
 
