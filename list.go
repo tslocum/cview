@@ -81,7 +81,6 @@ func NewList() *List {
 		Box:                     NewBox(),
 		showSecondaryText:       true,
 		showScrollBar:           true,
-		wrapAround:              true,
 		mainTextColor:           Styles.PrimaryTextColor,
 		secondaryTextColor:      Styles.TertiaryTextColor,
 		shortcutColor:           Styles.SecondaryTextColor,
