@@ -1,6 +1,7 @@
-v1.4.3 (WIP)
+v1.4.3 (2020-02-13)
 - Add SetFocusedFunc to TreeNode
 - Add option to always show scroll bar
+- Fix scrolling Table with PageDown and PageUp
 - Do not wrap around list by default
 
 v1.4.2 (2020-02-02)

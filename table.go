@@ -1160,26 +1160,26 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 
 			pageDown = func() {
 				if t.rowsSelectable {
-					t.selectedRow += t.visibleRows
+					t.selectedRow += t.visibleRows - t.fixedRows
 					if t.selectedRow >= len(t.cells) {
 						t.selectedRow = len(t.cells) - 1
 					}
 					next()
 				} else {
-					t.rowOffset += t.visibleRows
+					t.rowOffset += t.visibleRows - t.fixedRows
 				}
 			}
 
 			pageUp = func() {
 				if t.rowsSelectable {
-					t.selectedRow -= t.visibleRows
+					t.selectedRow -= t.visibleRows - t.fixedRows
 					if t.selectedRow < 0 {
 						t.selectedRow = 0
 					}
 					previous()
 				} else {
 					t.trackEnd = false
-					t.rowOffset -= t.visibleRows
+					t.rowOffset -= t.visibleRows - t.fixedRows
 				}
 			}
 		)
