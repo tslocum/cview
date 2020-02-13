@@ -1,5 +1,6 @@
 v1.4.3 (WIP)
 - Add SetFocusedFunc to TreeNode
+- Add option to always show scroll bar
 - Do not wrap around list by default
 
 v1.4.2 (2020-02-02)

@@ -42,8 +42,8 @@ type List struct {
 	// The text color for selected items.
 	selectedTextColor tcell.Color
 
-	// Whether or not to render a scroll bar.
-	showScrollBar bool
+	// Visibility of the scroll bar.
+	scrollBarVisibility ScrollBarVisibility
 
 	// The scroll bar color.
 	scrollBarColor tcell.Color
@@ -80,7 +80,7 @@ func NewList() *List {
 	return &List{
 		Box:                     NewBox(),
 		showSecondaryText:       true,
-		showScrollBar:           true,
+		scrollBarVisibility:     ScrollBarAuto,
 		mainTextColor:           Styles.PrimaryTextColor,
 		secondaryTextColor:      Styles.TertiaryTextColor,
 		shortcutColor:           Styles.SecondaryTextColor,
@@ -223,10 +223,9 @@ func (l *List) ShowSecondaryText(show bool) *List {
 	return l
 }
 
-// ShowScrollBar determines whether or not to render a scroll bar when there
-// are additional items offscreen.
-func (l *List) ShowScrollBar(show bool) *List {
-	l.showScrollBar = show
+// SetScrollBarVisibility specifies the display of the scroll bar.
+func (l *List) SetScrollBarVisibility(visibility ScrollBarVisibility) *List {
+	l.scrollBarVisibility = visibility
 	return l
 }
 
@@ -489,7 +488,7 @@ func (l *List) Draw(screen tcell.Screen) {
 			}
 		}
 
-		if l.showScrollBar {
+		if l.scrollBarVisibility == ScrollBarAlways || (l.scrollBarVisibility == ScrollBarAuto && len(l.items) > scrollBarHeight) {
 			RenderScrollBar(screen, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, index-l.offset, l.hasFocus, l.scrollBarColor)
 		}
 
@@ -503,7 +502,7 @@ func (l *List) Draw(screen tcell.Screen) {
 		if l.showSecondaryText {
 			Print(screen, item.SecondaryText, x, y, width, AlignLeft, l.secondaryTextColor)
 
-			if l.showScrollBar {
+			if l.scrollBarVisibility == ScrollBarAlways || (l.scrollBarVisibility == ScrollBarAuto && len(l.items) > scrollBarHeight) {
 				RenderScrollBar(screen, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, index-l.offset, l.hasFocus, l.scrollBarColor)
 			}
 

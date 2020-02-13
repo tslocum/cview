@@ -282,8 +282,8 @@ type TreeView struct {
 	// The color of the lines.
 	graphicsColor tcell.Color
 
-	// Whether or not to render a scroll bar.
-	showScrollBar bool
+	// Visibility of the scroll bar.
+	scrollBarVisibility ScrollBarVisibility
 
 	// The scroll bar color.
 	scrollBarColor tcell.Color
@@ -304,11 +304,11 @@ type TreeView struct {
 // NewTreeView returns a new tree view.
 func NewTreeView() *TreeView {
 	return &TreeView{
-		Box:            NewBox(),
-		showScrollBar:  true,
-		graphics:       true,
-		graphicsColor:  Styles.GraphicsColor,
-		scrollBarColor: Styles.ScrollBarColor,
+		Box:                 NewBox(),
+		scrollBarVisibility: ScrollBarAuto,
+		graphics:            true,
+		graphicsColor:       Styles.GraphicsColor,
+		scrollBarColor:      Styles.ScrollBarColor,
 	}
 }
 
@@ -386,10 +386,9 @@ func (t *TreeView) SetGraphicsColor(color tcell.Color) *TreeView {
 	return t
 }
 
-// ShowScrollBar determines whether or not to render a scroll bar when there
-// are additional nodes offscreen.
-func (t *TreeView) ShowScrollBar(show bool) *TreeView {
-	t.showScrollBar = show
+// SetScrollBarVisibility specifies the display of the scroll bar.
+func (t *TreeView) SetScrollBarVisibility(visibility ScrollBarVisibility) *TreeView {
+	t.scrollBarVisibility = visibility
 	return t
 }
 
@@ -710,7 +709,7 @@ func (t *TreeView) Draw(screen tcell.Screen) {
 		}
 
 		// Draw scroll bar.
-		if t.showScrollBar {
+		if t.scrollBarVisibility == ScrollBarAlways || (t.scrollBarVisibility == ScrollBarAuto && rows > height) {
 			RenderScrollBar(screen, x+(width-1), posY, height, rows, cursor, posY-y, t.hasFocus, tcell.ColorWhite)
 		}
 

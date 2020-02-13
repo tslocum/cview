@@ -251,8 +251,8 @@ type Table struct {
 	// The number of visible rows the last time the table was drawn.
 	visibleRows int
 
-	// Whether or not to render a scroll bar.
-	showScrollBar bool
+	// Visibility of the scroll bar.
+	scrollBarVisibility ScrollBarVisibility
 
 	// The scroll bar color.
 	scrollBarColor tcell.Color
@@ -279,12 +279,12 @@ type Table struct {
 // NewTable returns a new table.
 func NewTable() *Table {
 	return &Table{
-		Box:            NewBox(),
-		showScrollBar:  true,
-		scrollBarColor: Styles.ScrollBarColor,
-		bordersColor:   Styles.GraphicsColor,
-		separator:      ' ',
-		lastColumn:     -1,
+		Box:                 NewBox(),
+		scrollBarVisibility: ScrollBarAuto,
+		scrollBarColor:      Styles.ScrollBarColor,
+		bordersColor:        Styles.GraphicsColor,
+		separator:           ' ',
+		lastColumn:          -1,
 	}
 }
 
@@ -308,10 +308,9 @@ func (t *Table) SetBordersColor(color tcell.Color) *Table {
 	return t
 }
 
-// ShowScrollBar determines whether or not to render a scroll bar when there
-// are additional rows and/or columns offscreen.
-func (t *Table) ShowScrollBar(show bool) *Table {
-	t.showScrollBar = show
+// SetScrollBarVisibility specifies the display of the scroll bar.
+func (t *Table) SetScrollBarVisibility(visibility ScrollBarVisibility) *Table {
+	t.scrollBarVisibility = visibility
 	return t
 }
 
@@ -591,7 +590,7 @@ func (t *Table) Draw(screen tcell.Screen) {
 		t.visibleRows = height
 	}
 
-	showVerticalScrollBar := t.showScrollBar && len(t.cells) > height
+	showVerticalScrollBar := t.scrollBarVisibility == ScrollBarAlways || (t.scrollBarVisibility == ScrollBarAuto && len(t.cells) > t.visibleRows-t.fixedRows)
 	if showVerticalScrollBar {
 		width-- // Subtract space for scroll bar.
 	}
@@ -792,6 +791,7 @@ ColumnLoop:
 			toDistribute -= expWidth
 			expansionTotal -= expansion
 		}
+		tableWidth = width - toDistribute
 	}
 
 	// Helper function which draws border runes.
@@ -888,13 +888,32 @@ ColumnLoop:
 	}
 
 	if showVerticalScrollBar {
-		// Calculate scroll bar position.
+		// Calculate scroll bar position and dimensions.
 		rows := len(t.cells)
-		cursor := int(float64(rows-t.fixedRows) * (float64(t.rowOffset) / float64(((rows-t.fixedRows)-t.visibleRows)+1)))
+
+		scrollBarItems := rows - t.fixedRows
+		scrollBarHeight := t.visibleRows - t.fixedRows
+
+		scrollBarX := x + width
+		scrollBarY := y + t.fixedRows
+		if scrollBarX > x+tableWidth {
+			scrollBarX = x + tableWidth
+		}
+
+		padTotalOffset := 1
+		if t.borders {
+			padTotalOffset = 2
+
+			scrollBarItems *= 2
+			scrollBarHeight = (scrollBarHeight * 2) - 1
+
+			scrollBarY += t.fixedRows + 1
+		}
 
 		// Draw scroll bar.
-		for printed := 0; printed < (t.visibleRows - t.fixedRows); printed++ {
-			RenderScrollBar(screen, x+width, y+t.fixedRows+printed, t.visibleRows-t.fixedRows, rows-t.fixedRows, cursor, printed, t.hasFocus, t.scrollBarColor)
+		cursor := int(float64(scrollBarItems) * (float64(t.rowOffset) / float64(((rows-t.fixedRows)-t.visibleRows)+padTotalOffset)))
+		for printed := 0; printed < scrollBarHeight; printed++ {
+			RenderScrollBar(screen, scrollBarX, scrollBarY+printed, scrollBarHeight, scrollBarItems, cursor, printed, t.hasFocus, t.scrollBarColor)
 		}
 	}
 
