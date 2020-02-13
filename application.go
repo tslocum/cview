@@ -342,16 +342,17 @@ EventLoop:
 
 				a.lastResize = time.Now()
 
+				if screen == nil {
+					continue
+				}
+				screen.Sync()
+
 				// Call afterResize handler if there is one.
 				if a.afterResize != nil {
 					width, height := screen.Size()
 					a.afterResize(width, height)
 				}
 
-				if screen == nil {
-					continue
-				}
-				screen.Clear()
 				a.draw()
 			case *tcell.EventMouse:
 				atX, atY := event.Position()

@@ -1,3 +1,6 @@
+v1.4.4 (WIP)
+- Fix resize event dimensions on Windows
+
 v1.4.3 (2020-02-13)
 - Add SetFocusedFunc to TreeNode
 - Add option to always show scroll bar
