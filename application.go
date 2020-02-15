@@ -321,6 +321,7 @@ EventLoop:
 					}
 				}
 			case *tcell.EventResize:
+				// Throttle resize events.
 				if time.Since(a.lastResize) < ResizeEventThrottle {
 					// Stop timer
 					if a.throttleResize != nil && !a.throttleResize.Stop() {
@@ -345,7 +346,7 @@ EventLoop:
 				if screen == nil {
 					continue
 				}
-				screen.Sync()
+				screen.Clear()
 
 				// Call afterResize handler if there is one.
 				if a.afterResize != nil {
