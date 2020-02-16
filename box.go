@@ -4,14 +4,11 @@ import (
 	"github.com/gdamore/tcell"
 )
 
-// Box implements Primitive with a background and optional elements such as a
-// border and a title. Most subclasses keep their content contained in the box
-// but don't necessarily have to.
+// Box is the base Primitive for all widgets. It has a background color and
+// optional surrounding elements such as a border and a title. It does not have
+// inner text. Widgets embed Box and draw their text over it.
 //
-// Note that all classes which subclass from Box will also have access to its
-// functions.
-//
-// See https://gitlab.com/tslocum/cview/wiki/Box for an example.
+// See demos/box for an example.
 type Box struct {
 	// The position of the rect.
 	x, y, width, height int

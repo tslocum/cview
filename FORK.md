@@ -5,7 +5,7 @@ requests have been merged into cview.
 # Why fork?
 
 [rivo](https://github.com/rivo), the creator and sole maintainer of tview,
-explains his reviewing and merging process in a [a GitHub comment](https://github.com/rivo/tview/pull/298#issuecomment-559373851).
+explains his reviewing and merging process in a [GitHub comment](https://github.com/rivo/tview/pull/298#issuecomment-559373851).
 
 He states that he does not have the necessary time or interest to review,
 discuss and merge pull requests:
