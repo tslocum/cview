@@ -1,4 +1,5 @@
 v1.4.4 (WIP)
+- Fix panic when navigating empty list
 - Fix resize event dimensions on Windows
 - Clarify that Box does not have inner text
 
