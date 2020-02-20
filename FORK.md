@@ -1,6 +1,7 @@
 This document explains why [tview](https://github.com/rivo/tview) was forked to
-create [cview](https://gitlab.com/tslocum/cview) and tracks which tview pull
-requests have been merged into cview.
+create [cview](https://gitlab.com/tslocum/cview). It also explains any
+differences between the projects and tracks which tview pull requests have been
+merged into cview.
 
 # Why fork?
 
@@ -22,6 +23,12 @@ discuss and merge pull requests:
 
 cview aims to solve these issues by increasing the number of project
 maintainers and allowing code changes which may be outside of tview's scope.
+
+# Differences
+
+## QueueUpdate and QueueUpdateDraw do not block
+
+tview [blocks until the queued function returns](https://github.com/rivo/tview/blob/fe3052019536251fd145835dbaa225b33b7d3088/application.go#L510).
 
 # Merged pull requests
 
