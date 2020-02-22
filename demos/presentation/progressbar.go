@@ -9,6 +9,7 @@ import (
 // ProgressBar demonstrates the ProgressBar.
 func ProgressBar(nextSlide func()) (title string, content cview.Primitive) {
 	grid := cview.NewGrid().SetColumns(-1, 6, 4, 30, -1).SetRows(-1, 12, 4, 4, -1)
+	grid.SetBackgroundColor(cview.Styles.PrimitiveBackgroundColor)
 
 	verticalProgressBar := cview.NewProgressBar()
 	verticalProgressBar.SetBorder(true)

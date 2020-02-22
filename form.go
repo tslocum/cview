@@ -63,6 +63,9 @@ type Form struct {
 	// focus so that the last element that had focus keeps it.
 	focusedElement int
 
+	// Whether or not navigating the form will wrap around.
+	wrapAround bool
+
 	// The label color.
 	labelColor tcell.Color
 
@@ -355,6 +358,16 @@ func (f *Form) GetFocusedItemIndex() (formItem, button int) {
 	return -1, index - len(f.items)
 }
 
+// SetWrapAround sets the flag that determines whether navigating the form will
+// wrap around. That is, navigating downwards on the last item will move the
+// selection to the first item (similarly in the other direction). If set to
+// false, the selection won't change when navigating downwards on the last item
+// or navigating upwards on the first item.
+func (f *Form) SetWrapAround(wrapAround bool) *Form {
+	f.wrapAround = wrapAround
+	return f
+}
+
 // SetCancelFunc sets a handler which is called when the user hits the Escape
 // key.
 func (f *Form) SetCancelFunc(callback func()) *Form {
@@ -566,11 +579,18 @@ func (f *Form) Focus(delegate func(p Primitive)) {
 		switch key {
 		case tcell.KeyTab, tcell.KeyEnter:
 			f.focusedElement++
+			if !f.wrapAround && f.focusedElement >= len(f.items)+len(f.buttons) {
+				f.focusedElement = (len(f.items) + len(f.buttons)) - 1
+			}
 			f.Focus(delegate)
 		case tcell.KeyBacktab:
 			f.focusedElement--
 			if f.focusedElement < 0 {
-				f.focusedElement = len(f.items) + len(f.buttons) - 1
+				if f.wrapAround {
+					f.focusedElement = len(f.items) + len(f.buttons) - 1
+				} else {
+					f.focusedElement = 0
+				}
 			}
 			f.Focus(delegate)
 		case tcell.KeyEscape:

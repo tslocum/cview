@@ -2,12 +2,13 @@ v1.4.4 (WIP)
 - Fix panic when navigating empty list
 - Fix resize event dimensions on Windows
 - Clarify that Box does not have inner text
+- Do not wrap around form by default
 
 v1.4.3 (2020-02-13)
 - Add SetFocusedFunc to TreeNode
 - Add option to always show scroll bar
 - Fix scrolling Table with PageDown and PageUp
-- Do not wrap around list by default
+- Do not wrap around List by default
 
 v1.4.2 (2020-02-02)
 - Add scroll bar to List, DropDown, Table and TreeView

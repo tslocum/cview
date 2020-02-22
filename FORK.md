@@ -26,9 +26,13 @@ maintainers and allowing code changes which may be outside of tview's scope.
 
 # Differences
 
-## QueueUpdate and QueueUpdateDraw do not block
+## Application.QueueUpdate and Application.QueueUpdateDraw do not block
 
 tview [blocks until the queued function returns](https://github.com/rivo/tview/blob/fe3052019536251fd145835dbaa225b33b7d3088/application.go#L510).
+
+## Lists and Forms do not wrap around by default
+
+Call `SetWrapAround(true)` to wrap around when navigating.
 
 # Merged pull requests
 

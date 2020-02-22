@@ -10,7 +10,7 @@ See [FORK.md](https://gitlab.com/tslocum/cview/blob/master/FORK.md) for more inf
 
 ## Demo
 
-Try the demo: ```ssh cview.rocketnine.space -p 20000```
+`ssh cview.rocketnine.space -p 20000`
 
 [![Recording of presentation demo](https://gitlab.com/tslocum/cview/-/raw/master/cview.gif)](https://gitlab.com/tslocum/cview/tree/master/demos/presentation)
 
@@ -57,7 +57,8 @@ func main() {
 }
 ```
 
-Examples are available via [godoc](https://docs.rocketnine.space/gitlab.com/tslocum/cview#pkg-examples) and in the "demos" subdirectory.
+Examples are available via [godoc](https://docs.rocketnine.space/gitlab.com/tslocum/cview#pkg-examples)
+and in the "demos" subdirectory.
 
 For a presentation highlighting the features of this package, compile and run
 the program in the "demos/presentation" subdirectory.

@@ -35,11 +35,11 @@ type ProgressBar struct {
 // NewProgressBar returns a new progress bar.
 func NewProgressBar() *ProgressBar {
 	return &ProgressBar{
-		Box:         NewBox(),
+		Box:         NewBox().SetBackgroundColor(Styles.PrimitiveBackgroundColor),
 		EmptyRune:   ' ',
-		EmptyColor:  tcell.ColorDefault,
+		EmptyColor:  Styles.PrimitiveBackgroundColor,
 		FilledRune:  tcell.RuneBlock,
-		FilledColor: tcell.ColorDefault,
+		FilledColor: Styles.PrimaryTextColor,
 		max:         100,
 		Mutex:       new(sync.Mutex),
 	}
@@ -117,16 +117,16 @@ func (p *ProgressBar) Draw(screen tcell.Screen) {
 	for i := 0; i < barSize; i++ {
 		for j := 0; j < barLength; j++ {
 			if p.Vertical {
-				screen.SetContent(x+i, y+(height-1-j), p.FilledRune, nil, tcell.StyleDefault.Foreground(p.FilledColor))
+				screen.SetContent(x+i, y+(height-1-j), p.FilledRune, nil, tcell.StyleDefault.Foreground(p.FilledColor).Background(p.backgroundColor))
 			} else {
-				screen.SetContent(x+j, y+i, p.FilledRune, nil, tcell.StyleDefault.Foreground(p.FilledColor))
+				screen.SetContent(x+j, y+i, p.FilledRune, nil, tcell.StyleDefault.Foreground(p.FilledColor).Background(p.backgroundColor))
 			}
 		}
 		for j := barLength; j < maxLength; j++ {
 			if p.Vertical {
-				screen.SetContent(x+i, y+(height-1-j), p.EmptyRune, nil, tcell.StyleDefault.Foreground(p.EmptyColor))
+				screen.SetContent(x+i, y+(height-1-j), p.EmptyRune, nil, tcell.StyleDefault.Foreground(p.EmptyColor).Background(p.backgroundColor))
 			} else {
-				screen.SetContent(x+j, y+i, p.EmptyRune, nil, tcell.StyleDefault.Foreground(p.EmptyColor))
+				screen.SetContent(x+j, y+i, p.EmptyRune, nil, tcell.StyleDefault.Foreground(p.EmptyColor).Background(p.backgroundColor))
 			}
 		}
 	}
