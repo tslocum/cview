@@ -709,9 +709,7 @@ func (t *TreeView) Draw(screen tcell.Screen) {
 		}
 
 		// Draw scroll bar.
-		if t.scrollBarVisibility == ScrollBarAlways || (t.scrollBarVisibility == ScrollBarAuto && rows > height) {
-			RenderScrollBar(screen, x+(width-1), posY, height, rows, cursor, posY-y, t.hasFocus, tcell.ColorWhite)
-		}
+		RenderScrollBar(screen, t.scrollBarVisibility, x+(width-1), posY, height, rows, cursor, posY-y, t.hasFocus, tcell.ColorWhite)
 
 		// Advance.
 		posY++

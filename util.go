@@ -646,10 +646,14 @@ const (
 )
 
 // RenderScrollBar renders a scroll bar character at the specified position.
-func RenderScrollBar(screen tcell.Screen, x int, y int, height int, items int, cursor int, printed int, focused bool, color tcell.Color) {
-	// Do not render a scroll bar when all items are visible.
-	if items <= height {
+func RenderScrollBar(screen tcell.Screen, visibility ScrollBarVisibility, x int, y int, height int, items int, cursor int, printed int, focused bool, color tcell.Color) {
+	if visibility == ScrollBarNever || (visibility == ScrollBarAuto && items <= height) {
 		return
+	}
+
+	// Place cursor at top when there are no items offscreen.
+	if items <= height {
+		cursor = 0
 	}
 
 	// Handle negative cursor.

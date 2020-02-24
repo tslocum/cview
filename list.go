@@ -488,9 +488,7 @@ func (l *List) Draw(screen tcell.Screen) {
 			}
 		}
 
-		if l.scrollBarVisibility == ScrollBarAlways || (l.scrollBarVisibility == ScrollBarAuto && len(l.items) > scrollBarHeight) {
-			RenderScrollBar(screen, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, index-l.offset, l.hasFocus, l.scrollBarColor)
-		}
+		RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, index-l.offset, l.hasFocus, l.scrollBarColor)
 
 		y++
 
@@ -502,12 +500,16 @@ func (l *List) Draw(screen tcell.Screen) {
 		if l.showSecondaryText {
 			Print(screen, item.SecondaryText, x, y, width, AlignLeft, l.secondaryTextColor)
 
-			if l.scrollBarVisibility == ScrollBarAlways || (l.scrollBarVisibility == ScrollBarAuto && len(l.items) > scrollBarHeight) {
-				RenderScrollBar(screen, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, index-l.offset, l.hasFocus, l.scrollBarColor)
-			}
+			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, index-l.offset, l.hasFocus, l.scrollBarColor)
 
 			y++
 		}
+	}
+
+	// Overdraw scroll bar when necessary.
+	for y < bottomLimit {
+		RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, bottomLimit-y, l.hasFocus, l.scrollBarColor)
+		y++
 	}
 }
 

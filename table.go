@@ -913,7 +913,7 @@ ColumnLoop:
 		// Draw scroll bar.
 		cursor := int(float64(scrollBarItems) * (float64(t.rowOffset) / float64(((rows-t.fixedRows)-t.visibleRows)+padTotalOffset)))
 		for printed := 0; printed < scrollBarHeight; printed++ {
-			RenderScrollBar(screen, scrollBarX, scrollBarY+printed, scrollBarHeight, scrollBarItems, cursor, printed, t.hasFocus, t.scrollBarColor)
+			RenderScrollBar(screen, t.scrollBarVisibility, scrollBarX, scrollBarY+printed, scrollBarHeight, scrollBarItems, cursor, printed, t.hasFocus, t.scrollBarColor)
 		}
 	}
 
