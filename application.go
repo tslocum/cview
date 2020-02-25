@@ -757,7 +757,7 @@ func (a *Application) QueueEvent(event tcell.Event) *Application {
 
 // RingBell sends a bell code to the terminal.
 func (a *Application) RingBell() {
-	a.Lock()
-	fmt.Print(string(byte(7)))
-	a.Unlock()
+	a.QueueUpdate(func() {
+		fmt.Print(string(byte(7)))
+	})
 }

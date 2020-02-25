@@ -509,6 +509,7 @@ func (l *List) Draw(screen tcell.Screen) {
 	// Overdraw scroll bar when necessary.
 	for y < bottomLimit {
 		RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, bottomLimit-y, l.hasFocus, l.scrollBarColor)
+
 		y++
 	}
 }
