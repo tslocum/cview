@@ -6,63 +6,85 @@ Application.NewApplication documentation for usage examples.
 
 Widgets
 
-The package implements the following widgets:
+The following widgets are available:
 
-  - TextView: A scrollable window that display multi-colored text. Text may also
-    be highlighted.
-  - Table: A scrollable display of tabular data. Table cells, rows, or columns
-    may also be highlighted.
-  - TreeView: A scrollable display for hierarchical data. Tree nodes can be
-    highlighted, collapsed, expanded, and more.
-  - List: A navigable text list with optional keyboard shortcuts.
-  - InputField: One-line input fields to enter text.
-  - DropDown: Drop-down selection fields.
-  - Checkbox: Selectable checkbox for boolean values.
-  - Button: Buttons which get activated when the user selects them.
-  - ProgressBar: Indicates the progress of an operation.
-  - Form: Forms composed of input fields, drop down selections, checkboxes, and
+  Button - Button which is activated when the user selects it.
+  Checkbox - Selectable checkbox for boolean values.
+  DropDown - Drop-down selection field.
+  Flex - A Flexbox based layout manager.
+  Form - Form composed of input fields, drop down selections, checkboxes, and
     buttons.
-  - Modal: A centered window with a text message and one or more buttons.
-  - Grid: A grid based layout manager.
-  - Flex: A Flexbox based layout manager.
-  - Pages: A page based layout manager.
+  Grid - A grid based layout manager.
+  InputField - Single-line text entry field.
+  List - A navigable text list with optional keyboard shortcuts.
+  Modal - A centered window with a text message and one or more buttons.
+  Pages - A page based layout manager.
+  ProgressBar - Indicates the progress of an operation.
+  Table - A scrollable display of tabular data. Table cells, rows, or columns
+    may also be highlighted.
+  TextView - A scrollable window that displays multi-colored text. Text may
+    also be highlighted.
+  TreeView - A scrollable display for hierarchical data. Tree nodes can be
+    highlighted, collapsed, expanded, and more.
 
-The package also provides Application which is used to poll the event queue and
-draw widgets on screen.
+Base Primitive
 
-Hello World
+Widgets must implement the Primitive interface. All widgets embed the base
+primitive, Box, and thus inherit its functions. This isn't necessarily
+required, but it makes more sense than reimplementing Box's functionality in
+each widget.
 
-The following is a very basic example showing a box with the title "Hello,
-world!":
+Concurrency
 
-  package main
+Most of cview's functions are not thread-safe. You must synchronize execution
+via Application.QueueUpdate or Application.QueueUpdateDraw (see function
+documentation for more information):
 
-  import (
-  	"gitlab.com/tslocum/cview"
-  )
+  go func() {
+    // Queue a UI change from a goroutine.
+    app.QueueUpdateDraw(func() {
+      // This function will execute on the main thread.
+      table.SetCellSimple(0, 0, "Foo bar")
+    })
+  }()
 
-  func main() {
-  	box := cview.NewBox().SetBorder(true).SetTitle("Hello, world!")
-  	if err := cview.NewApplication().SetRoot(box, true).Run(); err != nil {
-  		panic(err)
-  	}
-  }
+One exception to this is the io.Writer interface implemented by TextView; you
+may safely write to a TextView from any goroutine. You may also call
+Application.Draw from any goroutine.
 
-First, we create a box primitive with a border and a title. Then we create an
-application, set the box as its root primitive, and run the event loop. The
-application exits when the application's Stop() function is called or when
-Ctrl-C is pressed.
+Event handlers execute on the main goroutine and thus do not require
+synchronization.
 
-If we have a primitive which consumes key presses, we call the application's
-SetFocus() function to redirect all key presses to that primitive. Most
-primitives then offer ways to install handlers that allow you to react to any
-actions performed on them.
+Unicode Support
 
-More Demos
+This package supports unicode characters including wide characters.
 
-You will find more demos in the "demos" subdirectory. It also contains a
-presentation (written using cview) which gives an overview of the different
-widgets and how they can be used.
+Mouse Support
+
+Mouse support may be enabled by calling Application.EnableMouse before
+Application.Run. See the example application provided with the
+Application.EnableMouse documentation.
+
+Mouse events are passed to:
+
+- The handler set with SetTemporaryMouseCapture, which is reserved for use by
+widgets to temporarily intercept mouse events, such as to close a Dropdown when
+the user clicks outside of the list.
+
+- The handler set with SetMouseCapture, which is reserved for use by application
+developers to permanently intercept mouse events.
+
+- The ObserveMouseEvent method of every widget under the mouse, bottom to top.
+
+- The MouseHandler method of the topmost widget under the mouse.
+
+Event handlers may return nil to stop propagation.
+
+Types
+
+This package is a fork of https://github.com/rivo/tview which is based on
+https://github.com/gdamore/tcell. It uses types and constants from tcell
+(e.g. colors and keyboard values).
 
 Colors
 
@@ -136,60 +158,40 @@ When primitives are instantiated, they are initialized with colors taken from
 the global Styles variable. You may change this variable to adapt the look and
 feel of the primitives to your preferred style.
 
-Unicode Support
+Hello World
 
-This package supports unicode characters including wide characters.
+The following is an example application which shows a box titled "Greetings"
+containing the text "Hello, world!":
 
-Mouse Support
+  package main
 
-Mouse support may be enabled by calling Application.EnableMouse before
-Application.Run. See the example application provided with the
-Application.EnableMouse documentation.
+  import (
+    "gitlab.com/tslocum/cview"
+  )
 
-Mouse events are passed to:
+  func main() {
+    tv := cview.NewTextView()
+    tv.SetText("Hello, world!").
+       SetBorder(true).
+       SetTitle("Greetings")
+    if err := cview.NewApplication().SetRoot(tv, true).Run(); err != nil {
+      panic(err)
+    }
+  }
 
-- The handler set with SetTemporaryMouseCapture, which is reserved for use by
-widgets to temporarily intercept mouse events, such as to close a Dropdown when
-the user clicks outside of the list.
+First, we create a TextView with a border and a title. Then we create an
+application, set the TextView as its root primitive, and run the event loop.
+The application exits when the application's Stop() function is called or when
+Ctrl-C is pressed.
 
-- The handler set with SetMouseCapture, which is reserved for use by application
-developers to permanently intercept mouse events.
+If we have a primitive which consumes key presses, we call the application's
+SetFocus() function to redirect all key presses to that primitive. Most
+primitives then offer ways to install handlers that allow you to react to any
+actions performed on them.
 
-- The ObserveMouseEvent method of every widget under the mouse, bottom to top.
+Demos
 
-- The MouseHandler method of the topmost widget under the mouse.
-
-Event handlers may return nil to stop propagation.
-
-Concurrency
-
-Most cview functions are not thread-safe. You must synchronize execution via
-Application.QueueUpdate or Application.QueueUpdateDraw (see function
-documentation for more information):
-
-  go func() {
-    app.QueueUpdateDraw(func() {
-      table.SetCellSimple(0, 0, "Foo bar")
-    })
-  }()
-
-One exception to this is the io.Writer interface implemented by TextView; you
-may safely write to a TextView from any goroutine. You may also call
-Application.Draw from any goroutine.
-
-Key and mouse event handlers execute on the main goroutine and thus do not
-require synchronization.
-
-Type Hierarchy
-
-All widgets listed above contain the Box type. All of Box's functions are
-therefore available for all widgets, too.
-
-All widgets also implement the Primitive interface. There is also the Focusable
-interface which is used to override functions in subclassing types.
-
-This package is a fork of [tview](https://github.com/rivo/tview), which is
-based on https://github.com/gdamore/tcell. It uses types and constants from
-that package (e.g. colors and keyboard values).
+The "demos" subdirectory contains a demo for each widget, as well as a
+presentation which gives an overview of the widgets and how they may be used.
 */
 package cview

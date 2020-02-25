@@ -2,11 +2,6 @@ package cview
 
 import "github.com/gdamore/tcell"
 
-// EventKey is the key input event info.
-// This exists for some consistency with EventMouse,
-// even though it's just an alias to tcell.EventKey for backwards compatibility.
-type EventKey = tcell.EventKey
-
 // MouseAction are bit flags indicating what the mouse is logically doing.
 type MouseAction int
 

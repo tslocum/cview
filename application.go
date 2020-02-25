@@ -11,8 +11,8 @@ import (
 // The size of the event/update/redraw channels.
 const queueSize = 100
 
-// ResizeEventThrottle is the minimum duration between resize event callbacks.
-const ResizeEventThrottle = 200 * time.Millisecond
+// The minimum duration between resize event callbacks.
+const resizeEventThrottle = 200 * time.Millisecond
 
 // Application represents the top node of an application.
 //
@@ -322,7 +322,7 @@ EventLoop:
 				}
 			case *tcell.EventResize:
 				// Throttle resize events.
-				if time.Since(a.lastResize) < ResizeEventThrottle {
+				if time.Since(a.lastResize) < resizeEventThrottle {
 					// Stop timer
 					if a.throttleResize != nil && !a.throttleResize.Stop() {
 						select {
@@ -334,7 +334,7 @@ EventLoop:
 					event := event // Capture
 
 					// Start timer
-					a.throttleResize = time.AfterFunc(ResizeEventThrottle, func() {
+					a.throttleResize = time.AfterFunc(resizeEventThrottle, func() {
 						a.events <- event
 					})
 
