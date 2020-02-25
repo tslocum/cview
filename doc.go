@@ -148,27 +148,24 @@ Application.EnableMouse documentation.
 
 Mouse events are passed to:
 
-The handler set with SetTemporaryMouseCapture, which is reserved for use by
+- The handler set with SetTemporaryMouseCapture, which is reserved for use by
 widgets to temporarily intercept mouse events, such as to close a Dropdown when
 the user clicks outside of the list.
 
-The handler set with SetMouseCapture, which is reserved for use by application
+- The handler set with SetMouseCapture, which is reserved for use by application
 developers to permanently intercept mouse events.
 
-The ObserveMouseEvent method of every widget under the mouse, bottom to top.
+- The ObserveMouseEvent method of every widget under the mouse, bottom to top.
 
-Finally, the MouseHandler method of the topmost widget under the mouse.
+- The MouseHandler method of the topmost widget under the mouse.
+
+Event handlers may return nil to stop propagation.
 
 Concurrency
 
-Many functions in this package are not thread-safe. For many applications, this
-may not be an issue: If your code makes changes in response to key events, it
-will execute in the main goroutine and thus will not cause any race conditions.
-
-If you access your primitives from other goroutines, however, you will need to
-synchronize execution. The easiest way to do this is to call
-Application.QueueUpdate() or Application.QueueUpdateDraw() (see the function
-documentation for details):
+Most cview functions are not thread-safe. You must synchronize execution via
+Application.QueueUpdate or Application.QueueUpdateDraw (see function
+documentation for more information):
 
   go func() {
     app.QueueUpdateDraw(func() {
@@ -176,14 +173,12 @@ documentation for details):
     })
   }()
 
-One exception to this is the io.Writer interface implemented by TextView. You
-can safely write to a TextView from any goroutine. See the TextView
-documentation for details.
+One exception to this is the io.Writer interface implemented by TextView; you
+may safely write to a TextView from any goroutine. You may also call
+Application.Draw from any goroutine.
 
-You can also call Application.Draw() from any goroutine without having to wrap
-it in QueueUpdate(). And, as mentioned above, key event callbacks are executed
-in the main goroutine and thus should not use QueueUpdate() as that may lead to
-deadlocks.
+Key and mouse event handlers execute on the main goroutine and thus do not
+require synchronization.
 
 Type Hierarchy
 
