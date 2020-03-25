@@ -29,7 +29,8 @@ type ProgressBar struct {
 
 	max      int
 	progress int
-	*sync.Mutex
+
+	sync.Mutex
 }
 
 // NewProgressBar returns a new progress bar.
@@ -41,7 +42,6 @@ func NewProgressBar() *ProgressBar {
 		FilledRune:  tcell.RuneBlock,
 		FilledColor: Styles.PrimaryTextColor,
 		max:         100,
-		Mutex:       new(sync.Mutex),
 	}
 }
 
@@ -95,10 +95,10 @@ func (p *ProgressBar) Complete() bool {
 
 // Draw draws this primitive onto the screen.
 func (p *ProgressBar) Draw(screen tcell.Screen) {
+	p.Box.Draw(screen)
+
 	p.Lock()
 	defer p.Unlock()
-
-	p.Box.Draw(screen)
 
 	x, y, width, height := p.GetInnerRect()
 

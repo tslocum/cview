@@ -13,7 +13,11 @@ the following shortcuts can be used:
 package main
 
 import (
+	"flag"
 	"fmt"
+	"log"
+	"net/http"
+	_ "net/http/pprof"
 	"strconv"
 
 	"github.com/gdamore/tcell"
@@ -30,6 +34,16 @@ var app = cview.NewApplication()
 
 // Starting point for the presentation.
 func main() {
+	var debugPort int
+	flag.IntVar(&debugPort, "debug", 0, "port to serve debug info")
+	flag.Parse()
+
+	if debugPort > 0 {
+		go func() {
+			log.Println(http.ListenAndServe(fmt.Sprintf("localhost:%d", debugPort), nil))
+		}()
+	}
+
 	// The presentation slides.
 	slides := []Slide{
 		Cover,

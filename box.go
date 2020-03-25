@@ -1,6 +1,8 @@
 package cview
 
 import (
+	"sync"
+
 	"github.com/gdamore/tcell"
 )
 
@@ -60,6 +62,8 @@ type Box struct {
 	// event to be forwarded to the primitive's default mouse event handler (nil if
 	// nothing should be forwarded).
 	mouseCapture func(event *EventMouse) *EventMouse
+
+	l sync.RWMutex
 }
 
 // NewBox returns a Box without a border.
@@ -79,6 +83,9 @@ func NewBox() *Box {
 
 // SetBorderPadding sets the size of the borders around the box content.
 func (b *Box) SetBorderPadding(top, bottom, left, right int) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.paddingTop, b.paddingBottom, b.paddingLeft, b.paddingRight = top, bottom, left, right
 	return b
 }
@@ -86,6 +93,9 @@ func (b *Box) SetBorderPadding(top, bottom, left, right int) *Box {
 // GetRect returns the current position of the rectangle, x, y, width, and
 // height.
 func (b *Box) GetRect() (int, int, int, int) {
+	b.l.RLock()
+	defer b.l.RUnlock()
+
 	return b.x, b.y, b.width, b.height
 }
 
@@ -93,10 +103,15 @@ func (b *Box) GetRect() (int, int, int, int) {
 // height), without the border and without any padding. Width and height values
 // will clamp to 0 and thus never be negative.
 func (b *Box) GetInnerRect() (int, int, int, int) {
+	b.l.RLock()
 	if b.innerX >= 0 {
+		defer b.l.RUnlock()
 		return b.innerX, b.innerY, b.innerWidth, b.innerHeight
 	}
+	b.l.RUnlock()
+
 	x, y, width, height := b.GetRect()
+	b.l.RLock()
 	if b.border {
 		x++
 		y++
@@ -113,6 +128,7 @@ func (b *Box) GetInnerRect() (int, int, int, int) {
 	if height < 0 {
 		height = 0
 	}
+	b.l.RUnlock()
 	return x, y, width, height
 }
 
@@ -122,6 +138,9 @@ func (b *Box) GetInnerRect() (int, int, int, int) {
 //
 //   application.SetRoot(b, true)
 func (b *Box) SetRect(x, y, width, height int) {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.x = x
 	b.y = y
 	b.width = width
@@ -138,6 +157,9 @@ func (b *Box) SetRect(x, y, width, height int) {
 // returned by GetInnerRect(), used by descendent primitives to draw their own
 // content.
 func (b *Box) SetDrawFunc(handler func(screen tcell.Screen, x, y, width, height int) (int, int, int, int)) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.draw = handler
 	return b
 }
@@ -145,6 +167,9 @@ func (b *Box) SetDrawFunc(handler func(screen tcell.Screen, x, y, width, height 
 // GetDrawFunc returns the callback function which was installed with
 // SetDrawFunc() or nil if no such function has been installed.
 func (b *Box) GetDrawFunc() func(screen tcell.Screen, x, y, width, height int) (int, int, int, int) {
+	b.l.RLock()
+	defer b.l.RUnlock()
+
 	return b.draw
 }
 
@@ -166,6 +191,9 @@ func (b *Box) WrapInputHandler(inputHandler func(*tcell.EventKey, func(p Primiti
 
 // InputHandler returns nil.
 func (b *Box) InputHandler() func(event *tcell.EventKey, setFocus func(p Primitive)) {
+	b.l.RLock()
+	defer b.l.RUnlock()
+
 	return b.WrapInputHandler(nil)
 }
 
@@ -184,6 +212,9 @@ func (b *Box) InputHandler() func(event *tcell.EventKey, setFocus func(p Primiti
 // to their contained primitives and thus never receive any key events
 // themselves. Therefore, they cannot intercept key events.
 func (b *Box) SetInputCapture(capture func(event *tcell.EventKey) *tcell.EventKey) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.inputCapture = capture
 	return b
 }
@@ -191,6 +222,9 @@ func (b *Box) SetInputCapture(capture func(event *tcell.EventKey) *tcell.EventKe
 // GetInputCapture returns the function installed with SetInputCapture() or nil
 // if no such function has been installed.
 func (b *Box) GetInputCapture() func(event *tcell.EventKey) *tcell.EventKey {
+	b.l.RLock()
+	defer b.l.RUnlock()
+
 	return b.inputCapture
 }
 
@@ -212,6 +246,9 @@ func (b *Box) WrapMouseHandler(mouseHandler func(*EventMouse)) func(*EventMouse)
 
 // MouseHandler returns nil.
 func (b *Box) MouseHandler() func(event *EventMouse) {
+	b.l.RLock()
+	defer b.l.RUnlock()
+
 	return b.WrapMouseHandler(nil)
 }
 
@@ -223,6 +260,9 @@ func (b *Box) MouseHandler() func(event *EventMouse) {
 //
 // Providing a nil handler will remove a previously existing handler.
 func (b *Box) SetMouseCapture(capture func(*EventMouse) *EventMouse) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.mouseCapture = capture
 	return b
 }
@@ -230,11 +270,17 @@ func (b *Box) SetMouseCapture(capture func(*EventMouse) *EventMouse) *Box {
 // GetMouseCapture returns the function installed with SetMouseCapture() or nil
 // if no such function has been installed.
 func (b *Box) GetMouseCapture() func(*EventMouse) *EventMouse {
+	b.l.RLock()
+	defer b.l.RUnlock()
+
 	return b.mouseCapture
 }
 
 // SetBackgroundColor sets the box's background color.
 func (b *Box) SetBackgroundColor(color tcell.Color) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.backgroundColor = color
 	return b
 }
@@ -242,12 +288,18 @@ func (b *Box) SetBackgroundColor(color tcell.Color) *Box {
 // SetBorder sets the flag indicating whether or not the box should have a
 // border.
 func (b *Box) SetBorder(show bool) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.border = show
 	return b
 }
 
 // SetBorderColor sets the box's border color.
 func (b *Box) SetBorderColor(color tcell.Color) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.borderColor = color
 	return b
 }
@@ -257,23 +309,35 @@ func (b *Box) SetBorderColor(color tcell.Color) *Box {
 //
 //   box.SetBorderAttributes(tcell.AttrUnderline | tcell.AttrBold)
 func (b *Box) SetBorderAttributes(attr tcell.AttrMask) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.borderAttributes = attr
 	return b
 }
 
 // SetTitle sets the box's title.
 func (b *Box) SetTitle(title string) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.title = title
 	return b
 }
 
 // GetTitle returns the box's current title.
 func (b *Box) GetTitle() string {
+	b.l.RLock()
+	defer b.l.RUnlock()
+
 	return b.title
 }
 
 // SetTitleColor sets the box's title color.
 func (b *Box) SetTitleColor(color tcell.Color) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.titleColor = color
 	return b
 }
@@ -281,14 +345,20 @@ func (b *Box) SetTitleColor(color tcell.Color) *Box {
 // SetTitleAlign sets the alignment of the title, one of AlignLeft, AlignCenter,
 // or AlignRight.
 func (b *Box) SetTitleAlign(align int) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.titleAlign = align
 	return b
 }
 
 // Draw draws this primitive onto the screen.
 func (b *Box) Draw(screen tcell.Screen) {
+	b.l.Lock()
+
 	// Don't draw anything if there is no space.
 	if b.width <= 0 || b.height <= 0 {
+		b.l.Unlock()
 		return
 	}
 
@@ -306,7 +376,14 @@ func (b *Box) Draw(screen tcell.Screen) {
 	if b.border && b.width >= 2 && b.height >= 2 {
 		border := background.Foreground(b.borderColor) | tcell.Style(b.borderAttributes)
 		var vertical, horizontal, topLeft, topRight, bottomLeft, bottomRight rune
-		if b.focus.HasFocus() {
+
+		var hasFocus bool
+		if b.focus == b {
+			hasFocus = b.hasFocus
+		} else {
+			hasFocus = b.focus.HasFocus()
+		}
+		if hasFocus {
 			horizontal = Borders.HorizontalFocus
 			vertical = Borders.VerticalFocus
 			topLeft = Borders.TopLeftFocus
@@ -347,11 +424,17 @@ func (b *Box) Draw(screen tcell.Screen) {
 
 	// Call custom draw function.
 	if b.draw != nil {
-		b.innerX, b.innerY, b.innerWidth, b.innerHeight = b.draw(screen, b.x, b.y, b.width, b.height)
+		b.l.Unlock()
+		newX, newY, newWidth, newHeight := b.draw(screen, b.x, b.y, b.width, b.height)
+		b.l.Lock()
+		b.innerX, b.innerY, b.innerWidth, b.innerHeight = newX, newY, newWidth, newHeight
 	} else {
 		// Remember the inner rect.
 		b.innerX = -1
-		b.innerX, b.innerY, b.innerWidth, b.innerHeight = b.GetInnerRect()
+		b.l.Unlock()
+		newX, newY, newWidth, newHeight := b.GetInnerRect()
+		b.l.Lock()
+		b.innerX, b.innerY, b.innerWidth, b.innerHeight = newX, newY, newWidth, newHeight
 	}
 
 	// Clamp inner rect to screen.
@@ -376,25 +459,39 @@ func (b *Box) Draw(screen tcell.Screen) {
 	if b.innerHeight < 0 {
 		b.innerHeight = 0
 	}
+
+	b.l.Unlock()
 }
 
 // Focus is called when this primitive receives focus.
 func (b *Box) Focus(delegate func(p Primitive)) {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.hasFocus = true
 }
 
 // Blur is called when this primitive loses focus.
 func (b *Box) Blur() {
+	b.l.Lock()
+	defer b.l.Unlock()
+
 	b.hasFocus = false
 }
 
 // HasFocus returns whether or not this primitive has focus.
 func (b *Box) HasFocus() bool {
+	b.l.RLock()
+	defer b.l.RUnlock()
+
 	return b.hasFocus
 }
 
 // GetFocusable returns the item's Focusable.
 func (b *Box) GetFocusable() Focusable {
+	b.l.RLock()
+	defer b.l.RUnlock()
+
 	return b.focus
 }
 

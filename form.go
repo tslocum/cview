@@ -1,6 +1,8 @@
 package cview
 
 import (
+	"sync"
+
 	"github.com/gdamore/tcell"
 )
 
@@ -83,6 +85,8 @@ type Form struct {
 
 	// An optional function which is called when the user hits Escape.
 	cancel func()
+
+	sync.Mutex
 }
 
 // NewForm returns a new form.
@@ -108,6 +112,9 @@ func NewForm() *Form {
 // layouts and the number of empty cells between form items for horizontal
 // layouts.
 func (f *Form) SetItemPadding(padding int) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.itemPadding = padding
 	return f
 }
@@ -117,24 +124,36 @@ func (f *Form) SetItemPadding(padding int) *Form {
 // positioned from left to right, moving into the next row if there is not
 // enough space.
 func (f *Form) SetHorizontal(horizontal bool) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.horizontal = horizontal
 	return f
 }
 
 // SetLabelColor sets the color of the labels.
 func (f *Form) SetLabelColor(color tcell.Color) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.labelColor = color
 	return f
 }
 
 // SetFieldBackgroundColor sets the background color of the input areas.
 func (f *Form) SetFieldBackgroundColor(color tcell.Color) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.fieldBackgroundColor = color
 	return f
 }
 
 // SetFieldTextColor sets the text color of the input areas.
 func (f *Form) SetFieldTextColor(color tcell.Color) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.fieldTextColor = color
 	return f
 }
@@ -142,18 +161,27 @@ func (f *Form) SetFieldTextColor(color tcell.Color) *Form {
 // SetButtonsAlign sets how the buttons align horizontally, one of AlignLeft
 // (the default), AlignCenter, and AlignRight. This is only
 func (f *Form) SetButtonsAlign(align int) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.buttonsAlign = align
 	return f
 }
 
 // SetButtonBackgroundColor sets the background color of the buttons.
 func (f *Form) SetButtonBackgroundColor(color tcell.Color) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.buttonBackgroundColor = color
 	return f
 }
 
 // SetButtonTextColor sets the color of the button texts.
 func (f *Form) SetButtonTextColor(color tcell.Color) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.buttonTextColor = color
 	return f
 }
@@ -162,6 +190,9 @@ func (f *Form) SetButtonTextColor(color tcell.Color) *Form {
 // non-button items first and buttons last. Note that this index is only used
 // when the form itself receives focus.
 func (f *Form) SetFocus(index int) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	if index < 0 {
 		f.focusedElement = 0
 	} else if index >= len(f.items)+len(f.buttons) {
@@ -178,6 +209,9 @@ func (f *Form) SetFocus(index int) *Form {
 // accept any text), and an (optional) callback function which is invoked when
 // the input field's text has changed.
 func (f *Form) AddInputField(label, value string, fieldWidth int, accept func(textToCheck string, lastChar rune) bool, changed func(text string)) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.items = append(f.items, NewInputField().
 		SetLabel(label).
 		SetText(value).
@@ -194,6 +228,9 @@ func (f *Form) AddInputField(label, value string, fieldWidth int, accept func(te
 // (optional) callback function which is invoked when the input field's text has
 // changed.
 func (f *Form) AddPasswordField(label, value string, fieldWidth int, mask rune, changed func(text string)) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	if mask == 0 {
 		mask = '*'
 	}
@@ -211,6 +248,9 @@ func (f *Form) AddPasswordField(label, value string, fieldWidth int, mask rune, 
 // selected. The initial option may be a negative value to indicate that no
 // option is currently selected.
 func (f *Form) AddDropDown(label string, options []string, initialOption int, selected func(option string, optionIndex int)) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.items = append(f.items, NewDropDown().
 		SetLabel(label).
 		SetOptions(options, selected).
@@ -222,6 +262,9 @@ func (f *Form) AddDropDown(label string, options []string, initialOption int, se
 // initial state, and an (optional) callback function which is invoked when the
 // state of the checkbox was changed by the user.
 func (f *Form) AddCheckbox(label string, message string, checked bool, changed func(checked bool)) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.items = append(f.items, NewCheckbox().
 		SetLabel(label).
 		SetMessage(message).
@@ -233,6 +276,9 @@ func (f *Form) AddCheckbox(label string, message string, checked bool, changed f
 // AddButton adds a new button to the form. The "selected" function is called
 // when the user selects this button. It may be nil.
 func (f *Form) AddButton(label string, selected func()) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.buttons = append(f.buttons, NewButton(label).SetSelectedFunc(selected))
 	return f
 }
@@ -241,18 +287,27 @@ func (f *Form) AddButton(label string, selected func()) *Form {
 // buttons have been specially prepared for this form and modifying some of
 // their attributes may have unintended side effects.
 func (f *Form) GetButton(index int) *Button {
+	f.Lock()
+	defer f.Unlock()
+
 	return f.buttons[index]
 }
 
 // RemoveButton removes the button at the specified position, starting with 0
 // for the button that was added first.
 func (f *Form) RemoveButton(index int) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.buttons = append(f.buttons[:index], f.buttons[index+1:]...)
 	return f
 }
 
 // GetButtonCount returns the number of buttons in this form.
 func (f *Form) GetButtonCount() int {
+	f.Lock()
+	defer f.Unlock()
+
 	return len(f.buttons)
 }
 
@@ -260,6 +315,9 @@ func (f *Form) GetButtonCount() int {
 // with 0 for the button that was added first. If no such label was found, -1
 // is returned.
 func (f *Form) GetButtonIndex(label string) int {
+	f.Lock()
+	defer f.Unlock()
+
 	for index, button := range f.buttons {
 		if button.GetLabel() == label {
 			return index
@@ -271,6 +329,9 @@ func (f *Form) GetButtonIndex(label string) int {
 // Clear removes all input elements from the form, including the buttons if
 // specified.
 func (f *Form) Clear(includeButtons bool) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.items = nil
 	if includeButtons {
 		f.ClearButtons()
@@ -281,6 +342,9 @@ func (f *Form) Clear(includeButtons bool) *Form {
 
 // ClearButtons removes all buttons from the form.
 func (f *Form) ClearButtons() *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.buttons = nil
 	return f
 }
@@ -296,6 +360,9 @@ func (f *Form) ClearButtons() *Form {
 //   - The field text color
 //   - The field background color
 func (f *Form) AddFormItem(item FormItem) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.items = append(f.items, item)
 	return f
 }
@@ -303,6 +370,9 @@ func (f *Form) AddFormItem(item FormItem) *Form {
 // GetFormItemCount returns the number of items in the form (not including the
 // buttons).
 func (f *Form) GetFormItemCount() int {
+	f.Lock()
+	defer f.Unlock()
+
 	return len(f.items)
 }
 
@@ -310,6 +380,9 @@ func (f *Form) GetFormItemCount() int {
 // 0. Elements are referenced in the order they were added. Buttons are not
 // included.
 func (f *Form) GetFormItem(index int) FormItem {
+	f.Lock()
+	defer f.Unlock()
+
 	return f.items[index]
 }
 
@@ -317,6 +390,9 @@ func (f *Form) GetFormItem(index int) FormItem {
 // index 0. Elements are referenced in the order they were added. Buttons are
 // not included.
 func (f *Form) RemoveFormItem(index int) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.items = append(f.items[:index], f.items[index+1:]...)
 	return f
 }
@@ -325,6 +401,9 @@ func (f *Form) RemoveFormItem(index int) *Form {
 // no such element is found, nil is returned. Buttons are not searched and will
 // therefore not be returned.
 func (f *Form) GetFormItemByLabel(label string) FormItem {
+	f.Lock()
+	defer f.Unlock()
+
 	for _, item := range f.items {
 		if item.GetLabel() == label {
 			return item
@@ -337,6 +416,9 @@ func (f *Form) GetFormItemByLabel(label string) FormItem {
 // label. If no such element is found, -1 is returned. Buttons are not searched
 // and will therefore not be returned.
 func (f *Form) GetFormItemIndex(label string) int {
+	f.Lock()
+	defer f.Unlock()
+
 	for index, item := range f.items {
 		if item.GetLabel() == label {
 			return index
@@ -348,6 +430,9 @@ func (f *Form) GetFormItemIndex(label string) int {
 // GetFocusedItemIndex returns the indices of the form element or button which
 // currently has focus. If they don't, -1 is returned resepectively.
 func (f *Form) GetFocusedItemIndex() (formItem, button int) {
+	f.Lock()
+	defer f.Unlock()
+
 	index := f.focusIndex()
 	if index < 0 {
 		return -1, -1
@@ -364,6 +449,9 @@ func (f *Form) GetFocusedItemIndex() (formItem, button int) {
 // false, the selection won't change when navigating downwards on the last item
 // or navigating upwards on the first item.
 func (f *Form) SetWrapAround(wrapAround bool) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.wrapAround = wrapAround
 	return f
 }
@@ -371,6 +459,9 @@ func (f *Form) SetWrapAround(wrapAround bool) *Form {
 // SetCancelFunc sets a handler which is called when the user hits the Escape
 // key.
 func (f *Form) SetCancelFunc(callback func()) *Form {
+	f.Lock()
+	defer f.Unlock()
+
 	f.cancel = callback
 	return f
 }
@@ -378,6 +469,9 @@ func (f *Form) SetCancelFunc(callback func()) *Form {
 // Draw draws this primitive onto the screen.
 func (f *Form) Draw(screen tcell.Screen) {
 	f.Box.Draw(screen)
+
+	f.Lock()
+	defer f.Unlock()
 
 	// Determine the actual item that has focus.
 	if index := f.focusIndex(); index >= 0 {
@@ -565,8 +659,10 @@ func (f *Form) Draw(screen tcell.Screen) {
 
 // Focus is called by the application when the primitive receives focus.
 func (f *Form) Focus(delegate func(p Primitive)) {
+	f.Lock()
 	if len(f.items)+len(f.buttons) == 0 {
 		f.hasFocus = true
+		f.Unlock()
 		return
 	}
 	f.hasFocus = false
@@ -576,13 +672,17 @@ func (f *Form) Focus(delegate func(p Primitive)) {
 		f.focusedElement = 0
 	}
 	handler := func(key tcell.Key) {
+		f.Lock()
+
 		switch key {
 		case tcell.KeyTab, tcell.KeyEnter:
 			f.focusedElement++
 			if !f.wrapAround && f.focusedElement >= len(f.items)+len(f.buttons) {
 				f.focusedElement = (len(f.items) + len(f.buttons)) - 1
 			}
+			f.Unlock()
 			f.Focus(delegate)
+			f.Lock()
 		case tcell.KeyBacktab:
 			f.focusedElement--
 			if f.focusedElement < 0 {
@@ -592,32 +692,45 @@ func (f *Form) Focus(delegate func(p Primitive)) {
 					f.focusedElement = 0
 				}
 			}
+			f.Unlock()
 			f.Focus(delegate)
+			f.Lock()
 		case tcell.KeyEscape:
 			if f.cancel != nil {
+				f.Unlock()
 				f.cancel()
+				f.Lock()
 			} else {
 				f.focusedElement = 0
+				f.Unlock()
 				f.Focus(delegate)
+				f.Lock()
 			}
 		}
+
+		f.Unlock()
 	}
 
 	if f.focusedElement < len(f.items) {
 		// We're selecting an item.
 		item := f.items[f.focusedElement]
 		item.SetFinishedFunc(handler)
+		f.Unlock()
 		delegate(item)
 	} else {
 		// We're selecting a button.
 		button := f.buttons[f.focusedElement-len(f.items)]
 		button.SetBlurFunc(handler)
+		f.Unlock()
 		delegate(button)
 	}
 }
 
 // HasFocus returns whether or not this primitive has focus.
 func (f *Form) HasFocus() bool {
+	f.Lock()
+	defer f.Unlock()
+
 	if f.hasFocus {
 		return true
 	}
@@ -643,6 +756,9 @@ func (f *Form) focusIndex() int {
 
 // GetChildren returns all primitives that have been added.
 func (f *Form) GetChildren() []Primitive {
+	f.Lock()
+	defer f.Unlock()
+
 	children := make([]Primitive, len(f.items)+len(f.buttons))
 	i := 0
 	for _, item := range f.items {

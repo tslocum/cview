@@ -1,6 +1,8 @@
 package cview
 
 import (
+	"sync"
+
 	"github.com/gdamore/tcell"
 )
 
@@ -49,6 +51,8 @@ type TreeNode struct {
 	level     int       // The hierarchy level (0 for the root, 1 for its children, and so on).
 	graphicsX int       // The x-coordinate of the left-most graphics rune.
 	textX     int       // The x-coordinate of the first rune of the text.
+
+	sync.Mutex
 }
 
 // NewTreeNode returns a new tree node.
@@ -68,6 +72,13 @@ func NewTreeNode(text string) *TreeNode {
 // The callback returns whether traversal should continue with the traversed
 // node's child nodes (true) or not recurse any deeper (false).
 func (n *TreeNode) Walk(callback func(node, parent *TreeNode) bool) *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
+	return n.walk(callback)
+}
+
+func (n *TreeNode) walk(callback func(node, parent *TreeNode) bool) *TreeNode {
 	n.parent = nil
 	nodes := []*TreeNode{n}
 	for len(nodes) > 0 {
@@ -93,39 +104,60 @@ func (n *TreeNode) Walk(callback func(node, parent *TreeNode) bool) *TreeNode {
 // will allow you to establish a mapping between the TreeView hierarchy and your
 // internal tree structure.
 func (n *TreeNode) SetReference(reference interface{}) *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.reference = reference
 	return n
 }
 
 // GetReference returns this node's reference object.
 func (n *TreeNode) GetReference() interface{} {
+	n.Lock()
+	defer n.Unlock()
+
 	return n.reference
 }
 
 // SetChildren sets this node's child nodes.
 func (n *TreeNode) SetChildren(childNodes []*TreeNode) *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.children = childNodes
 	return n
 }
 
 // GetText returns this node's text.
 func (n *TreeNode) GetText() string {
+	n.Lock()
+	defer n.Unlock()
+
 	return n.text
 }
 
 // GetChildren returns this node's children.
 func (n *TreeNode) GetChildren() []*TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	return n.children
 }
 
 // ClearChildren removes all child nodes from this node.
 func (n *TreeNode) ClearChildren() *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.children = nil
 	return n
 }
 
 // AddChild adds a new child node to this node.
 func (n *TreeNode) AddChild(node *TreeNode) *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.children = append(n.children, node)
 	return n
 }
@@ -133,6 +165,9 @@ func (n *TreeNode) AddChild(node *TreeNode) *TreeNode {
 // SetSelectable sets a flag indicating whether this node can be focused and
 // selected by the user.
 func (n *TreeNode) SetSelectable(selectable bool) *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.selectable = selectable
 	return n
 }
@@ -142,6 +177,9 @@ func (n *TreeNode) SetSelectable(selectable bool) *TreeNode {
 //
 // This function is also called when the user selects this node.
 func (n *TreeNode) SetFocusedFunc(handler func()) *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.focused = handler
 	return n
 }
@@ -149,24 +187,36 @@ func (n *TreeNode) SetFocusedFunc(handler func()) *TreeNode {
 // SetSelectedFunc sets a function which is called when the user selects this
 // node by hitting Enter when it is focused.
 func (n *TreeNode) SetSelectedFunc(handler func()) *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.selected = handler
 	return n
 }
 
 // SetExpanded sets whether or not this node's child nodes should be displayed.
 func (n *TreeNode) SetExpanded(expanded bool) *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.expanded = expanded
 	return n
 }
 
 // Expand makes the child nodes of this node appear.
 func (n *TreeNode) Expand() *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.expanded = true
 	return n
 }
 
 // Collapse makes the child nodes of this node disappear.
 func (n *TreeNode) Collapse() *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.expanded = false
 	return n
 }
@@ -191,22 +241,34 @@ func (n *TreeNode) CollapseAll() *TreeNode {
 
 // IsExpanded returns whether the child nodes of this node are visible.
 func (n *TreeNode) IsExpanded() bool {
+	n.Lock()
+	defer n.Unlock()
+
 	return n.expanded
 }
 
 // SetText sets the node's text which is displayed.
 func (n *TreeNode) SetText(text string) *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.text = text
 	return n
 }
 
 // GetColor returns the node's color.
 func (n *TreeNode) GetColor() tcell.Color {
+	n.Lock()
+	defer n.Unlock()
+
 	return n.color
 }
 
 // SetColor sets the node's text color.
 func (n *TreeNode) SetColor(color tcell.Color) *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.color = color
 	return n
 }
@@ -215,6 +277,9 @@ func (n *TreeNode) SetColor(color tcell.Color) *TreeNode {
 // keeps the text as far left as possible with a minimum of line graphics. Any
 // value greater than that moves the text to the right.
 func (n *TreeNode) SetIndent(indent int) *TreeNode {
+	n.Lock()
+	defer n.Unlock()
+
 	n.indent = indent
 	return n
 }
@@ -299,6 +364,8 @@ type TreeView struct {
 
 	// The visible nodes, top-down, as set by process().
 	nodes []*TreeNode
+
+	sync.Mutex
 }
 
 // NewTreeView returns a new tree view.
@@ -314,6 +381,9 @@ func NewTreeView() *TreeView {
 
 // SetRoot sets the root node of the tree.
 func (t *TreeView) SetRoot(root *TreeNode) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+
 	t.root = root
 	return t
 }
@@ -321,6 +391,9 @@ func (t *TreeView) SetRoot(root *TreeNode) *TreeView {
 // GetRoot returns the root node of the tree. If no such node was previously
 // set, nil is returned.
 func (t *TreeView) GetRoot() *TreeNode {
+	t.Lock()
+	defer t.Unlock()
+
 	return t.root
 }
 
@@ -330,9 +403,14 @@ func (t *TreeView) GetRoot() *TreeNode {
 //
 // This function does NOT trigger the "changed" callback.
 func (t *TreeView) SetCurrentNode(node *TreeNode) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+
 	t.currentNode = node
 	if t.currentNode.focused != nil {
+		t.Unlock()
 		t.currentNode.focused()
+		t.Lock()
 	}
 	return t
 }
@@ -340,6 +418,9 @@ func (t *TreeView) SetCurrentNode(node *TreeNode) *TreeView {
 // GetCurrentNode returns the currently selected node or nil of no node is
 // currently selected.
 func (t *TreeView) GetCurrentNode() *TreeNode {
+	t.Lock()
+	defer t.Unlock()
+
 	return t.currentNode
 }
 
@@ -347,6 +428,9 @@ func (t *TreeView) GetCurrentNode() *TreeNode {
 // root, 1 to the root's child nodes, and so on. Nodes above the top level are
 // not displayed.
 func (t *TreeView) SetTopLevel(topLevel int) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+
 	t.topLevel = topLevel
 	return t
 }
@@ -361,6 +445,9 @@ func (t *TreeView) SetTopLevel(topLevel int) *TreeView {
 //   treeView.SetGraphics(false).
 //     SetPrefixes([]string{"* ", "- ", "x "})
 func (t *TreeView) SetPrefixes(prefixes []string) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+
 	t.prefixes = prefixes
 	return t
 }
@@ -369,6 +456,9 @@ func (t *TreeView) SetPrefixes(prefixes []string) *TreeView {
 // all texts except that of top-level nodes will be placed in the same column.
 // If set to false, they will indent with the hierarchy.
 func (t *TreeView) SetAlign(align bool) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+
 	t.align = align
 	return t
 }
@@ -376,24 +466,36 @@ func (t *TreeView) SetAlign(align bool) *TreeView {
 // SetGraphics sets a flag which determines whether or not line graphics are
 // drawn to illustrate the tree's hierarchy.
 func (t *TreeView) SetGraphics(showGraphics bool) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+
 	t.graphics = showGraphics
 	return t
 }
 
 // SetGraphicsColor sets the colors of the lines used to draw the tree structure.
 func (t *TreeView) SetGraphicsColor(color tcell.Color) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+
 	t.graphicsColor = color
 	return t
 }
 
 // SetScrollBarVisibility specifies the display of the scroll bar.
 func (t *TreeView) SetScrollBarVisibility(visibility ScrollBarVisibility) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+
 	t.scrollBarVisibility = visibility
 	return t
 }
 
 // SetScrollBarColor sets the color of the scroll bar.
 func (t *TreeView) SetScrollBarColor(color tcell.Color) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+
 	t.scrollBarColor = color
 	return t
 }
@@ -401,6 +503,9 @@ func (t *TreeView) SetScrollBarColor(color tcell.Color) *TreeView {
 // SetChangedFunc sets the function which is called when the user navigates to
 // a new tree node.
 func (t *TreeView) SetChangedFunc(handler func(node *TreeNode)) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+
 	t.changed = handler
 	return t
 }
@@ -408,6 +513,9 @@ func (t *TreeView) SetChangedFunc(handler func(node *TreeNode)) *TreeView {
 // SetSelectedFunc sets the function which is called when the user selects a
 // node by pressing Enter on the current selection.
 func (t *TreeView) SetSelectedFunc(handler func(node *TreeNode)) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+
 	t.selected = handler
 	return t
 }
@@ -415,6 +523,9 @@ func (t *TreeView) SetSelectedFunc(handler func(node *TreeNode)) *TreeView {
 // SetDoneFunc sets a handler which is called whenever the user presses the
 // Escape, Tab, or Backtab key.
 func (t *TreeView) SetDoneFunc(handler func(key tcell.Key)) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+
 	t.done = handler
 	return t
 }
@@ -423,6 +534,9 @@ func (t *TreeView) SetDoneFunc(handler func(key tcell.Key)) *TreeView {
 // of the tree view. Note that when the user navigates the tree view, this value
 // is only updated after the tree view has been redrawn.
 func (t *TreeView) GetScrollOffset() int {
+	t.Lock()
+	defer t.Unlock()
+
 	return t.offsetY
 }
 
@@ -431,6 +545,9 @@ func (t *TreeView) GetScrollOffset() int {
 // of collapsed nodes. Note that this value is only up to date after the tree
 // view has been drawn.
 func (t *TreeView) GetRowCount() int {
+	t.Lock()
+	defer t.Unlock()
+
 	return len(t.nodes)
 }
 
@@ -447,7 +564,7 @@ func (t *TreeView) process() {
 	if t.graphics {
 		graphicsOffset = 1
 	}
-	t.root.Walk(func(node, parent *TreeNode) bool {
+	t.root.walk(func(node, parent *TreeNode) bool {
 		// Set node attributes.
 		node.parent = parent
 		if parent == nil {
@@ -570,10 +687,14 @@ func (t *TreeView) process() {
 		if newSelectedIndex != selectedIndex {
 			t.movement = treeNone
 			if t.changed != nil {
+				t.Unlock()
 				t.changed(t.currentNode)
+				t.Lock()
 			}
 			if t.currentNode.focused != nil {
+				t.Unlock()
 				t.currentNode.focused()
+				t.Lock()
 			}
 		}
 		selectedIndex = newSelectedIndex
@@ -605,6 +726,10 @@ func (t *TreeView) process() {
 // Draw draws this primitive onto the screen.
 func (t *TreeView) Draw(screen tcell.Screen) {
 	t.Box.Draw(screen)
+
+	t.Lock()
+	defer t.Unlock()
+
 	if t.root == nil {
 		return
 	}
@@ -720,25 +845,35 @@ func (t *TreeView) Draw(screen tcell.Screen) {
 func (t *TreeView) InputHandler() func(event *tcell.EventKey, setFocus func(p Primitive)) {
 	return t.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p Primitive)) {
 		selectNode := func() {
-			if t.currentNode != nil {
-				if t.selected != nil {
-					t.selected(t.currentNode)
-				}
-				if t.currentNode.focused != nil {
-					t.currentNode.focused()
-				}
-				if t.currentNode.selected != nil {
-					t.currentNode.selected()
-				}
+			t.Lock()
+			currentNode := t.currentNode
+			t.Unlock()
+			if currentNode == nil {
+				return
+			}
+
+			if t.selected != nil {
+				t.selected(currentNode)
+			}
+			if currentNode.focused != nil {
+				currentNode.focused()
+			}
+			if currentNode.selected != nil {
+				currentNode.selected()
 			}
 		}
+
+		t.Lock()
+		defer t.Unlock()
 
 		// Because the tree is flattened into a list only at drawing time, we also
 		// postpone the (selection) movement to drawing time.
 		switch key := event.Key(); key {
 		case tcell.KeyTab, tcell.KeyBacktab, tcell.KeyEscape:
 			if t.done != nil {
+				t.Unlock()
 				t.done(key)
+				t.Lock()
 			}
 		case tcell.KeyDown, tcell.KeyRight:
 			t.movement = treeDown
@@ -763,10 +898,14 @@ func (t *TreeView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 			case 'k':
 				t.movement = treeUp
 			case ' ':
+				t.Unlock()
 				selectNode()
+				t.Lock()
 			}
 		case tcell.KeyEnter:
+			t.Unlock()
 			selectNode()
+			t.Lock()
 		}
 
 		t.process()
