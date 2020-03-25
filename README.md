@@ -67,9 +67,6 @@ the program in the "demos/presentation" subdirectory.
 
 Package documentation is available via [godoc](https://docs.rocketnine.space/gitlab.com/tslocum/cview).
 
-**This package is not thread-safe.** Most functions may only be called from the
-main thread, as documented in [Concurrency](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#hdr-Concurrency).
-
 An [introduction tutorial](https://rocketnine.space/post/tview-and-you/) is also available.
 
 ## Dependencies

@@ -26,6 +26,10 @@ maintainers and allowing code changes which may be outside of tview's scope.
 
 # Differences
 
+## cview is thread-safe
+
+tview [is not thread-safe](https://godoc.org/github.com/rivo/tview#hdr-Concurrency).
+
 ## Application.QueueUpdate and Application.QueueUpdateDraw do not block
 
 tview [blocks until the queued function returns](https://github.com/rivo/tview/blob/fe3052019536251fd145835dbaa225b33b7d3088/application.go#L510).

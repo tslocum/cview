@@ -34,26 +34,18 @@ primitive, Box, and thus inherit its functions. This isn't necessarily
 required, but it makes more sense than reimplementing Box's functionality in
 each widget.
 
+Types
+
+This package is a fork of https://github.com/rivo/tview which is based on
+https://github.com/gdamore/tcell. It uses types and constants from tcell
+(e.g. colors and keyboard values).
+
 Concurrency
 
-Most of cview's functions are not thread-safe. You must synchronize execution
-via Application.QueueUpdate or Application.QueueUpdateDraw (see function
-documentation for more information):
-
-  go func() {
-    // Queue a UI change from a goroutine.
-    app.QueueUpdateDraw(func() {
-      // This function will execute on the main thread.
-      table.SetCellSimple(0, 0, "Foo bar")
-    })
-  }()
-
-One exception to this is the io.Writer interface implemented by TextView; you
-may safely write to a TextView from any goroutine. You may also call
-Application.Draw from any goroutine.
-
-Event handlers execute on the main goroutine and thus do not require
-synchronization.
+All functions may be called concurrently (they are thread-safe). When called
+from multiple threads, functions will block until the application or widget
+becomes available. Function calls may be queued with Application.QueueUpdate to
+avoid blocking.
 
 Unicode Support
 
@@ -79,12 +71,6 @@ developers to permanently intercept mouse events.
 - The MouseHandler method of the topmost widget under the mouse.
 
 Event handlers may return nil to stop propagation.
-
-Types
-
-This package is a fork of https://github.com/rivo/tview which is based on
-https://github.com/gdamore/tcell. It uses types and constants from tcell
-(e.g. colors and keyboard values).
 
 Colors
 

@@ -1,3 +1,6 @@
+v1.4.5 (WIP)
+- Add multithreading support
+
 v1.4.4 (2020-02-24)
 - Fix panic when navigating empty list
 - Fix resize event dimensions on Windows
