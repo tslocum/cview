@@ -12,23 +12,26 @@ type ProgressBar struct {
 	*Box
 
 	// Rune to use when rendering the empty area of the progress bar.
-	EmptyRune rune
+	emptyRune rune
 
 	// Color of the empty area of the progress bar.
-	EmptyColor tcell.Color
+	emptyColor tcell.Color
 
 	// Rune to use when rendering the filled area of the progress bar.
-	FilledRune rune
+	filledRune rune
 
 	// Color of the filled area of the progress bar.
-	FilledColor tcell.Color
+	filledColor tcell.Color
 
 	// If set to true, instead of filling from left to right, the bar is filled
 	// from bottom to top.
-	Vertical bool
+	vertical bool
 
-	max      int
+	// Current progress.
 	progress int
+
+	// Progress required to fill the bar.
+	max int
 
 	sync.Mutex
 }
@@ -37,12 +40,52 @@ type ProgressBar struct {
 func NewProgressBar() *ProgressBar {
 	return &ProgressBar{
 		Box:         NewBox().SetBackgroundColor(Styles.PrimitiveBackgroundColor),
-		EmptyRune:   ' ',
-		EmptyColor:  Styles.PrimitiveBackgroundColor,
-		FilledRune:  tcell.RuneBlock,
-		FilledColor: Styles.PrimaryTextColor,
+		emptyRune:   ' ',
+		emptyColor:  Styles.PrimitiveBackgroundColor,
+		filledRune:  tcell.RuneBlock,
+		filledColor: Styles.PrimaryTextColor,
 		max:         100,
 	}
+}
+
+// SetEmptyRune sets the rune used for the empty area of the progress bar.
+func (p *ProgressBar) SetEmptyRune(empty rune) {
+	p.Lock()
+	defer p.Unlock()
+
+	p.emptyRune = empty
+}
+
+// SetEmptyColor sets the color of the empty area of the progress bar.
+func (p *ProgressBar) SetEmptyColor(empty tcell.Color) {
+	p.Lock()
+	defer p.Unlock()
+
+	p.emptyColor = empty
+}
+
+// SetFilledRune sets the rune used for the filled area of the progress bar.
+func (p *ProgressBar) SetFilledRune(filled rune) {
+	p.Lock()
+	defer p.Unlock()
+
+	p.filledRune = filled
+}
+
+// SetFilledColor sets the color of the filled area of the progress bar.
+func (p *ProgressBar) SetFilledColor(filled tcell.Color) {
+	p.Lock()
+	defer p.Unlock()
+
+	p.filledColor = filled
+}
+
+// SetVertical sets the direction of the progress bar.
+func (p *ProgressBar) SetVertical(vertical bool) {
+	p.Lock()
+	defer p.Unlock()
+
+	p.vertical = vertical
 }
 
 // SetMax sets the progress required to fill the bar.
@@ -104,7 +147,7 @@ func (p *ProgressBar) Draw(screen tcell.Screen) {
 
 	barSize := height
 	maxLength := width
-	if p.Vertical {
+	if p.vertical {
 		barSize = width
 		maxLength = height
 	}
@@ -116,17 +159,17 @@ func (p *ProgressBar) Draw(screen tcell.Screen) {
 
 	for i := 0; i < barSize; i++ {
 		for j := 0; j < barLength; j++ {
-			if p.Vertical {
-				screen.SetContent(x+i, y+(height-1-j), p.FilledRune, nil, tcell.StyleDefault.Foreground(p.FilledColor).Background(p.backgroundColor))
+			if p.vertical {
+				screen.SetContent(x+i, y+(height-1-j), p.filledRune, nil, tcell.StyleDefault.Foreground(p.filledColor).Background(p.backgroundColor))
 			} else {
-				screen.SetContent(x+j, y+i, p.FilledRune, nil, tcell.StyleDefault.Foreground(p.FilledColor).Background(p.backgroundColor))
+				screen.SetContent(x+j, y+i, p.filledRune, nil, tcell.StyleDefault.Foreground(p.filledColor).Background(p.backgroundColor))
 			}
 		}
 		for j := barLength; j < maxLength; j++ {
-			if p.Vertical {
-				screen.SetContent(x+i, y+(height-1-j), p.EmptyRune, nil, tcell.StyleDefault.Foreground(p.EmptyColor).Background(p.backgroundColor))
+			if p.vertical {
+				screen.SetContent(x+i, y+(height-1-j), p.emptyRune, nil, tcell.StyleDefault.Foreground(p.emptyColor).Background(p.backgroundColor))
 			} else {
-				screen.SetContent(x+j, y+i, p.EmptyRune, nil, tcell.StyleDefault.Foreground(p.EmptyColor).Background(p.backgroundColor))
+				screen.SetContent(x+j, y+i, p.emptyRune, nil, tcell.StyleDefault.Foreground(p.emptyColor).Background(p.backgroundColor))
 			}
 		}
 	}

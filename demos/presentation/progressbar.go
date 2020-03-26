@@ -13,7 +13,7 @@ func ProgressBar(nextSlide func()) (title string, content cview.Primitive) {
 
 	verticalProgressBar := cview.NewProgressBar()
 	verticalProgressBar.SetBorder(true)
-	verticalProgressBar.Vertical = true
+	verticalProgressBar.SetVertical(true)
 
 	horizontalProgressBar := cview.NewProgressBar()
 	horizontalProgressBar.SetBorder(true)

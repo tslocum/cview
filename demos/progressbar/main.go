@@ -15,7 +15,7 @@ func main() {
 
 	verticalProgressBar := cview.NewProgressBar()
 	verticalProgressBar.SetBorder(true)
-	verticalProgressBar.Vertical = true
+	verticalProgressBar.SetVertical(true)
 
 	horizontalProgressBar := cview.NewProgressBar()
 	horizontalProgressBar.SetBorder(true)

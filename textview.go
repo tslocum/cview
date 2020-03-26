@@ -2,7 +2,6 @@ package cview
 
 import (
 	"bytes"
-	"fmt"
 	"regexp"
 	"strings"
 	"sync"
@@ -90,7 +89,6 @@ type textViewIndex struct {
 //
 // See https://gitlab.com/tslocum/cview/wiki/TextView for an example.
 type TextView struct {
-	sync.RWMutex
 	*Box
 
 	// The text buffer.
@@ -170,6 +168,8 @@ type TextView struct {
 	// An optional function which is called when the user presses one of the
 	// following keys: Escape, Enter, Tab, Backtab.
 	done func(tcell.Key)
+
+	sync.RWMutex
 }
 
 // NewTextView returns a new text view.
@@ -258,8 +258,11 @@ func (t *TextView) SetTextColor(color tcell.Color) *TextView {
 // SetText sets the text of this text view to the provided string. Previously
 // contained text will be removed.
 func (t *TextView) SetText(text string) *TextView {
-	t.Clear()
-	fmt.Fprint(t, text)
+	t.Lock()
+	defer t.Unlock()
+
+	t.clear()
+	t.write([]byte(text))
 	return t
 }
 
@@ -413,6 +416,10 @@ func (t *TextView) Clear() *TextView {
 	t.Lock()
 	defer t.Unlock()
 
+	return t.clear()
+}
+
+func (t *TextView) clear() *TextView {
 	t.buffer = nil
 	t.recentBytes = nil
 	t.index = nil
@@ -580,6 +587,10 @@ func (t *TextView) Write(p []byte) (n int, err error) {
 	}
 	defer t.Unlock()
 
+	return t.write(p)
+}
+
+func (t *TextView) write(p []byte) (n int, err error) {
 	// Copy data over.
 	newBytes := append(t.recentBytes, p...)
 	t.recentBytes = nil
