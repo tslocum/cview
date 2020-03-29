@@ -696,54 +696,68 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 	})
 }
 
-// returns -1 if not found.
-func (l *List) indexAtPoint(atX, atY int) int {
-	_, y, _, h := l.GetInnerRect()
-	if atY < y || atY >= y+h {
+// indexAtPoint returns the index of the list item found at the given position
+// or a negative value if there is no such list item.
+func (l *List) indexAtPoint(x, y int) int {
+	rectX, rectY, width, height := l.GetInnerRect()
+	if rectX < 0 || rectX >= rectX+width || y < rectY || y >= rectY+height {
 		return -1
 	}
 
-	n := atY - y
+	index := y - rectY
 	if l.showSecondaryText {
-		n /= 2
+		index /= 2
 	}
+	index += l.offset
 
-	if n >= len(l.items) {
+	if index >= len(l.items) {
 		return -1
 	}
-	return n
+	return index
 }
 
 // MouseHandler returns the mouse handler for this primitive.
-func (l *List) MouseHandler() func(event *EventMouse) {
-	return l.WrapMouseHandler(func(event *EventMouse) {
-		// Process mouse event.
-		if event.Action()&MouseClick != 0 {
-			l.Lock()
+func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
+	return l.WrapMouseHandler(func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
+		if !l.InRect(event.Position()) {
+			return false, nil
+		}
 
-			atX, atY := event.Position()
-			index := l.indexAtPoint(atX, atY)
+		// Process mouse event.
+		switch action {
+		case MouseLeftClick:
+			setFocus(l)
+			index := l.indexAtPoint(event.Position())
 			if index != -1 {
 				item := l.items[index]
 				if item.Selected != nil {
-					l.Unlock()
 					item.Selected()
-					l.Lock()
 				}
 				if l.selected != nil {
-					l.Unlock()
 					l.selected(index, item.MainText, item.SecondaryText, item.Shortcut)
-					l.Lock()
 				}
 				if index != l.currentItem && l.changed != nil {
-					l.Unlock()
 					l.changed(index, item.MainText, item.SecondaryText, item.Shortcut)
-					l.Lock()
 				}
 				l.currentItem = index
 			}
-
-			l.Unlock()
+			consumed = true
+		case MouseScrollUp:
+			if l.offset > 0 {
+				l.offset--
+			}
+			consumed = true
+		case MouseScrollDown:
+			lines := len(l.items) - l.offset
+			if l.showSecondaryText {
+				lines *= 2
+			}
+			if _, _, _, height := l.GetInnerRect(); lines > height {
+				l.offset++
+			}
+			consumed = true
 		}
+
+		return
 	})
 }

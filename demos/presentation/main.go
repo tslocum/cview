@@ -62,27 +62,29 @@ func main() {
 		End,
 	}
 
+	pages := cview.NewPages()
+
 	// The bottom row has some info on where we are.
 	info := cview.NewTextView().
 		SetDynamicColors(true).
 		SetRegions(true).
-		SetWrap(false)
+		SetWrap(false).
+		SetHighlightedFunc(func(added, removed, remaining []string) {
+			pages.SwitchToPage(added[0])
+		})
 
 	// Create the pages for all slides.
-	currentSlide := 0
-	info.Highlight(strconv.Itoa(currentSlide))
-	pages := cview.NewPages()
 	previousSlide := func() {
-		currentSlide = (currentSlide - 1 + len(slides)) % len(slides)
-		info.Highlight(strconv.Itoa(currentSlide)).
+		slide, _ := strconv.Atoi(info.GetHighlights()[0])
+		slide = (slide - 1 + len(slides)) % len(slides)
+		info.Highlight(strconv.Itoa(slide)).
 			ScrollToHighlight()
-		pages.SwitchToPage(strconv.Itoa(currentSlide))
 	}
 	nextSlide := func() {
-		currentSlide = (currentSlide + 1) % len(slides)
-		info.Highlight(strconv.Itoa(currentSlide)).
+		slide, _ := strconv.Atoi(info.GetHighlights()[0])
+		slide = (slide + 1) % len(slides)
+		info.Highlight(strconv.Itoa(slide)).
 			ScrollToHighlight()
-		pages.SwitchToPage(strconv.Itoa(currentSlide))
 	}
 
 	cursor := 0
@@ -91,11 +93,12 @@ func main() {
 		slideRegions = append(slideRegions, cursor)
 
 		title, primitive := slide(nextSlide)
-		pages.AddPage(strconv.Itoa(index), primitive, true, index == currentSlide)
+		pages.AddPage(strconv.Itoa(index), primitive, true, index == 0)
 		fmt.Fprintf(info, `%d ["%d"][darkcyan]%s[white][""]  `, index+1, index, title)
 
 		cursor += len(title) + 4
 	}
+	info.Highlight("0")
 
 	// Create the main layout.
 	layout := cview.NewFlex().
@@ -113,37 +116,8 @@ func main() {
 		return event
 	})
 
-	app.EnableMouse()
-
-	var screenHeight int
-
-	app.SetAfterResizeFunc(func(_ int, height int) {
-		screenHeight = height
-	})
-
-	app.SetMouseCapture(func(event *cview.EventMouse) *cview.EventMouse {
-		atX, atY := event.Position()
-		if event.Action()&cview.MouseDown != 0 && atY == screenHeight-1 {
-			slideClicked := -1
-			for i, region := range slideRegions {
-				if atX >= region {
-					slideClicked = i
-				}
-			}
-			if slideClicked >= 0 {
-				currentSlide = slideClicked
-				info.Highlight(strconv.Itoa(currentSlide)).
-					ScrollToHighlight()
-				pages.SwitchToPage(strconv.Itoa(currentSlide))
-			}
-			return nil
-		}
-
-		return event
-	})
-
 	// Start the application.
-	if err := app.SetRoot(layout, true).Run(); err != nil {
+	if err := app.SetRoot(layout, true).EnableMouse(true).Run(); err != nil {
 		panic(err)
 	}
 }

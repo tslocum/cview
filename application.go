@@ -8,11 +8,52 @@ import (
 	"github.com/gdamore/tcell"
 )
 
-// The size of the event/update/redraw channels.
-const queueSize = 100
+const (
+	// The size of the event/update/redraw channels.
+	queueSize = 100
 
-// The minimum duration between resize event callbacks.
-const resizeEventThrottle = 200 * time.Millisecond
+	// The minimum time between two consecutive redraws.
+	redrawPause = 50 * time.Millisecond
+
+	// The minimum duration between resize event callbacks.
+	resizeEventThrottle = 200 * time.Millisecond
+)
+
+// DoubleClickInterval specifies the maximum time between clicks to register a
+// double click rather than click.
+var DoubleClickInterval = 500 * time.Millisecond
+
+// MouseAction indicates one of the actions the mouse is logically doing.
+type MouseAction int16
+
+// Available mouse actions.
+const (
+	MouseMove MouseAction = iota
+	MouseLeftDown
+	MouseLeftUp
+	MouseLeftClick
+	MouseLeftDoubleClick
+	MouseMiddleDown
+	MouseMiddleUp
+	MouseMiddleClick
+	MouseMiddleDoubleClick
+	MouseRightDown
+	MouseRightUp
+	MouseRightClick
+	MouseRightDoubleClick
+	MouseScrollUp
+	MouseScrollDown
+	MouseScrollLeft
+	MouseScrollRight
+)
+
+// queuedUpdate represented the execution of f queued by
+// Application.QueueUpdate(). The "done" channel receives exactly one element
+// after f has executed.
+type queuedUpdate struct {
+	f    func()
+	done chan struct{}
+}
 
 // Application represents the top node of an application.
 //
@@ -84,14 +125,13 @@ type Application struct {
 	// An optional capture function which receives a mouse event and returns the
 	// event to be forwarded to the default mouse handler (nil if nothing should
 	// be forwarded).
-	mouseCapture func(event *EventMouse) *EventMouse
+	mouseCapture func(event *tcell.EventMouse, action MouseAction) (*tcell.EventMouse, MouseAction)
 
-	// A temporary capture function overriding the above.
-	tempMouseCapture func(event *EventMouse) *EventMouse
-
-	lastMouseX, lastMouseY int
-	lastMouseBtn           tcell.ButtonMask
-	lastMouseTarget        Primitive // nil if none
+	mouseCapturingPrimitive Primitive        // A Primitive returned by a MouseHandler which will capture future mouse events.
+	lastMouseX, lastMouseY  int              // The last position of the mouse.
+	mouseDownX, mouseDownY  int              // The position of the mouse when its button was last pressed.
+	lastMouseClick          time.Time        // The time when a mouse button was last clicked.
+	lastMouseButtons        tcell.ButtonMask // The last mouse button state.
 
 	sync.RWMutex
 }
@@ -131,43 +171,20 @@ func (a *Application) GetInputCapture() func(event *tcell.EventKey) *tcell.Event
 	return a.inputCapture
 }
 
-// SetMouseCapture sets a function which captures mouse events before they are
+// SetMouseCapture sets a function which captures mouse events (consisting of
+// the original tcell mouse event and the semantic mouse action) before they are
 // forwarded to the appropriate mouse event handler. This function can then
 // choose to forward that event (or a different one) by returning it or stop
-// the event processing by returning nil.
-func (a *Application) SetMouseCapture(capture func(event *EventMouse) *EventMouse) *Application {
-	a.Lock()
+// the event processing by returning a nil mouse event.
+func (a *Application) SetMouseCapture(capture func(event *tcell.EventMouse, action MouseAction) (*tcell.EventMouse, MouseAction)) *Application {
 	a.mouseCapture = capture
-	a.Unlock()
 	return a
 }
 
 // GetMouseCapture returns the function installed with SetMouseCapture() or nil
 // if no such function has been installed.
-func (a *Application) GetMouseCapture() func(event *EventMouse) *EventMouse {
-	a.RLock()
-	defer a.RUnlock()
-
+func (a *Application) GetMouseCapture() func(event *tcell.EventMouse, action MouseAction) (*tcell.EventMouse, MouseAction) {
 	return a.mouseCapture
-}
-
-// SetTemporaryMouseCapture temporarily overrides the normal capture function.
-// Calling this function from anywhere other than a widget may result in
-// unexpected behavior.
-func (a *Application) SetTemporaryMouseCapture(capture func(event *EventMouse) *EventMouse) *Application {
-	a.Lock()
-	a.tempMouseCapture = capture
-	a.Unlock()
-	return a
-}
-
-// GetTemporaryMouseCapture returns the function installed with
-// SetTemporaryMouseCapture() or nil if no such function has been installed.
-func (a *Application) GetTemporaryMouseCapture() func(event *EventMouse) *EventMouse {
-	a.RLock()
-	defer a.RUnlock()
-
-	return a.tempMouseCapture
 }
 
 // SetScreen allows you to provide your own tcell.Screen object. For most
@@ -199,10 +216,17 @@ func (a *Application) SetScreen(screen tcell.Screen) *Application {
 }
 
 // EnableMouse enables mouse events.
-func (a *Application) EnableMouse() *Application {
+func (a *Application) EnableMouse(enable bool) *Application {
 	a.Lock()
-	a.enableMouse = true
-	a.Unlock()
+	defer a.Unlock()
+	if enable != a.enableMouse && a.screen != nil {
+		if enable {
+			a.screen.EnableMouse()
+		} else {
+			a.screen.DisableMouse()
+		}
+	}
+	a.enableMouse = enable
 	return a
 }
 
@@ -301,10 +325,7 @@ EventLoop:
 			a.RLock()
 			p := a.focus
 			inputCapture := a.inputCapture
-			mouseCapture := a.mouseCapture
-			tempMouseCapture := a.tempMouseCapture
 			screen := a.screen
-			root := a.root
 			a.RUnlock()
 
 			switch event := event.(type) {
@@ -368,84 +389,13 @@ EventLoop:
 
 				a.draw()
 			case *tcell.EventMouse:
-				atX, atY := event.Position()
-				btn := event.Buttons()
-
-				pstack := a.appendStackAtPoint(nil, atX, atY)
-				var punderMouse Primitive
-				if len(pstack) > 0 {
-					punderMouse = pstack[len(pstack)-1]
-				}
-				var ptarget Primitive
-				if a.lastMouseBtn != 0 {
-					// While a button is down, the same primitive gets events.
-					ptarget = a.lastMouseTarget
-				}
-				if ptarget == nil {
-					ptarget = punderMouse
-					if ptarget == nil {
-						ptarget = root // Fallback to root.
-					}
-				}
-				a.lastMouseTarget = ptarget
-
-				// Calculate mouse actions.
-				var act MouseAction
-				if atX != a.lastMouseX || atY != a.lastMouseY {
-					act |= MouseMove
-					a.lastMouseX = atX
-					a.lastMouseY = atY
-				}
-				btnDiff := btn ^ a.lastMouseBtn
-				if btnDiff != 0 {
-					if btn&btnDiff != 0 {
-						act |= MouseDown
-					}
-					if a.lastMouseBtn&btnDiff != 0 {
-						act |= MouseUp
-					}
-					if a.lastMouseBtn == tcell.Button1 && btn == 0 {
-						if ptarget == punderMouse {
-							// Only if Button1 and mouse up over same p.
-							act |= MouseClick
-						}
-					}
-					a.lastMouseBtn = btn
-				}
-
-				event2 := NewEventMouse(event, ptarget, a, act)
-
-				// Intercept event.
-				if tempMouseCapture != nil {
-					event2 = tempMouseCapture(event2)
-					if event2 == nil {
-						a.draw()
-						continue // Don't forward event.
-					}
-				}
-				if mouseCapture != nil {
-					event2 = mouseCapture(event2)
-					if event2 == nil {
-						a.draw()
-						continue // Don't forward event.
-					}
-				}
-
-				if ptarget == punderMouse {
-					// Observe mouse events inward ("capture")
-					for _, pp := range pstack {
-						// If the primitive has this ObserveMouseEvent func.
-						if pp, ok := pp.(interface {
-							ObserveMouseEvent(*EventMouse)
-						}); ok {
-							pp.ObserveMouseEvent(event2)
-						}
-					}
-				}
-
-				if handler := ptarget.MouseHandler(); handler != nil {
-					handler(event2)
+				consumed, isMouseDownAction := a.fireMouseActions(event)
+				if consumed {
 					a.draw()
+				}
+				a.lastMouseButtons = event.Buttons()
+				if isMouseDownAction {
+					a.mouseDownX, a.mouseDownY = event.Position()
 				}
 			}
 
@@ -462,48 +412,103 @@ EventLoop:
 	return nil
 }
 
-func findAtPoint(atX, atY int, p Primitive, capture func(p Primitive)) Primitive {
-	x, y, w, h := p.GetRect()
-	if atX < x || atY < y {
-		return nil
+// fireMouseActions analyzes the provided mouse event, derives mouse actions
+// from it and then forwards them to the corresponding primitives.
+func (a *Application) fireMouseActions(event *tcell.EventMouse) (consumed, isMouseDownAction bool) {
+	// We want to relay follow-up events to the same target primitive.
+	var targetPrimitive Primitive
+
+	// Helper function to fire a mouse action.
+	fire := func(action MouseAction) {
+		switch action {
+		case MouseLeftDown, MouseMiddleDown, MouseRightDown:
+			isMouseDownAction = true
+		}
+
+		// Intercept event.
+		if a.mouseCapture != nil {
+			event, action = a.mouseCapture(event, action)
+			if event == nil {
+				consumed = true
+				return // Don't forward event.
+			}
+		}
+
+		// Determine the target primitive.
+		var primitive, capturingPrimitive Primitive
+		if a.mouseCapturingPrimitive != nil {
+			primitive = a.mouseCapturingPrimitive
+			targetPrimitive = a.mouseCapturingPrimitive
+		} else if targetPrimitive != nil {
+			primitive = targetPrimitive
+		} else {
+			primitive = a.root
+		}
+		if primitive != nil {
+			if handler := primitive.MouseHandler(); handler != nil {
+				var wasConsumed bool
+				wasConsumed, capturingPrimitive = handler(action, event, func(p Primitive) {
+					a.SetFocus(p)
+				})
+				if wasConsumed {
+					consumed = true
+				}
+			}
+		}
+		a.mouseCapturingPrimitive = capturingPrimitive
 	}
-	if atX >= x+w || atY >= y+h {
-		return nil
+
+	x, y := event.Position()
+	buttons := event.Buttons()
+	clickMoved := x != a.mouseDownX || y != a.mouseDownY
+	buttonChanges := buttons ^ a.lastMouseButtons
+
+	if x != a.lastMouseX || y != a.lastMouseY {
+		fire(MouseMove)
+		a.lastMouseX = x
+		a.lastMouseY = y
 	}
-	if capture != nil {
-		capture(p)
-	}
-	bestp := p
-	for _, pchild := range p.GetChildren() {
-		x := findAtPoint(atX, atY, pchild, capture)
-		if x != nil {
-			// Always overwrite if we find another one,
-			// this is because if any overlap, the last one is "on top".
-			bestp = x
+
+	for _, buttonEvent := range []struct {
+		button                  tcell.ButtonMask
+		down, up, click, dclick MouseAction
+	}{
+		{tcell.Button1, MouseLeftDown, MouseLeftUp, MouseLeftClick, MouseLeftDoubleClick},
+		{tcell.Button2, MouseMiddleDown, MouseMiddleUp, MouseMiddleClick, MouseMiddleDoubleClick},
+		{tcell.Button3, MouseRightDown, MouseRightUp, MouseRightClick, MouseRightDoubleClick},
+	} {
+		if buttonChanges&buttonEvent.button != 0 {
+			if buttons&buttonEvent.button != 0 {
+				fire(buttonEvent.down)
+			} else {
+				fire(buttonEvent.up)
+				if !clickMoved {
+					if a.lastMouseClick.Add(DoubleClickInterval).Before(time.Now()) {
+						fire(buttonEvent.click)
+						a.lastMouseClick = time.Now()
+					} else {
+						fire(buttonEvent.dclick)
+						a.lastMouseClick = time.Time{} // reset
+					}
+				}
+			}
 		}
 	}
-	return bestp
-}
 
-// GetPrimitiveAtPoint returns the Primitive at the specified point, or nil.
-// Note that this only works with a valid hierarchy of primitives (children)
-func (a *Application) GetPrimitiveAtPoint(atX, atY int) Primitive {
-	a.RLock()
-	defer a.RUnlock()
+	for _, wheelEvent := range []struct {
+		button tcell.ButtonMask
+		action MouseAction
+	}{
+		{tcell.WheelUp, MouseScrollUp},
+		{tcell.WheelDown, MouseScrollDown},
+		{tcell.WheelLeft, MouseScrollLeft},
+		{tcell.WheelRight, MouseScrollRight}} {
+		if buttons&wheelEvent.button != 0 {
+			fire(wheelEvent.action)
+		}
+	}
 
-	return findAtPoint(atX, atY, a.root, nil)
-}
-
-// The last element appended to buf is the primitive clicked,
-// the preceeding are its parents.
-func (a *Application) appendStackAtPoint(buf []Primitive, atX, atY int) []Primitive {
-	a.RLock()
-	defer a.RUnlock()
-
-	findAtPoint(atX, atY, a.root, func(p Primitive) {
-		buf = append(buf, p)
-	})
-	return buf
+	return consumed, isMouseDownAction
 }
 
 // Stop stops the application, causing Run() to return.

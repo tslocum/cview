@@ -16,7 +16,7 @@ func main() {
 		AddText("Header second middle", true, cview.AlignCenter, tcell.ColorRed).
 		AddText("Footer middle", false, cview.AlignCenter, tcell.ColorGreen).
 		AddText("Footer second middle", false, cview.AlignCenter, tcell.ColorGreen)
-	if err := app.SetRoot(frame, true).Run(); err != nil {
+	if err := app.SetRoot(frame, true).EnableMouse(true).Run(); err != nil {
 		panic(err)
 	}
 }

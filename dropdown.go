@@ -81,6 +81,9 @@ type DropDown struct {
 	// selection.
 	selected func(text string, index int)
 
+	// Set to true when mouse dragging is in progress.
+	dragging bool
+
 	sync.RWMutex
 }
 
@@ -482,7 +485,7 @@ func (d *DropDown) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 				d.evalPrefix()
 			}
 
-			d.openList(setFocus, nil)
+			d.openList(setFocus)
 		case tcell.KeyEscape, tcell.KeyTab, tcell.KeyBacktab:
 			if d.done != nil {
 				d.done(key)
@@ -494,8 +497,7 @@ func (d *DropDown) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 	})
 }
 
-// A helper function which selects an item in the drop-down list based on
-// the current prefix.
+// evalPrefix selects an item in the drop-down list based on the current prefix.
 func (d *DropDown) evalPrefix() {
 	if len(d.prefix) > 0 {
 		for index, option := range d.options {
@@ -504,31 +506,33 @@ func (d *DropDown) evalPrefix() {
 				return
 			}
 		}
+
 		// Prefix does not match any item. Remove last rune.
 		r := []rune(d.prefix)
 		d.prefix = string(r[:len(r)-1])
 	}
 }
 
-// Hand control over to the list.
-func (d *DropDown) openList(setFocus func(Primitive), app *Application) {
+// openList hands control over to the embedded List primitive.
+func (d *DropDown) openList(setFocus func(Primitive)) {
 	d.open = true
 	optionBefore := d.currentOption
+
 	d.list.SetSelectedFunc(func(index int, mainText, secondaryText string, shortcut rune) {
+		if d.dragging {
+			return // If we're dragging the mouse, we don't want to trigger any events.
+		}
+
 		// An option was selected. Close the list again.
 		d.currentOption = index
-		d.closeList(setFocus, app)
+		d.closeList(setFocus)
 
 		// Trigger "selected" event.
 		if d.selected != nil {
-			d.Unlock()
 			d.selected(d.options[d.currentOption].Text, d.currentOption)
-			d.Lock()
 		}
 		if d.options[d.currentOption].Selected != nil {
-			d.Unlock()
 			d.options[d.currentOption].Selected()
-			d.Lock()
 		}
 	}).SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyRune {
@@ -542,50 +546,20 @@ func (d *DropDown) openList(setFocus func(Primitive), app *Application) {
 			d.evalPrefix()
 		} else if event.Key() == tcell.KeyEscape {
 			d.currentOption = optionBefore
-			d.closeList(setFocus, app)
+			d.closeList(setFocus)
 		} else {
 			d.prefix = ""
 		}
+
 		return event
 	})
-	if app != nil {
-		app.SetTemporaryMouseCapture(func(event *EventMouse) *EventMouse {
-			if d.open {
-				// Forward the mouse event to the list.
-				atX, atY := event.Position()
-				x, y, w, h := d.list.GetInnerRect()
-				if atX >= x && atY >= y && atX < x+w && atY < y+h {
-					// Mouse is within the list.
-					if handler := d.list.MouseHandler(); handler != nil {
-						if event.Action()&MouseUp != 0 {
-							// Treat mouse up as click here.
-							// This allows you to expand and select in one go.
-							event = NewEventMouse(event.EventMouse,
-								event.Target(), event.Application(),
-								event.Action()|MouseClick)
-						}
-						handler(event)
-						return nil // handled
-					}
-				} else {
-					// Mouse not within the list.
-					if event.Action()&MouseDown != 0 {
-						// If a mouse button was pressed, cancel this capture.
-						d.closeList(event.SetFocus, app)
-					}
-				}
-			}
-			return event
-		})
-	}
+
 	setFocus(d.list)
 }
 
-func (d *DropDown) closeList(setFocus func(Primitive), app *Application) {
-	if app != nil {
-		app.SetTemporaryMouseCapture(nil)
-	}
-
+// closeList closes the embedded List element by hiding it and removing focus
+// from it.
+func (d *DropDown) closeList(setFocus func(Primitive)) {
 	d.open = false
 	if d.list.HasFocus() {
 		setFocus(d)
@@ -612,20 +586,43 @@ func (d *DropDown) HasFocus() bool {
 }
 
 // MouseHandler returns the mouse handler for this primitive.
-func (d *DropDown) MouseHandler() func(event *EventMouse) {
-	return d.WrapMouseHandler(func(event *EventMouse) {
-		// Process mouse event.
-		if event.Action()&MouseDown != 0 && event.Buttons()&tcell.Button1 != 0 {
-			d.Lock()
-			defer d.Unlock()
+func (d *DropDown) MouseHandler() func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
+	return d.WrapMouseHandler(func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
+		// Was the mouse event in the drop-down box itself (or on its label)?
+		x, y := event.Position()
+		_, rectY, _, _ := d.GetInnerRect()
+		inRect := y == rectY
+		if !d.open && !inRect {
+			return d.InRect(x, y), nil // No, and it's not expanded either. Ignore.
+		}
 
-			//d.open = !d.open
-			//event.SetFocus(d)
-			if d.open {
-				d.closeList(event.SetFocus, event.Application())
-			} else {
-				d.openList(event.SetFocus, event.Application())
+		// Handle dragging. Clicks are implicitly handled by this logic.
+		switch action {
+		case MouseLeftDown:
+			consumed = d.open || inRect
+			capture = d
+			if !d.open {
+				d.openList(setFocus)
+				d.dragging = true
+			} else if consumed, _ := d.list.MouseHandler()(MouseLeftClick, event, setFocus); !consumed {
+				d.closeList(setFocus) // Close drop-down if clicked outside of it.
+			}
+		case MouseMove:
+			if d.dragging {
+				// We pretend it's a left click so we can see the selection during
+				// dragging. Because we don't act upon it, it's not a problem.
+				d.list.MouseHandler()(MouseLeftClick, event, setFocus)
+				consumed = true
+				capture = d
+			}
+		case MouseLeftUp:
+			if d.dragging {
+				d.dragging = false
+				d.list.MouseHandler()(MouseLeftClick, event, setFocus)
+				consumed = true
 			}
 		}
+
+		return
 	})
 }

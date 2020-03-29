@@ -61,27 +61,33 @@ func ExampleNewApplication() {
 // Example of an application with mouse support.
 func ExampleApplication_EnableMouse() {
 	// Initialize application and enable mouse support.
-	app := NewApplication().EnableMouse()
+	app := NewApplication()
 
 	// Create a textview.
 	tv := NewTextView().SetText("Click somewhere!")
 
 	// Set a mouse capture function which prints where the mouse was clicked.
-	app.SetMouseCapture(func(event *EventMouse) *EventMouse {
-		if event.Action()&MouseDown != 0 && event.Buttons()&tcell.Button1 != 0 {
+	app.SetMouseCapture(func(event *tcell.EventMouse, action MouseAction) (*tcell.EventMouse, MouseAction) {
+		if action == MouseLeftClick || action == MouseLeftDoubleClick {
+			actionLabel := "click"
+			if action == MouseLeftDoubleClick {
+				actionLabel = "double-click"
+			}
+
 			x, y := event.Position()
-			fmt.Fprintf(tv, "\nYou clicked at %d,%d! Amazing!", x, y)
+
+			fmt.Fprintf(tv, "\nYou %sed at %d,%d! Amazing!", actionLabel, x, y)
 
 			// Return nil to stop propagating the event to any remaining handlers.
-			return nil
+			return nil, 0
 		}
 
 		// Return the event to continue propagating it.
-		return event
+		return event, action
 	})
 
 	// Run the application.
-	if err := app.SetRoot(tv, true).Run(); err != nil {
+	if err := app.EnableMouse(true).SetRoot(tv, true).Run(); err != nil {
 		panic(err)
 	}
 }

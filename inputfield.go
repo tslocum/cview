@@ -69,9 +69,6 @@ type InputField struct {
 	// The cursor position as a byte index into the text string.
 	cursorPos int
 
-	// The number of bytes of the text string skipped ahead while drawing.
-	offset int
-
 	// An optional autocomplete function which receives the current text of the
 	// input field and returns a slice of strings to be displayed in a drop-down
 	// selection.
@@ -95,6 +92,12 @@ type InputField struct {
 	// A callback function set by the Form class and called when the user leaves
 	// this form item.
 	finished func(tcell.Key)
+
+	// The x-coordinate of the input field as determined during the last call to Draw().
+	fieldX int
+
+	// The number of bytes of the text string skipped ahead while drawing.
+	offset int
 
 	sync.RWMutex
 }
@@ -396,6 +399,7 @@ func (i *InputField) Draw(screen tcell.Screen) {
 	}
 
 	// Draw input area.
+	i.fieldX = x
 	fieldWidth := i.fieldWidth
 	if fieldWidth == 0 {
 		fieldWidth = math.MaxInt32
@@ -681,11 +685,32 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 }
 
 // MouseHandler returns the mouse handler for this primitive.
-func (i *InputField) MouseHandler() func(event *EventMouse) {
-	return i.WrapMouseHandler(func(event *EventMouse) {
-		// Process mouse event.
-		if event.Action()&MouseDown != 0 {
-			event.SetFocus(i)
+func (i *InputField) MouseHandler() func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
+	return i.WrapMouseHandler(func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
+		x, y := event.Position()
+		_, rectY, _, _ := i.GetInnerRect()
+		if !i.InRect(x, y) {
+			return false, nil
 		}
+
+		// Process mouse event.
+		if action == MouseLeftClick && y == rectY {
+			// Determine where to place the cursor.
+			if x >= i.fieldX {
+				if !iterateString(i.text, func(main rune, comb []rune, textPos int, textWidth int, screenPos int, screenWidth int) bool {
+					if x-i.fieldX < screenPos+screenWidth {
+						i.cursorPos = textPos
+						return true
+					}
+					return false
+				}) {
+					i.cursorPos = len(i.text)
+				}
+			}
+			setFocus(i)
+			consumed = true
+		}
+
+		return
 	})
 }

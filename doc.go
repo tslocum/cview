@@ -59,10 +59,6 @@ Application.EnableMouse documentation.
 
 Mouse events are passed to:
 
-- The handler set with SetTemporaryMouseCapture, which is reserved for use by
-widgets to temporarily intercept mouse events, such as to close a Dropdown when
-the user clicks outside of the list.
-
 - The handler set with SetMouseCapture, which is reserved for use by application
 developers to permanently intercept mouse events.
 

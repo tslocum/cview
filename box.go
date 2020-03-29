@@ -59,9 +59,9 @@ type Box struct {
 	draw func(screen tcell.Screen, x, y, width, height int) (int, int, int, int)
 
 	// An optional capture function which receives a mouse event and returns the
-	// event to be forwarded to the primitive's default mouse event handler (nil if
-	// nothing should be forwarded).
-	mouseCapture func(event *EventMouse) *EventMouse
+	// event to be forwarded to the primitive's default mouse event handler (at
+	// least one nil if nothing should be forwarded).
+	mouseCapture func(action MouseAction, event *tcell.EventMouse) (MouseAction, *tcell.EventMouse)
 
 	l sync.RWMutex
 }
@@ -229,50 +229,56 @@ func (b *Box) GetInputCapture() func(event *tcell.EventKey) *tcell.EventKey {
 }
 
 // WrapMouseHandler wraps a mouse event handler (see MouseHandler()) with the
-// functionality to capture input (see SetMouseCapture()) before passing it
-// on to the provided (default) event handler.
+// functionality to capture mouse events (see SetMouseCapture()) before passing
+// them on to the provided (default) event handler.
 //
 // This is only meant to be used by subclassing primitives.
-func (b *Box) WrapMouseHandler(mouseHandler func(*EventMouse)) func(*EventMouse) {
-	return func(event *EventMouse) {
+func (b *Box) WrapMouseHandler(mouseHandler func(MouseAction, *tcell.EventMouse, func(p Primitive)) (bool, Primitive)) func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
+	return func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
 		if b.mouseCapture != nil {
-			event = b.mouseCapture(event)
+			action, event = b.mouseCapture(action, event)
 		}
 		if event != nil && mouseHandler != nil {
-			mouseHandler(event)
+			consumed, capture = mouseHandler(action, event, setFocus)
 		}
+		return
 	}
 }
 
 // MouseHandler returns nil.
-func (b *Box) MouseHandler() func(event *EventMouse) {
-	b.l.RLock()
-	defer b.l.RUnlock()
-
-	return b.WrapMouseHandler(nil)
+func (b *Box) MouseHandler() func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
+	return b.WrapMouseHandler(func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
+		if action == MouseLeftClick && b.InRect(event.Position()) {
+			setFocus(b)
+			consumed = true
+		}
+		return
+	})
 }
 
-// SetMouseCapture installs a function which captures events before they are
-// forwarded to the primitive's default event handler. This function can
-// then choose to forward that event (or a different one) to the default
-// handler by returning it. If nil is returned, the default handler will not
-// be called.
+// SetMouseCapture sets a function which captures mouse events (consisting of
+// the original tcell mouse event and the semantic mouse action) before they are
+// forwarded to the primitive's default mouse event handler. This function can
+// then choose to forward that event (or a different one) by returning it or
+// returning a nil mouse event, in which case the default handler will not be
+// called.
 //
 // Providing a nil handler will remove a previously existing handler.
-func (b *Box) SetMouseCapture(capture func(*EventMouse) *EventMouse) *Box {
-	b.l.Lock()
-	defer b.l.Unlock()
-
+func (b *Box) SetMouseCapture(capture func(action MouseAction, event *tcell.EventMouse) (MouseAction, *tcell.EventMouse)) *Box {
 	b.mouseCapture = capture
 	return b
 }
 
+// InRect returns true if the given coordinate is within the bounds of the box's
+// rectangle.
+func (b *Box) InRect(x, y int) bool {
+	rectX, rectY, width, height := b.GetRect()
+	return x >= rectX && x < rectX+width && y >= rectY && y < rectY+height
+}
+
 // GetMouseCapture returns the function installed with SetMouseCapture() or nil
 // if no such function has been installed.
-func (b *Box) GetMouseCapture() func(*EventMouse) *EventMouse {
-	b.l.RLock()
-	defer b.l.RUnlock()
-
+func (b *Box) GetMouseCapture() func(action MouseAction, event *tcell.EventMouse) (MouseAction, *tcell.EventMouse) {
 	return b.mouseCapture
 }
 

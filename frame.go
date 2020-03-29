@@ -14,8 +14,8 @@ type frameText struct {
 	Color  tcell.Color // The text color.
 }
 
-// Frame is a wrapper which adds a border around another primitive. The top area
-// (header) and the bottom area (footer) may also contain text.
+// Frame is a wrapper which adds space around another primitive. In addition,
+// the top area (header) and the bottom area (footer) may also contain text.
 //
 // See https://gitlab.com/tslocum/cview/wiki/Frame for an example.
 type Frame struct {
@@ -179,10 +179,14 @@ func (f *Frame) HasFocus() bool {
 	return false
 }
 
-// GetChildren returns all primitives that have been added.
-func (f *Frame) GetChildren() []Primitive {
-	f.Lock()
-	defer f.Unlock()
+// MouseHandler returns the mouse handler for this primitive.
+func (f *Frame) MouseHandler() func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
+	return f.WrapMouseHandler(func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
+		if !f.InRect(event.Position()) {
+			return false, nil
+		}
 
-	return []Primitive{f.primitive}
+		// Pass mouse events on to contained primitive.
+		return f.primitive.MouseHandler()(action, event, setFocus)
+	})
 }
