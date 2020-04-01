@@ -12,9 +12,6 @@ const (
 	// The size of the event/update/redraw channels.
 	queueSize = 100
 
-	// The minimum time between two consecutive redraws.
-	redrawPause = 50 * time.Millisecond
-
 	// The minimum duration between resize event callbacks.
 	resizeEventThrottle = 200 * time.Millisecond
 )
@@ -46,14 +43,6 @@ const (
 	MouseScrollLeft
 	MouseScrollRight
 )
-
-// queuedUpdate represented the execution of f queued by
-// Application.QueueUpdate(). The "done" channel receives exactly one element
-// after f has executed.
-type queuedUpdate struct {
-	f    func()
-	done chan struct{}
-}
 
 // Application represents the top node of an application.
 //

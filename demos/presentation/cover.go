@@ -18,8 +18,8 @@ const logo = `
 
 const (
 	subtitle   = `Terminal-based user interface toolkit`
-	navigation = `Ctrl-N: Next slide    Ctrl-P: Previous slide    Ctrl-C: Exit`
-	mouse      = `(or use your mouse)`
+	mouse      = `Navigate with your keyboard or mouse.`
+	navigation = `Next slide: Ctrl-N   Previous: Ctrl-P   Exit: Ctrl-C`
 )
 
 // Cover returns the cover page.
@@ -45,8 +45,8 @@ func Cover(nextSlide func()) (title string, content cview.Primitive) {
 		SetBorders(0, 0, 0, 0, 0, 0).
 		AddText(subtitle, true, cview.AlignCenter, tcell.ColorWhite).
 		AddText("", true, cview.AlignCenter, tcell.ColorWhite).
-		AddText(navigation, true, cview.AlignCenter, tcell.ColorDarkMagenta).
-		AddText(mouse, true, cview.AlignCenter, tcell.ColorDarkMagenta)
+		AddText(mouse, true, cview.AlignCenter, tcell.ColorDarkMagenta).
+		AddText(navigation, true, cview.AlignCenter, tcell.ColorDarkMagenta)
 
 	// Create a Flex layout that centers the logo and subtitle.
 	flex := cview.NewFlex().
