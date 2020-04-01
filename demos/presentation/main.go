@@ -65,11 +65,18 @@ func main() {
 	pages := cview.NewPages()
 
 	// The bottom row has some info on where we are.
-	info := cview.NewTextView().
+	info := cview.NewTextView()
+	info.
 		SetDynamicColors(true).
 		SetRegions(true).
 		SetWrap(false).
 		SetHighlightedFunc(func(added, removed, remaining []string) {
+			n, err := strconv.Atoi(added[0])
+			if err == nil && n >= 1000 {
+				info.Highlight(strconv.Itoa((n - 1) / 1000))
+				return
+			}
+
 			pages.SwitchToPage(added[0])
 		})
 
@@ -94,7 +101,7 @@ func main() {
 
 		title, primitive := slide(nextSlide)
 		pages.AddPage(strconv.Itoa(index), primitive, true, index == 0)
-		fmt.Fprintf(info, `%d ["%d"][darkcyan]%s[white][""]  `, index+1, index, title)
+		fmt.Fprintf(info, `["%d"]%d [""]["%d"][darkcyan]%s[white][""]  `, (index+1)*1000, index+1, index, title)
 
 		cursor += len(title) + 4
 	}

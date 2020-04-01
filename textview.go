@@ -473,7 +473,6 @@ func (t *TextView) clear() *TextView {
 // background and foreground colors swapped.
 func (t *TextView) Highlight(regionIDs ...string) *TextView {
 	t.Lock()
-	defer t.Unlock()
 
 	// Toggle highlights.
 	if t.toggleHighlights {
@@ -523,7 +522,10 @@ func (t *TextView) Highlight(regionIDs ...string) *TextView {
 
 	// Notify.
 	if t.highlighted != nil && len(added) > 0 || len(removed) > 0 {
+		t.Unlock()
 		t.highlighted(added, removed, remaining)
+	} else {
+		t.Unlock()
 	}
 
 	return t
