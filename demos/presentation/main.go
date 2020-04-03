@@ -48,17 +48,15 @@ func main() {
 	slides := []Slide{
 		Cover,
 		Introduction,
-		HelloWorld,
-		InputField,
-		Form,
+		Colors,
 		TextView1,
 		TextView2,
-		ProgressBar,
+		InputField,
+		Form,
 		Table,
 		TreeView,
 		Flex,
 		Grid,
-		Colors,
 		End,
 	}
 
@@ -71,12 +69,6 @@ func main() {
 		SetRegions(true).
 		SetWrap(false).
 		SetHighlightedFunc(func(added, removed, remaining []string) {
-			n, err := strconv.Atoi(added[0])
-			if err == nil && n >= 1000 {
-				info.Highlight(strconv.Itoa((n - 1) / 1000))
-				return
-			}
-
 			pages.SwitchToPage(added[0])
 		})
 
@@ -101,7 +93,7 @@ func main() {
 
 		title, primitive := slide(nextSlide)
 		pages.AddPage(strconv.Itoa(index), primitive, true, index == 0)
-		fmt.Fprintf(info, `["%d"]%d [""]["%d"][darkcyan]%s[white][""]  `, (index+1)*1000, index+1, index, title)
+		fmt.Fprintf(info, `["%d"][darkcyan] %s [white][""]|`, index, title)
 
 		cursor += len(title) + 4
 	}

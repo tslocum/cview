@@ -500,8 +500,3 @@ func (b *Box) GetFocusable() Focusable {
 
 	return b.focus
 }
-
-// GetChildren returns nil because Box doesn't have any use for children.
-func (b *Box) GetChildren() []Primitive {
-	return nil
-}
