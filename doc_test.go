@@ -60,8 +60,14 @@ func ExampleNewApplication() {
 
 // Example of an application with mouse support.
 func ExampleApplication_EnableMouse() {
-	// Initialize application and enable mouse support.
+	// Initialize application.
 	app := NewApplication()
+
+	// Enable mouse support.
+	app.EnableMouse(true)
+
+	// Enable double clicks.
+	app.SetDoubleClickInterval(StandardDoubleClick)
 
 	// Create a textview.
 	tv := NewTextView().SetText("Click somewhere!")
@@ -87,7 +93,7 @@ func ExampleApplication_EnableMouse() {
 	})
 
 	// Run the application.
-	if err := app.EnableMouse(true).SetRoot(tv, true).Run(); err != nil {
+	if err := app.SetRoot(tv, true).Run(); err != nil {
 		panic(err)
 	}
 }

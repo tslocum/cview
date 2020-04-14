@@ -34,6 +34,10 @@ tview [is not thread-safe](https://godoc.org/github.com/rivo/tview#hdr-Concurren
 
 tview [blocks until the queued function returns](https://github.com/rivo/tview/blob/fe3052019536251fd145835dbaa225b33b7d3088/application.go#L510).
 
+## Double clicks are not handled by default
+
+All clicks are handled as single clicks until an interval is set with [Application.SetDoubleClickInterval](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Application.SetDoubleClickInterval).
+
 ## Lists and Forms do not wrap around by default
 
 Call `SetWrapAround(true)` to wrap around when navigating.

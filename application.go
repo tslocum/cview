@@ -9,16 +9,15 @@ import (
 )
 
 const (
+	// StandardDoubleClick is the standard double click interval.
+	StandardDoubleClick = 500 * time.Millisecond
+
 	// The size of the event/update/redraw channels.
 	queueSize = 100
 
 	// The minimum duration between resize event callbacks.
 	resizeEventThrottle = 200 * time.Millisecond
 )
-
-// DoubleClickInterval specifies the maximum time between clicks to register a
-// double click rather than click.
-var DoubleClickInterval = 500 * time.Millisecond
 
 // MouseAction indicates one of the actions the mouse is logically doing.
 type MouseAction int16
@@ -116,6 +115,10 @@ type Application struct {
 	// be forwarded).
 	mouseCapture func(event *tcell.EventMouse, action MouseAction) (*tcell.EventMouse, MouseAction)
 
+	// doubleClickInterval specifies the maximum time between clicks to register a
+	// double click rather than a single click.
+	doubleClickInterval time.Duration
+
 	mouseCapturingPrimitive Primitive        // A Primitive returned by a MouseHandler which will capture future mouse events.
 	lastMouseX, lastMouseY  int              // The last position of the mouse.
 	mouseDownX, mouseDownY  int              // The position of the mouse when its button was last pressed.
@@ -174,6 +177,13 @@ func (a *Application) SetMouseCapture(capture func(event *tcell.EventMouse, acti
 // if no such function has been installed.
 func (a *Application) GetMouseCapture() func(event *tcell.EventMouse, action MouseAction) (*tcell.EventMouse, MouseAction) {
 	return a.mouseCapture
+}
+
+// SetDoubleClickInterval sets the maximum time between clicks to register a
+// double click rather than a single click. A standard duration is provided as
+// StandardDoubleClick. No interval is set by default, disabling double clicks.
+func (a *Application) SetDoubleClickInterval(interval time.Duration) {
+	a.doubleClickInterval = interval
 }
 
 // SetScreen allows you to provide your own tcell.Screen object. For most
@@ -472,7 +482,7 @@ func (a *Application) fireMouseActions(event *tcell.EventMouse) (consumed, isMou
 			} else {
 				fire(buttonEvent.up)
 				if !clickMoved {
-					if a.lastMouseClick.Add(DoubleClickInterval).Before(time.Now()) {
+					if a.doubleClickInterval == 0 || a.lastMouseClick.Add(a.doubleClickInterval).Before(time.Now()) {
 						fire(buttonEvent.click)
 						a.lastMouseClick = time.Now()
 					} else {
