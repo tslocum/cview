@@ -22,7 +22,7 @@ Available widgets:
 - Navigable multi-color __text views__
 - Sophisticated navigable __table views__
 - Flexible __tree views__
-- Selectable __lists__
+- Selectable __lists__ with __context menus__
 - __Grid__, __Flexbox__ and __page layouts__
 - Modal __message windows__
 - Horizontal and vertical __progress bars__

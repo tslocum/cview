@@ -50,6 +50,9 @@ type Box struct {
 	// Whether or not this box has focus.
 	hasFocus bool
 
+	// Whether or not this box shows its focus.
+	showFocus bool
+
 	// An optional capture function which receives a key event and returns the
 	// event to be forwarded to the primitive's default input handler (nil if
 	// nothing should be forwarded).
@@ -76,6 +79,7 @@ func NewBox() *Box {
 		borderColor:     Styles.BorderColor,
 		titleColor:      Styles.TitleColor,
 		titleAlign:      AlignCenter,
+		showFocus:       true,
 	}
 	b.focus = b
 	return b
@@ -389,7 +393,7 @@ func (b *Box) Draw(screen tcell.Screen) {
 		} else {
 			hasFocus = b.focus.HasFocus()
 		}
-		if hasFocus {
+		if hasFocus && b.showFocus {
 			horizontal = Borders.HorizontalFocus
 			vertical = Borders.VerticalFocus
 			topLeft = Borders.TopLeftFocus
