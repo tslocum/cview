@@ -90,6 +90,14 @@ type Application struct {
 	// is drawn.
 	afterResize func(width int, height int)
 
+	// An optional callback function which is invoked before the application's
+	// focus changes.
+	beforeFocus func(p Primitive) bool
+
+	// An optional callback function which is invoked after the application's
+	// focus changes.
+	afterFocus func(p Primitive)
+
 	// An optional callback function which is invoked just before the root
 	// primitive is drawn.
 	beforeDraw func(screen tcell.Screen) bool
@@ -738,14 +746,34 @@ func (a *Application) GetAfterResizeFunc() func(width int, height int) {
 // called on the new primitive.
 func (a *Application) SetFocus(p Primitive) *Application {
 	a.Lock()
+
+	if a.beforeFocus != nil {
+		a.Unlock()
+		ok := a.beforeFocus(p)
+		if !ok {
+			return a
+		}
+		a.Lock()
+	}
+
 	if a.focus != nil {
 		a.focus.Blur()
 	}
+
 	a.focus = p
+
 	if a.screen != nil {
 		a.screen.HideCursor()
 	}
-	a.Unlock()
+
+	if a.afterFocus != nil {
+		a.Unlock()
+
+		a.afterFocus(p)
+	} else {
+		a.Unlock()
+	}
+
 	if p != nil {
 		p.Focus(func(p Primitive) {
 			a.SetFocus(p)
@@ -762,6 +790,30 @@ func (a *Application) GetFocus() Primitive {
 	defer a.RUnlock()
 
 	return a.focus
+}
+
+// SetBeforeFocusFunc installs a callback function which is invoked before the
+// application's focus changes. Return false to maintain the current focus.
+//
+// Provide nil to uninstall the callback function.
+func (a *Application) SetBeforeFocusFunc(handler func(p Primitive) bool) *Application {
+	a.Lock()
+	defer a.Unlock()
+
+	a.beforeFocus = handler
+	return a
+}
+
+// SetAfterFocusFunc installs a callback function which is invoked after the
+// application's focus changes.
+//
+// Provide nil to uninstall the callback function.
+func (a *Application) SetAfterFocusFunc(handler func(p Primitive)) *Application {
+	a.Lock()
+	defer a.Unlock()
+
+	a.afterFocus = handler
+	return a
 }
 
 // QueueUpdate queues a function to be executed as part of the event loop.
