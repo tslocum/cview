@@ -683,13 +683,13 @@ func RenderScrollBar(screen tcell.Screen, visibility ScrollBarVisibility, x int,
 		if focused {
 			scrollBar = "[::r] [-:-:-]"
 		} else {
-			scrollBar = "▓"
+			scrollBar = "[-:-:-]▓"
 		}
 	} else {
 		if focused {
-			scrollBar = "▒"
+			scrollBar = "[-:-:-]▒"
 		} else {
-			scrollBar = "░"
+			scrollBar = "[-:-:-]░"
 		}
 	}
 	Print(screen, scrollBar, x, y, 1, AlignLeft, color)
