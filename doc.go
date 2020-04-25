@@ -57,16 +57,17 @@ Mouse support may be enabled by calling Application.EnableMouse before
 Application.Run. See the example application provided with the
 Application.EnableMouse documentation.
 
+Double clicks are treated single clicks by default. Specify a maximum duration
+between clicks with Application.SetDoubleClickInterval to enable double clicks.
+A standard duration is provided as StandardDoubleClick.
+
 Mouse events are passed to:
 
 - The handler set with SetMouseCapture, which is reserved for use by application
-developers to permanently intercept mouse events.
-
-- The ObserveMouseEvent method of every widget under the mouse, bottom to top.
+developers to permanently intercept mouse events. Return nil to stop
+propagation.
 
 - The MouseHandler method of the topmost widget under the mouse.
-
-Event handlers may return nil to stop propagation.
 
 Colors
 
