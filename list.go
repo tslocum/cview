@@ -683,7 +683,7 @@ func (l *List) Draw(screen tcell.Screen) {
 		Print(screen, item.MainText, x, y, width, AlignLeft, l.mainTextColor)
 
 		// Background color of selected text.
-		if index == l.currentItem && (!l.selectedFocusOnly || l.HasFocus()) {
+		if index == l.currentItem && (!l.selectedFocusOnly || hasFocus) {
 			textWidth := width
 			if !l.highlightFullLine {
 				if w := TaggedStringWidth(item.MainText); w < textWidth {
@@ -788,6 +788,8 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 
 		if event.Key() == tcell.KeyEscape {
 			if l.ContextMenu.open {
+				l.Unlock()
+
 				l.ContextMenu.hide(setFocus)
 				return
 			}
@@ -840,7 +842,9 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 				}
 
 				x, y, _, _ := l.GetInnerRect()
+				l.Unlock()
 				l.ContextMenu.show(l.currentItem, x+offsetX, y+offsetY, setFocus)
+				l.Lock()
 			} else if l.currentItem >= 0 && l.currentItem < len(l.items) {
 				item := l.items[l.currentItem]
 				if item.Enabled {
@@ -998,7 +1002,9 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 			}
 
 			if l.ContextMenu.list != nil && len(l.ContextMenu.list.items) > 0 {
+				l.Unlock()
 				l.ContextMenu.show(l.currentItem, x, y, setFocus)
+				l.Lock()
 				l.ContextMenu.drag = true
 			} else {
 				defer l.MouseHandler()(MouseLeftClick, event, setFocus)
