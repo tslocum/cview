@@ -37,7 +37,7 @@ type FormItem interface {
 
 // Form allows you to combine multiple one-line form elements into a vertical
 // or horizontal layout. Form elements include types such as InputField or
-// Checkbox. These elements can be optionally followed by one or more buttons
+// CheckBox. These elements can be optionally followed by one or more buttons
 // for which you can define form-wide actions (e.g. Save, Clear, Cancel).
 //
 // See https://gitlab.com/tslocum/cview/wiki/Form for an example.
@@ -258,14 +258,14 @@ func (f *Form) AddDropDown(label string, options []string, initialOption int, se
 	return f
 }
 
-// AddCheckbox adds a checkbox to the form. It has a label, a message, an
+// AddCheckBox adds a checkbox to the form. It has a label, a message, an
 // initial state, and an (optional) callback function which is invoked when the
 // state of the checkbox was changed by the user.
-func (f *Form) AddCheckbox(label string, message string, checked bool, changed func(checked bool)) *Form {
+func (f *Form) AddCheckBox(label string, message string, checked bool, changed func(checked bool)) *Form {
 	f.Lock()
 	defer f.Unlock()
 
-	f.items = append(f.items, NewCheckbox().
+	f.items = append(f.items, NewCheckBox().
 		SetLabel(label).
 		SetMessage(message).
 		SetChecked(checked).

@@ -9,7 +9,7 @@ Widgets
 The following widgets are available:
 
   Button - Button which is activated when the user selects it.
-  Checkbox - Selectable checkbox for boolean values.
+  CheckBox - Selectable checkbox for boolean values.
   DropDown - Drop-down selection field.
   Flex - A Flexbox based layout manager.
   Form - Form composed of input fields, drop down selections, checkboxes, and

@@ -1,4 +1,4 @@
-// Demo code for the Checkbox primitive.
+// Demo code for the CheckBox primitive.
 package main
 
 import (
@@ -7,7 +7,7 @@ import (
 
 func main() {
 	app := cview.NewApplication()
-	checkbox := cview.NewCheckbox().SetLabel("Hit Enter to check box: ")
+	checkbox := cview.NewCheckBox().SetLabel("Hit Enter to check box: ")
 	if err := app.SetRoot(checkbox, true).EnableMouse(true).Run(); err != nil {
 		panic(err)
 	}
