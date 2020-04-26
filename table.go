@@ -246,8 +246,6 @@ func (c *TableCell) GetLastPosition() (x, y, width int) {
 // The class will attempt to keep the selection from moving out of the screen.
 //
 // Use SetInputCapture() to override or modify keyboard input.
-//
-// See https://gitlab.com/tslocum/cview/wiki/Table for an example.
 type Table struct {
 	*Box
 

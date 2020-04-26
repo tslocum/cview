@@ -39,8 +39,6 @@ type FormItem interface {
 // or horizontal layout. Form elements include types such as InputField or
 // CheckBox. These elements can be optionally followed by one or more buttons
 // for which you can define form-wide actions (e.g. Save, Clear, Cancel).
-//
-// See https://gitlab.com/tslocum/cview/wiki/Form for an example.
 type Form struct {
 	*Box
 

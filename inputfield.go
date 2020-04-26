@@ -28,8 +28,6 @@ import (
 //   - Ctrl-K: Delete from the cursor to the end of the line.
 //   - Ctrl-W: Delete the last word before the cursor.
 //   - Ctrl-U: Delete the entire line.
-//
-// See https://gitlab.com/tslocum/cview/wiki/InputField for an example.
 type InputField struct {
 	*Box
 

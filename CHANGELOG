@@ -64,7 +64,7 @@ v0.1.17 (2018-06-20)
 
 v0.1.15 (2018-05-02)
 - Flex and Grid don't clear their background per default, thus allowing for
-custom modals. See the Wiki for an example.
+custom modals.
 
 v0.1.14 (2018-04-13)
 - Added an Escape() function which keep strings like color or region tags from

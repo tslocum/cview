@@ -16,8 +16,6 @@ type frameText struct {
 
 // Frame is a wrapper which adds space around another primitive. In addition,
 // the top area (header) and the bottom area (footer) may also contain text.
-//
-// See https://gitlab.com/tslocum/cview/wiki/Frame for an example.
 type Frame struct {
 	*Box
 

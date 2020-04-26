@@ -9,8 +9,6 @@ import (
 // Modal is a centered message window used to inform the user or prompt them
 // for an immediate decision. It needs to have at least one button (added via
 // AddButtons()) or it will never disappear.
-//
-// See https://gitlab.com/tslocum/cview/wiki/Modal for an example.
 type Modal struct {
 	*Box
 

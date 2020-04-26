@@ -8,8 +8,6 @@ import (
 
 // CheckBox implements a simple box for boolean values which can be checked and
 // unchecked.
-//
-// See https://gitlab.com/tslocum/cview/wiki/Checkbox for an example.
 type CheckBox struct {
 	*Box
 

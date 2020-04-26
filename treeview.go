@@ -314,8 +314,6 @@ func (n *TreeNode) SetIndent(indent int) *TreeNode {
 // hierarchy. Alternative (or additionally), you can set different prefixes
 // using SetPrefixes() for different levels, for example to display hierarchical
 // bullet point lists.
-//
-// See https://gitlab.com/tslocum/cview/wiki/TreeView for an example.
 type TreeView struct {
 	*Box
 

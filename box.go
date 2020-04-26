@@ -9,8 +9,6 @@ import (
 // Box is the base Primitive for all widgets. It has a background color and
 // optional surrounding elements such as a border and a title. It does not have
 // inner text. Widgets embed Box and draw their text over it.
-//
-// See demos/box for an example.
 type Box struct {
 	// The position of the rect.
 	x, y, width, height int

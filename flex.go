@@ -24,8 +24,6 @@ type flexItem struct {
 // primitives are arranged horizontally or vertically. The way they are
 // distributed along that dimension depends on their layout settings, which is
 // either a fixed length or a proportional length. See AddItem() for details.
-//
-// See https://gitlab.com/tslocum/cview/wiki/Flex for an example.
 type Flex struct {
 	*Box
 
