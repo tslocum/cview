@@ -2,23 +2,18 @@ package cview
 
 import (
 	"testing"
-
-	"github.com/gdamore/tcell"
 )
 
 func TestProgressBar(t *testing.T) {
 	t.Parallel()
 
-	p, sc, err := testProgressBar()
-	if err != nil {
-		t.Error(err)
-	}
+	p := NewProgressBar()
 	if p.GetProgress() != 0 {
-		t.Errorf("failed to initalize ProgressBar: incorrect initial state: expected 0 progress, got %d", p.GetProgress())
+		t.Errorf("failed to initialize ProgressBar: incorrect initial state: expected 0 progress, got %d", p.GetProgress())
 	} else if p.GetMax() != 100 {
-		t.Errorf("failed to initalize ProgressBar: incorrect initial state: expected 100 max, got %d", p.GetMax())
+		t.Errorf("failed to initialize ProgressBar: incorrect initial state: expected 100 max, got %d", p.GetMax())
 	} else if p.Complete() {
-		t.Errorf("failed to initalize ProgressBar: incorrect initial state: expected incomplete, got complete")
+		t.Errorf("failed to initialize ProgressBar: incorrect initial state: expected incomplete, got complete")
 	}
 
 	p.AddProgress(25)
@@ -56,16 +51,10 @@ func TestProgressBar(t *testing.T) {
 		t.Errorf("failed to update ProgressBar: incorrect state: expected incomplete, got complete")
 	}
 
-	p.Draw(sc)
-}
+	app, err := newTestApp(p)
+	if err != nil {
+		t.Errorf("failed to initialize Application: %s", err)
+	}
 
-func testProgressBar() (*ProgressBar, tcell.Screen, error) {
-	p := NewProgressBar()
-
-	sc := tcell.NewSimulationScreen("UTF-8")
-	sc.SetSize(80, 24)
-
-	_ = NewApplication().SetRoot(p, true).SetScreen(sc)
-
-	return p, sc, nil
+	p.Draw(app.screen)
 }

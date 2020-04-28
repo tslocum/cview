@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"testing"
-
-	"github.com/gdamore/tcell"
 )
 
 const (
@@ -44,18 +42,16 @@ func TestTextViewWrite(t *testing.T) {
 			t.Parallel()
 
 			var (
-				tv, _, err   = testTextView(c)
+				tv           = tvc(NewTextView(), c)
 				expectedData []byte
 				n            int
+				err          error
 			)
-			if err != nil {
-				t.Error(err)
-			}
 
 			if c.app {
 				expectedData, err = prepareAppendTextView(tv)
 				if err != nil {
-					t.Error(err)
+					t.Errorf("failed to prepare append TextView: %s", err)
 				}
 
 				expectedData = append(expectedData, randomData...)
@@ -91,17 +87,15 @@ func BenchmarkTextViewWrite(b *testing.B) {
 
 		b.Run(c.String(), func(b *testing.B) {
 			var (
-				tv, _, err = testTextView(c)
-				n          int
+				tv  = tvc(NewTextView(), c)
+				n   int
+				err error
 			)
-			if err != nil {
-				b.Error(err)
-			}
 
 			if c.app {
 				_, err = prepareAppendTextView(tv)
 				if err != nil {
-					b.Error(err)
+					b.Errorf("failed to prepare append TextView: %s", err)
 				}
 			}
 
@@ -135,31 +129,30 @@ func TestTextViewDraw(t *testing.T) {
 		t.Run(c.String(), func(t *testing.T) {
 			t.Parallel()
 
-			var (
-				tv, sc, err = testTextView(c)
-				n           int
-			)
+			tv := tvc(NewTextView(), c)
+
+			app, err := newTestApp(tv)
 			if err != nil {
-				t.Error(err)
+				t.Errorf("failed to initialize Application: %s", err)
 			}
 
 			if c.app {
 				_, err = prepareAppendTextView(tv)
 				if err != nil {
-					t.Error(err)
+					t.Errorf("failed to prepare append TextView: %s", err)
 				}
 
-				tv.Draw(sc)
+				tv.Draw(app.screen)
 			}
 
-			n, err = tv.Write(randomData)
+			n, err := tv.Write(randomData)
 			if err != nil {
 				t.Errorf("failed to write (successfully wrote %d) bytes: %s", n, err)
 			} else if n != randomDataSize {
 				t.Errorf("failed to write: expected to write %d bytes, wrote %d", randomDataSize, n)
 			}
 
-			tv.Draw(sc)
+			tv.Draw(app.screen)
 		})
 	}
 }
@@ -169,24 +162,23 @@ func BenchmarkTextViewDraw(b *testing.B) {
 		c := c // Capture
 
 		b.Run(c.String(), func(b *testing.B) {
-			var (
-				tv, sc, err = testTextView(c)
-				n           int
-			)
+			tv := tvc(NewTextView(), c)
+
+			app, err := newTestApp(tv)
 			if err != nil {
-				b.Error(err)
+				b.Errorf("failed to initialize Application: %s", err)
 			}
 
 			if c.app {
 				_, err = prepareAppendTextView(tv)
 				if err != nil {
-					b.Error(err)
+					b.Errorf("failed to prepare append TextView: %s", err)
 				}
 
-				tv.Draw(sc)
+				tv.Draw(app.screen)
 			}
 
-			n, err = tv.Write(randomData)
+			n, err := tv.Write(randomData)
 			if err != nil {
 				b.Errorf("failed to write (successfully wrote %d) bytes: %s", n, err)
 			} else if n != randomDataSize {
@@ -197,7 +189,7 @@ func BenchmarkTextViewDraw(b *testing.B) {
 			b.ResetTimer()
 
 			for i := 0; i < b.N; i++ {
-				tv.Draw(sc)
+				tv.Draw(app.screen)
 			}
 		})
 	}
@@ -263,17 +255,6 @@ func cl(v bool) rune {
 		return 'T'
 	}
 	return 'F'
-}
-
-func testTextView(c *textViewTestCase) (*TextView, tcell.Screen, error) {
-	tv := NewTextView()
-
-	sc := tcell.NewSimulationScreen("UTF-8")
-	sc.SetSize(80, 24)
-
-	_ = NewApplication().SetRoot(tv, true).SetScreen(sc)
-
-	return tvc(tv, c), sc, nil
 }
 
 func prepareAppendTextView(t *TextView) ([]byte, error) {

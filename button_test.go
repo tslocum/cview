@@ -2,8 +2,6 @@ package cview
 
 import (
 	"testing"
-
-	"github.com/gdamore/tcell"
 )
 
 const (
@@ -14,12 +12,9 @@ const (
 func TestButton(t *testing.T) {
 	t.Parallel()
 
-	b, sc, err := testButton()
-	if err != nil {
-		t.Error(err)
-	}
+	b := NewButton(testButtonLabelA)
 	if b.GetLabel() != testButtonLabelA {
-		t.Errorf("failed to initalize Button: incorrect label: expected %s, got %s", testButtonLabelA, b.GetLabel())
+		t.Errorf("failed to initialize Button: incorrect label: expected %s, got %s", testButtonLabelA, b.GetLabel())
 	}
 
 	b.SetLabel(testButtonLabelB)
@@ -32,16 +27,10 @@ func TestButton(t *testing.T) {
 		t.Errorf("failed to update Button: incorrect label: expected %s, got %s", testButtonLabelA, b.GetLabel())
 	}
 
-	b.Draw(sc)
-}
+	app, err := newTestApp(b)
+	if err != nil {
+		t.Errorf("failed to initialize Application: %s", err)
+	}
 
-func testButton() (*Button, tcell.Screen, error) {
-	b := NewButton(testButtonLabelA)
-
-	sc := tcell.NewSimulationScreen("UTF-8")
-	sc.SetSize(80, 24)
-
-	_ = NewApplication().SetRoot(b, true).SetScreen(sc)
-
-	return b, sc, nil
+	b.Draw(app.screen)
 }

@@ -2,8 +2,6 @@ package cview
 
 import (
 	"testing"
-
-	"github.com/gdamore/tcell"
 )
 
 const (
@@ -14,16 +12,18 @@ const (
 func TestTreeView(t *testing.T) {
 	t.Parallel()
 
-	tr, sc, err := testTreeView()
-	if err != nil {
-		t.Error(err)
-	}
+	tr := NewTreeView()
 	if tr.GetRoot() != nil {
-		t.Errorf("failed to initalize TreeView: expected nil root node, got %v", tr.GetRoot())
+		t.Errorf("failed to initialize TreeView: expected nil root node, got %v", tr.GetRoot())
 	} else if tr.GetCurrentNode() != nil {
-		t.Errorf("failed to initalize TreeView: expected nil current node, got %v", tr.GetCurrentNode())
+		t.Errorf("failed to initialize TreeView: expected nil current node, got %v", tr.GetCurrentNode())
 	} else if tr.GetRowCount() != 0 {
-		t.Errorf("failed to initalize TreeView: incorrect row count: expected 0, got %d", tr.GetRowCount())
+		t.Errorf("failed to initialize TreeView: incorrect row count: expected 0, got %d", tr.GetRowCount())
+	}
+
+	app, err := newTestApp(tr)
+	if err != nil {
+		t.Errorf("failed to initialize Application: %s", err)
 	}
 
 	rootNode := NewTreeNode(treeViewTextA)
@@ -32,16 +32,16 @@ func TestTreeView(t *testing.T) {
 	}
 
 	tr.SetRoot(rootNode)
-	tr.Draw(sc)
+	tr.Draw(app.screen)
 	if tr.GetRoot() != rootNode {
-		t.Errorf("failed to initalize TreeView: expected root node A, got %v", tr.GetRoot())
+		t.Errorf("failed to initialize TreeView: expected root node A, got %v", tr.GetRoot())
 	} else if tr.GetRowCount() != 1 {
-		t.Errorf("failed to initalize TreeView: incorrect row count: expected 1, got %d", tr.GetRowCount())
+		t.Errorf("failed to initialize TreeView: incorrect row count: expected 1, got %d", tr.GetRowCount())
 	}
 
 	tr.SetCurrentNode(rootNode)
 	if tr.GetCurrentNode() != rootNode {
-		t.Errorf("failed to initalize TreeView: expected current node A, got %v", tr.GetCurrentNode())
+		t.Errorf("failed to initialize TreeView: expected current node A, got %v", tr.GetCurrentNode())
 	}
 
 	childNode := NewTreeNode(treeViewTextB)
@@ -50,21 +50,10 @@ func TestTreeView(t *testing.T) {
 	}
 
 	rootNode.AddChild(childNode)
-	tr.Draw(sc)
+	tr.Draw(app.screen)
 	if tr.GetRoot() != rootNode {
-		t.Errorf("failed to initalize TreeView: expected root node A, got %v", tr.GetRoot())
+		t.Errorf("failed to initialize TreeView: expected root node A, got %v", tr.GetRoot())
 	} else if tr.GetRowCount() != 2 {
-		t.Errorf("failed to initalize TreeView: incorrect row count: expected 1, got %d", tr.GetRowCount())
+		t.Errorf("failed to initialize TreeView: incorrect row count: expected 1, got %d", tr.GetRowCount())
 	}
-}
-
-func testTreeView() (*TreeView, tcell.Screen, error) {
-	t := NewTreeView()
-
-	sc := tcell.NewSimulationScreen("UTF-8")
-	sc.SetSize(80, 24)
-
-	_ = NewApplication().SetRoot(t, true).SetScreen(sc)
-
-	return t, sc, nil
 }

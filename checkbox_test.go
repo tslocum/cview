@@ -2,8 +2,6 @@ package cview
 
 import (
 	"testing"
-
-	"github.com/gdamore/tcell"
 )
 
 const (
@@ -14,14 +12,16 @@ const (
 func TestCheckBox(t *testing.T) {
 	t.Parallel()
 
-	c, sc, err := testCheckBox()
-	if err != nil {
-		t.Error(err)
-	}
+	c := NewCheckBox()
 	if c.IsChecked() {
-		t.Errorf("failed to initalize CheckBox: incorrect initial state: expected unchecked, got checked")
-	} else if c.GetLabel() != testCheckBoxLabelA {
-		t.Errorf("failed to initalize CheckBox: incorrect label: expected %s, got %s", testCheckBoxLabelA, c.GetLabel())
+		t.Errorf("failed to initialize CheckBox: incorrect initial state: expected unchecked, got checked")
+	} else if c.GetLabel() != "" {
+		t.Errorf("failed to initialize CheckBox: incorrect label: expected '', got %s", c.GetLabel())
+	}
+
+	c.SetLabel(testCheckBoxLabelA)
+	if c.GetLabel() != testCheckBoxLabelA {
+		t.Errorf("failed to set CheckBox label: incorrect label: expected %s, got %s", testCheckBoxLabelA, c.GetLabel())
 	}
 
 	c.SetLabel(testCheckBoxLabelB)
@@ -39,18 +39,10 @@ func TestCheckBox(t *testing.T) {
 		t.Errorf("failed to update CheckBox state: incorrect state: expected unchecked, got checked")
 	}
 
-	c.Draw(sc)
-}
+	app, err := newTestApp(c)
+	if err != nil {
+		t.Errorf("failed to initialize Application: %s", err)
+	}
 
-func testCheckBox() (*CheckBox, tcell.Screen, error) {
-	c := NewCheckBox()
-
-	sc := tcell.NewSimulationScreen("UTF-8")
-	sc.SetSize(80, 24)
-
-	_ = NewApplication().SetRoot(c, true).SetScreen(sc)
-
-	c.SetLabel(testCheckBoxLabelA)
-
-	return c, sc, nil
+	c.Draw(app.screen)
 }
