@@ -13,12 +13,16 @@ const (
 func TestList(t *testing.T) {
 	t.Parallel()
 
+	// Initialize
+
 	l := NewList()
 	if l.GetItemCount() != 0 {
 		t.Errorf("failed to initialize List: expected item count 0, got %d", l.GetItemCount())
 	} else if l.GetCurrentItem() != 0 {
 		t.Errorf("failed to initialize List: expected current item 0, got %d", l.GetCurrentItem())
 	}
+
+	// Add item 0
 
 	l.AddItem(listTextA, listTextB, 'a', nil)
 	if l.GetItemCount() != 1 {
@@ -27,12 +31,16 @@ func TestList(t *testing.T) {
 		t.Errorf("failed to update List: expected current item 0, got %d", l.GetCurrentItem())
 	}
 
+	// Get item 0 text
+
 	mainText, secondaryText := l.GetItemText(0)
 	if mainText != listTextA {
 		t.Errorf("failed to update List: expected main text %s, got %s", listTextA, mainText)
 	} else if secondaryText != listTextB {
 		t.Errorf("failed to update List: expected secondary text %s, got %s", listTextB, secondaryText)
 	}
+
+	// Add item 1
 
 	l.AddItem(listTextB, listTextC, 'a', nil)
 	if l.GetItemCount() != 2 {
@@ -41,12 +49,16 @@ func TestList(t *testing.T) {
 		t.Errorf("failed to update List: expected current item 0, got %v", l.GetCurrentItem())
 	}
 
+	// Get item 1 text
+
 	mainText, secondaryText = l.GetItemText(1)
 	if mainText != listTextB {
 		t.Errorf("failed to update List: expected main text %s, got %s", listTextB, mainText)
 	} else if secondaryText != listTextC {
 		t.Errorf("failed to update List: expected secondary text %s, got %s", listTextC, secondaryText)
 	}
+
+	// Draw
 
 	app, err := newTestApp(l)
 	if err != nil {

@@ -7,6 +7,8 @@ import (
 func TestProgressBar(t *testing.T) {
 	t.Parallel()
 
+	// Initialize
+
 	p := NewProgressBar()
 	if p.GetProgress() != 0 {
 		t.Errorf("failed to initialize ProgressBar: incorrect initial state: expected 0 progress, got %d", p.GetProgress())
@@ -15,6 +17,8 @@ func TestProgressBar(t *testing.T) {
 	} else if p.Complete() {
 		t.Errorf("failed to initialize ProgressBar: incorrect initial state: expected incomplete, got complete")
 	}
+
+	// Add progress
 
 	p.AddProgress(25)
 	if p.GetProgress() != 25 {
@@ -44,12 +48,16 @@ func TestProgressBar(t *testing.T) {
 		t.Errorf("failed to update ProgressBar: incorrect state: expected complete, got incomplete")
 	}
 
+	// Reset progress
+
 	p.SetProgress(0)
 	if p.GetProgress() != 0 {
 		t.Errorf("failed to update ProgressBar: incorrect state: expected 0 progress, got %d", p.GetProgress())
 	} else if p.Complete() {
 		t.Errorf("failed to update ProgressBar: incorrect state: expected incomplete, got complete")
 	}
+
+	// Draw
 
 	app, err := newTestApp(p)
 	if err != nil {
