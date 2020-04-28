@@ -1,3 +1,6 @@
+v1.4.6 (WIP)
+- Add List.SetSelectedTextAttributes
+
 v1.4.5 (2020-04-25)
 - Add multithreading support
 - Add ContextMenu (initially supported by List)

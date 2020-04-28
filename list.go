@@ -43,6 +43,9 @@ type List struct {
 	// The text color for selected items.
 	selectedTextColor tcell.Color
 
+	// The style attributes for selected items.
+	selectedTextAttributes tcell.AttrMask
+
 	// Visibility of the scroll bar.
 	scrollBarVisibility ScrollBarVisibility
 
@@ -229,6 +232,15 @@ func (l *List) SetSelectedTextColor(color tcell.Color) *List {
 	defer l.Unlock()
 
 	l.selectedTextColor = color
+	return l
+}
+
+// SetSelectedTextAttributes sets the style attributes of selected items.
+func (l *List) SetSelectedTextAttributes(attr tcell.AttrMask) *List {
+	l.Lock()
+	defer l.Unlock()
+
+	l.selectedTextAttributes = attr
 	return l
 }
 
@@ -695,7 +707,7 @@ func (l *List) Draw(screen tcell.Screen) {
 				if fg == l.mainTextColor {
 					fg = l.selectedTextColor
 				}
-				style = style.Background(l.selectedBackgroundColor).Foreground(fg)
+				style = style.Background(l.selectedBackgroundColor).Foreground(fg) | tcell.Style(l.selectedTextAttributes)
 				screen.SetContent(x+bx, y, m, c, style)
 			}
 		}
