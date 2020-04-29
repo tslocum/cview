@@ -123,14 +123,15 @@ func (l *List) SetCurrentItem(index int) *List {
 		index = 0
 	}
 
-	if index != l.currentItem && l.changed != nil {
+	previousCurrentItem := l.currentItem
+	l.currentItem = index
+
+	if index != previousCurrentItem && l.changed != nil {
 		item := l.items[index]
 		l.Unlock()
 		l.changed(index, item.MainText, item.SecondaryText, item.Shortcut)
 		l.Lock()
 	}
-
-	l.currentItem = index
 
 	l.Unlock()
 	return l
@@ -978,6 +979,7 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 			if index != -1 {
 				item := l.items[index]
 				if item.Enabled {
+					l.currentItem = index
 					if item.Selected != nil {
 						item.Selected()
 					}
@@ -987,7 +989,6 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 					if index != l.currentItem && l.changed != nil {
 						l.changed(index, item.MainText, item.SecondaryText, item.Shortcut)
 					}
-					l.currentItem = index
 				}
 			}
 			consumed = true
@@ -1004,10 +1005,10 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 			if index != -1 {
 				item := l.items[index]
 				if item.Enabled {
+					l.currentItem = index
 					if index != l.currentItem && l.changed != nil {
 						l.changed(index, item.MainText, item.SecondaryText, item.Shortcut)
 					}
-					l.currentItem = index
 				}
 			}
 
