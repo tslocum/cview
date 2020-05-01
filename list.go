@@ -58,6 +58,9 @@ type List struct {
 	// If true, the selection is only shown when the list has focus.
 	selectedFocusOnly bool
 
+	// If true, the selection must remain visible when scrolling.
+	selectedAlwaysVisible bool
+
 	// If true, the entire row is highlighted when selected.
 	highlightFullLine bool
 
@@ -80,6 +83,9 @@ type List struct {
 
 	// An optional function which is called when the user presses the Escape key.
 	done func()
+
+	// The height of the list the last time it was drawn.
+	height int
 
 	sync.RWMutex
 }
@@ -125,6 +131,8 @@ func (l *List) SetCurrentItem(index int) *List {
 
 	previousCurrentItem := l.currentItem
 	l.currentItem = index
+
+	l.updateOffset()
 
 	if index != previousCurrentItem && l.changed != nil {
 		item := l.items[index]
@@ -200,6 +208,25 @@ func (l *List) RemoveItem(index int) *List {
 	return l
 }
 
+// SetOffset sets the number of list items skipped at the top before the first
+// item is drawn.
+func (l *List) SetOffset(offset int) *List {
+	l.Lock()
+	defer l.Unlock()
+
+	l.offset = offset
+	return l
+}
+
+// GetOffset returns the number of list items skipped at the top before the
+// first item is drawn.
+func (l *List) GetOffset() int {
+	l.Lock()
+	defer l.Unlock()
+
+	return l.offset
+}
+
 // SetMainTextColor sets the color of the items' main text.
 func (l *List) SetMainTextColor(color tcell.Color) *List {
 	l.Lock()
@@ -262,6 +289,16 @@ func (l *List) SetSelectedFocusOnly(focusOnly bool) *List {
 	defer l.Unlock()
 
 	l.selectedFocusOnly = focusOnly
+	return l
+}
+
+// SetSelectedAlwaysVisible sets a flag which determines whether the currently
+// selected list item must remain visible when scrolling.
+func (l *List) SetSelectedAlwaysVisible(alwaysVisible bool) *List {
+	l.Lock()
+	defer l.Unlock()
+
+	l.selectedAlwaysVisible = alwaysVisible
 	return l
 }
 
@@ -526,6 +563,7 @@ func (l *List) Clear() *List {
 
 	l.items = nil
 	l.currentItem = 0
+	l.offset = 0
 	return l
 }
 
@@ -562,6 +600,7 @@ func (l *List) transform(tr Transformation) {
 	switch tr {
 	case TransformFirstItem:
 		l.currentItem = 0
+		l.offset = 0
 		decreasing = true
 	case TransformLastItem:
 		l.currentItem = len(l.items) - 1
@@ -583,10 +622,12 @@ func (l *List) transform(tr Transformation) {
 				l.currentItem = len(l.items) - 1
 			} else {
 				l.currentItem = 0
+				l.offset = 0
 			}
 		} else if l.currentItem >= len(l.items) {
 			if l.wrapAround {
 				l.currentItem = 0
+				l.offset = 0
 			} else {
 				l.currentItem = len(l.items) - 1
 			}
@@ -603,6 +644,22 @@ func (l *List) transform(tr Transformation) {
 			l.currentItem++
 		}
 	}
+
+	l.updateOffset()
+}
+
+func (l *List) updateOffset() {
+	if l.currentItem < l.offset {
+		l.offset = l.currentItem
+	} else if l.showSecondaryText {
+		if 2*(l.currentItem-l.offset) >= l.height-1 {
+			l.offset = (2*l.currentItem + 3 - l.height) / 2
+		}
+	} else {
+		if l.currentItem-l.offset >= l.height {
+			l.offset = l.currentItem + 1 - l.height
+		}
+	}
 }
 
 // Draw draws this primitive onto the screen.
@@ -616,6 +673,8 @@ func (l *List) Draw(screen tcell.Screen) {
 	// Determine the dimensions.
 	x, y, width, height := l.GetInnerRect()
 	bottomLimit := y + height
+
+	l.height = height
 
 	screenWidth, _ := screen.Size()
 	scrollBarHeight := height
@@ -641,16 +700,8 @@ func (l *List) Draw(screen tcell.Screen) {
 	}
 
 	// Adjust offset to keep the current selection in view.
-	if l.currentItem < l.offset {
-		l.offset = l.currentItem
-	} else if l.showSecondaryText {
-		if 2*(l.currentItem-l.offset) >= height-1 {
-			l.offset = (2*l.currentItem + 3 - height) / 2
-		}
-	} else {
-		if l.currentItem-l.offset >= height {
-			l.offset = l.currentItem + 1 - height
-		}
+	if l.selectedAlwaysVisible {
+		l.updateOffset()
 	}
 
 	// Draw the list items.
