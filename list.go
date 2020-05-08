@@ -936,6 +936,15 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 					}
 				}
 				if !found {
+					if ch == 'j' {
+						l.transform(TransformNextItem)
+					} else if ch == 'k' {
+						l.transform(TransformPreviousItem)
+					} else if ch == 'g' {
+						l.transform(TransformFirstItem)
+					} else if ch == 'G' {
+						l.transform(TransformLastItem)
+					}
 					break
 				}
 			}
