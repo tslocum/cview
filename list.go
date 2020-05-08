@@ -129,12 +129,12 @@ func (l *List) SetCurrentItem(index int) *List {
 		index = 0
 	}
 
-	previousCurrentItem := l.currentItem
+	previousItem := l.currentItem
 	l.currentItem = index
 
 	l.updateOffset()
 
-	if index != previousCurrentItem && l.changed != nil {
+	if index != previousItem && l.changed != nil {
 		item := l.items[index]
 		l.Unlock()
 		l.changed(index, item.MainText, item.SecondaryText, item.Shortcut)
@@ -191,13 +191,13 @@ func (l *List) RemoveItem(index int) *List {
 	}
 
 	// Shift current item.
-	previousCurrentItem := l.currentItem
+	previousItem := l.currentItem
 	if l.currentItem >= index && l.currentItem > 0 {
 		l.currentItem--
 	}
 
 	// Fire "changed" event for removed items.
-	if previousCurrentItem == index && l.changed != nil {
+	if previousItem == index && l.changed != nil {
 		item := l.items[l.currentItem]
 		l.Unlock()
 		l.changed(l.currentItem, item.MainText, item.SecondaryText, item.Shortcut)
@@ -936,14 +936,15 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 					}
 				}
 				if !found {
-					if ch == 'j' {
-						l.transform(TransformNextItem)
-					} else if ch == 'k' {
-						l.transform(TransformPreviousItem)
-					} else if ch == 'g' {
+					switch ch {
+					case 'g':
 						l.transform(TransformFirstItem)
-					} else if ch == 'G' {
+					case 'G':
 						l.transform(TransformLastItem)
+					case 'j':
+						l.transform(TransformNextItem)
+					case 'k':
+						l.transform(TransformPreviousItem)
 					}
 					break
 				}

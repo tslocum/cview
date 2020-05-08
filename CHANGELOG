@@ -1,5 +1,6 @@
 v1.4.6 (WIP)
 - Add List.GetOffset, List.SetOffset and List.SetSelectedTextAttributes
+- Add Vim-style keybindings to List
 - Fix List not updating selected item before calling selected handlers
 
 v1.4.5 (2020-04-25)
