@@ -40,7 +40,7 @@ func main() {
 
 	if debugPort > 0 {
 		go func() {
-			log.Println(http.ListenAndServe(fmt.Sprintf("localhost:%d", debugPort), nil))
+			log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", debugPort), nil))
 		}()
 	}
 

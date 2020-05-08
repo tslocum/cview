@@ -904,9 +904,7 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 				}
 
 				x, y, _, _ := l.GetInnerRect()
-				l.Unlock()
-				l.ContextMenu.show(l.currentItem, x+offsetX, y+offsetY, setFocus)
-				l.Lock()
+				defer l.ContextMenu.show(l.currentItem, x+offsetX, y+offsetY, setFocus)
 			} else if l.currentItem >= 0 && l.currentItem < len(l.items) {
 				item := l.items[l.currentItem]
 				if item.Enabled {
@@ -1015,14 +1013,18 @@ func (l *List) indexAtPoint(x, y int) int {
 // MouseHandler returns the mouse handler for this primitive.
 func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
 	return l.WrapMouseHandler(func(action MouseAction, event *tcell.EventMouse, setFocus func(p Primitive)) (consumed bool, capture Primitive) {
+		l.Lock()
+
 		// Pass events to context menu.
 		if l.ContextMenu.open && l.ContextMenu.list != nil && l.ContextMenu.list.InRect(event.Position()) {
-			l.ContextMenu.list.MouseHandler()(action, event, setFocus)
+			defer l.ContextMenu.list.MouseHandler()(action, event, setFocus)
 			consumed = true
+			l.Unlock()
 			return
 		}
 
 		if !l.InRect(event.Position()) {
+			l.Unlock()
 			return false, nil
 		}
 
@@ -1030,33 +1032,44 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 		switch action {
 		case MouseLeftClick:
 			if l.ContextMenu.open {
-				l.ContextMenu.hide(setFocus)
+				defer l.ContextMenu.hide(setFocus)
 				consumed = true
+				l.Unlock()
 				return
 			}
 
+			l.Unlock()
 			setFocus(l)
+			l.Lock()
+
 			index := l.indexAtPoint(event.Position())
 			if index != -1 {
 				item := l.items[index]
 				if item.Enabled {
 					l.currentItem = index
 					if item.Selected != nil {
+						l.Unlock()
 						item.Selected()
+						l.Lock()
 					}
 					if l.selected != nil {
+						l.Unlock()
 						l.selected(index, item.MainText, item.SecondaryText, item.Shortcut)
+						l.Lock()
 					}
 					if index != l.currentItem && l.changed != nil {
+						l.Unlock()
 						l.changed(index, item.MainText, item.SecondaryText, item.Shortcut)
+						l.Lock()
 					}
 				}
 			}
 			consumed = true
 		case MouseMiddleClick:
 			if l.ContextMenu.open {
-				l.ContextMenu.hide(setFocus)
+				defer l.ContextMenu.hide(setFocus)
 				consumed = true
+				l.Unlock()
 				return
 			}
 		case MouseRightDown:
@@ -1068,16 +1081,16 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 				if item.Enabled {
 					l.currentItem = index
 					if index != l.currentItem && l.changed != nil {
+						l.Unlock()
 						l.changed(index, item.MainText, item.SecondaryText, item.Shortcut)
+						l.Lock()
 					}
 				}
 			}
 
 			if l.ContextMenu.list != nil && len(l.ContextMenu.list.items) > 0 {
-				l.Unlock()
-				l.ContextMenu.show(l.currentItem, x, y, setFocus)
-				l.Lock()
 				l.ContextMenu.drag = true
+				defer l.ContextMenu.show(l.currentItem, x, y, setFocus)
 			} else {
 				defer l.MouseHandler()(MouseLeftClick, event, setFocus)
 			}
@@ -1111,6 +1124,7 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 			consumed = true
 		}
 
+		l.Unlock()
 		return
 	})
 }
