@@ -1073,6 +1073,11 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 				return
 			}
 		case MouseRightDown:
+			if l.ContextMenu.list == nil || len(l.ContextMenu.list.items) == 0 {
+				l.Unlock()
+				return
+			}
+
 			x, y := event.Position()
 
 			index := l.indexAtPoint(event.Position())
@@ -1088,12 +1093,8 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 				}
 			}
 
-			if l.ContextMenu.list != nil && len(l.ContextMenu.list.items) > 0 {
-				l.ContextMenu.drag = true
-				defer l.ContextMenu.show(l.currentItem, x, y, setFocus)
-			} else {
-				defer l.MouseHandler()(MouseLeftClick, event, setFocus)
-			}
+			defer l.ContextMenu.show(l.currentItem, x, y, setFocus)
+			l.ContextMenu.drag = true
 			consumed = true
 		case MouseMove:
 			if l.hover {
