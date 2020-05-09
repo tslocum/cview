@@ -18,15 +18,36 @@ type ContextMenu struct {
 
 // NewContextMenu returns a new context menu.
 func NewContextMenu(parent Primitive) *ContextMenu {
-	c := &ContextMenu{parent: parent}
+	return &ContextMenu{
+		parent: parent,
+	}
+}
 
-	return c
+func (c *ContextMenu) initializeList() {
+	if c.list != nil {
+		return
+	}
+
+	c.list = NewList().
+		ShowSecondaryText(false).
+		SetHover(true).
+		SetWrapAround(true)
+	c.list.
+		SetBorder(true).
+		SetBorderPadding(
+			Styles.ContextMenuPaddingTop,
+			Styles.ContextMenuPaddingBottom,
+			Styles.ContextMenuPaddingLeft,
+			Styles.ContextMenuPaddingRight)
+	c.list.showFocus = false
 }
 
 // ContextMenuList returns the underlying List of the context menu.
 func (c *ContextMenu) ContextMenuList() *List {
 	c.l.Lock()
 	defer c.l.Unlock()
+
+	c.initializeList()
 
 	return c.list
 }
@@ -37,20 +58,7 @@ func (c *ContextMenu) AddContextItem(text string, shortcut rune, selected func(i
 	c.l.Lock()
 	defer c.l.Unlock()
 
-	if c.list == nil {
-		c.list = NewList().
-			ShowSecondaryText(false).
-			SetHover(true).
-			SetWrapAround(true)
-		c.list.
-			SetBorder(true).
-			SetBorderPadding(
-				Styles.ContextMenuPaddingTop,
-				Styles.ContextMenuPaddingBottom,
-				Styles.ContextMenuPaddingLeft,
-				Styles.ContextMenuPaddingRight)
-		c.list.showFocus = false
-	}
+	c.initializeList()
 
 	c.list.AddItem(text, "", shortcut, c.wrap(selected))
 	if text == "" && shortcut == 0 {
@@ -74,9 +82,9 @@ func (c *ContextMenu) ClearContextMenu() *ContextMenu {
 	c.l.Lock()
 	defer c.l.Unlock()
 
-	if c.list != nil {
-		c.list.Clear()
-	}
+	c.initializeList()
+
+	c.list.Clear()
 
 	return c
 }
@@ -101,8 +109,26 @@ func (c *ContextMenu) ShowContextMenu(item int, x int, y int, setFocus func(Prim
 	c.show(item, x, y, setFocus)
 }
 
+// HideContextMenu hides the context menu.
+func (c *ContextMenu) HideContextMenu(setFocus func(Primitive)) {
+	c.l.Lock()
+	defer c.l.Unlock()
+
+	c.hide(setFocus)
+}
+
+// ContextMenuVisible returns whether or not the context menu is visible.
+func (c *ContextMenu) ContextMenuVisible() bool {
+	c.l.Lock()
+	defer c.l.Unlock()
+
+	return c.open
+}
+
 func (c *ContextMenu) show(item int, x int, y int, setFocus func(Primitive)) {
-	if c.list == nil || len(c.list.items) == 0 {
+	c.initializeList()
+
+	if len(c.list.items) == 0 {
 		return
 	}
 
@@ -139,11 +165,9 @@ func (c *ContextMenu) show(item int, x int, y int, setFocus func(Primitive)) {
 }
 
 func (c *ContextMenu) hide(setFocus func(Primitive)) {
-	c.open = false
+	c.initializeList()
 
-	if c.list == nil {
-		return
-	}
+	c.open = false
 
 	if c.list.HasFocus() {
 		setFocus(c.parent)

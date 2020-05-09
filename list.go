@@ -577,12 +577,12 @@ func (l *List) Focus(delegate func(p Primitive)) {
 
 // HasFocus returns whether or not this primitive has focus.
 func (l *List) HasFocus() bool {
-	l.RLock()
-	defer l.RUnlock()
-
 	if l.ContextMenu.open {
 		return l.ContextMenu.list.HasFocus()
 	}
+
+	l.RLock()
+	defer l.RUnlock()
 	return l.hasFocus
 }
 
@@ -791,13 +791,13 @@ func (l *List) Draw(screen tcell.Screen) {
 
 	// Draw context menu.
 	if hasFocus && l.ContextMenu.open {
-		list := l.ContextMenu.list
+		ctx := l.ContextMenuList()
 
 		x, y, width, height = l.GetInnerRect()
 
 		// What's the longest option text?
 		maxWidth := 0
-		for _, option := range list.items {
+		for _, option := range ctx.items {
 			strWidth := TaggedStringWidth(option.MainText)
 			if option.Shortcut != 0 {
 				strWidth += 4
@@ -807,15 +807,15 @@ func (l *List) Draw(screen tcell.Screen) {
 			}
 		}
 
-		lheight := len(list.items)
+		lheight := len(ctx.items)
 		lwidth := maxWidth
 
 		// Add space for borders
 		lwidth += 2
 		lheight += 2
 
-		lwidth += l.list.paddingLeft + l.list.paddingRight
-		lheight += l.list.paddingTop + l.list.paddingBottom
+		lwidth += ctx.paddingLeft + ctx.paddingRight
+		lheight += ctx.paddingTop + ctx.paddingBottom
 
 		cx, cy := l.ContextMenu.x, l.ContextMenu.y
 		if cx < 0 || cy < 0 {
@@ -834,12 +834,12 @@ func (l *List) Draw(screen tcell.Screen) {
 			lheight = sheight - cy
 		}
 
-		if list.scrollBarVisibility == ScrollBarAlways || (list.scrollBarVisibility == ScrollBarAuto && len(list.items) > lheight) {
+		if ctx.scrollBarVisibility == ScrollBarAlways || (ctx.scrollBarVisibility == ScrollBarAuto && len(ctx.items) > lheight) {
 			lwidth++ // Add space for scroll bar
 		}
 
-		list.SetRect(cx, cy, lwidth, lheight)
-		list.Draw(screen)
+		ctx.SetRect(cx, cy, lwidth, lheight)
+		ctx.Draw(screen)
 	}
 }
 
@@ -1016,8 +1016,8 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 		l.Lock()
 
 		// Pass events to context menu.
-		if l.ContextMenu.open && l.ContextMenu.list != nil && l.ContextMenu.list.InRect(event.Position()) {
-			defer l.ContextMenu.list.MouseHandler()(action, event, setFocus)
+		if l.ContextMenuVisible() && l.ContextMenuList().InRect(event.Position()) {
+			defer l.ContextMenuList().MouseHandler()(action, event, setFocus)
 			consumed = true
 			l.Unlock()
 			return
@@ -1031,7 +1031,7 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 		// Process mouse event.
 		switch action {
 		case MouseLeftClick:
-			if l.ContextMenu.open {
+			if l.ContextMenuVisible() {
 				defer l.ContextMenu.hide(setFocus)
 				consumed = true
 				l.Unlock()
@@ -1073,7 +1073,7 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 				return
 			}
 		case MouseRightDown:
-			if l.ContextMenu.list == nil || len(l.ContextMenu.list.items) == 0 {
+			if len(l.ContextMenuList().items) == 0 {
 				l.Unlock()
 				return
 			}
