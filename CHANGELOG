@@ -1,4 +1,5 @@
 v1.4.6 (WIP)
+- Add Box.ShowFocus
 - Add List.GetOffset, List.SetOffset and List.SetSelectedTextAttributes
 - Add Vim-style keybindings to List
 - Fix List not updating selected item before calling selected handlers

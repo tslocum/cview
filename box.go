@@ -471,6 +471,16 @@ func (b *Box) Draw(screen tcell.Screen) {
 	b.l.Unlock()
 }
 
+// ShowFocus sets the flag indicating whether or not the borders of this
+// primitive should change thickness when focused.
+func (b *Box) ShowFocus(showFocus bool) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
+	b.showFocus = showFocus
+	return b
+}
+
 // Focus is called when this primitive receives focus.
 func (b *Box) Focus(delegate func(p Primitive)) {
 	b.l.Lock()

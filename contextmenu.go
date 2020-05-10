@@ -33,13 +33,13 @@ func (c *ContextMenu) initializeList() {
 		SetHover(true).
 		SetWrapAround(true)
 	c.list.
+		ShowFocus(false).
 		SetBorder(true).
 		SetBorderPadding(
 			Styles.ContextMenuPaddingTop,
 			Styles.ContextMenuPaddingBottom,
 			Styles.ContextMenuPaddingLeft,
 			Styles.ContextMenuPaddingRight)
-	c.list.showFocus = false
 }
 
 // ContextMenuList returns the underlying List of the context menu.
