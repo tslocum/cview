@@ -649,6 +649,8 @@ func (l *List) transform(tr Transformation) {
 }
 
 func (l *List) updateOffset() {
+	_, _, _, l.height = l.GetInnerRect()
+
 	if l.currentItem < l.offset {
 		l.offset = l.currentItem
 	} else if l.showSecondaryText {
