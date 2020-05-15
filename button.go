@@ -151,14 +151,13 @@ func (b *Button) Draw(screen tcell.Screen) {
 func (b *Button) InputHandler() func(event *tcell.EventKey, setFocus func(p Primitive)) {
 	return b.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p Primitive)) {
 		// Process key event.
-		switch key := event.Key(); key {
-		case tcell.KeyEnter: // Selected.
+		if matchesKeys(event, Keys.Select) {
 			if b.selected != nil {
 				b.selected()
 			}
-		case tcell.KeyBacktab, tcell.KeyTab, tcell.KeyEscape: // Leave. No action.
+		} else if matchesKeys(event, Keys.Cancel) || matchesKeys(event, Keys.PreviousField) || matchesKeys(event, Keys.NextField) {
 			if b.blur != nil {
-				b.blur(key)
+				b.blur(event.Key())
 			}
 		}
 	})

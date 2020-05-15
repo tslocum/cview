@@ -889,41 +889,25 @@ func (t *TreeView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 
 		// Because the tree is flattened into a list only at drawing time, we also
 		// postpone the (selection) movement to drawing time.
-		switch key := event.Key(); key {
-		case tcell.KeyTab, tcell.KeyBacktab, tcell.KeyEscape:
+		if matchesKeys(event, Keys.Cancel) || matchesKeys(event, Keys.PreviousField) || matchesKeys(event, Keys.NextField) {
 			if t.done != nil {
 				t.Unlock()
-				t.done(key)
+				t.done(event.Key())
 				t.Lock()
 			}
-		case tcell.KeyDown, tcell.KeyRight:
-			t.movement = treeDown
-		case tcell.KeyUp, tcell.KeyLeft:
-			t.movement = treeUp
-		case tcell.KeyHome:
+		} else if matchesKeys(event, Keys.FirstItem) {
 			t.movement = treeHome
-		case tcell.KeyEnd:
+		} else if matchesKeys(event, Keys.LastItem) {
 			t.movement = treeEnd
-		case tcell.KeyPgDn, tcell.KeyCtrlF:
-			t.movement = treePageDown
-		case tcell.KeyPgUp, tcell.KeyCtrlB:
+		} else if matchesKeys(event, Keys.PreviousItem) || matchesKeys(event, Keys.PreviousField) {
+			t.movement = treeUp
+		} else if matchesKeys(event, Keys.NextItem) || matchesKeys(event, Keys.NextField) {
+			t.movement = treeDown
+		} else if matchesKeys(event, Keys.PreviousPage) {
 			t.movement = treePageUp
-		case tcell.KeyRune:
-			switch event.Rune() {
-			case 'g':
-				t.movement = treeHome
-			case 'G':
-				t.movement = treeEnd
-			case 'j':
-				t.movement = treeDown
-			case 'k':
-				t.movement = treeUp
-			case ' ':
-				t.Unlock()
-				selectNode()
-				t.Lock()
-			}
-		case tcell.KeyEnter:
+		} else if matchesKeys(event, Keys.NextPage) {
+			t.movement = treePageDown
+		} else if matchesKeys(event, Keys.Select) || event.Rune() == ' ' { // TODO space is hardcoded
 			t.Unlock()
 			selectNode()
 			t.Lock()

@@ -31,7 +31,7 @@ type Theme struct {
 	ScrollBarColor tcell.Color // Scroll bar color.
 }
 
-// Styles defines the theme for applications. The default is for a black
+// Styles defines the appearance of an application. The default is for a black
 // background and some basic colors: black, white, yellow, green, cyan, and
 // blue.
 var Styles = Theme{

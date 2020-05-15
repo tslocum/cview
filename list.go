@@ -850,7 +850,9 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 	return l.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p Primitive)) {
 		l.Lock()
 
-		if event.Key() == tcell.KeyEscape {
+		previousItem := l.currentItem
+
+		if matchesKeys(event, Keys.Cancel) {
 			if l.ContextMenu.open {
 				l.Unlock()
 
@@ -865,49 +867,8 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 				l.Unlock()
 			}
 			return
-		} else if len(l.items) == 0 && (event.Key() != tcell.KeyEnter || event.Modifiers()&tcell.ModAlt == 0) {
-			l.Unlock()
-			return
-		}
-
-		previousItem := l.currentItem
-
-		switch key := event.Key(); key {
-		case tcell.KeyHome:
-			l.transform(TransformFirstItem)
-		case tcell.KeyEnd:
-			l.transform(TransformLastItem)
-		case tcell.KeyBacktab, tcell.KeyUp, tcell.KeyLeft:
-			l.transform(TransformPreviousItem)
-		case tcell.KeyTab, tcell.KeyDown, tcell.KeyRight:
-			l.transform(TransformNextItem)
-		case tcell.KeyPgUp:
-			l.transform(TransformPreviousPage)
-		case tcell.KeyPgDn:
-			l.transform(TransformNextPage)
-		case tcell.KeyEnter:
-			if event.Modifiers()&tcell.ModAlt != 0 {
-				// Do we show any shortcuts?
-				var showShortcuts bool
-				for _, item := range l.items {
-					if item.Shortcut != 0 {
-						showShortcuts = true
-						break
-					}
-				}
-
-				offsetX := 7
-				if showShortcuts {
-					offsetX += 4
-				}
-				offsetY := l.currentItem
-				if l.showSecondaryText {
-					offsetY *= 2
-				}
-
-				x, y, _, _ := l.GetInnerRect()
-				defer l.ContextMenu.show(l.currentItem, x+offsetX, y+offsetY, setFocus)
-			} else if l.currentItem >= 0 && l.currentItem < len(l.items) {
+		} else if matchesKeys(event, Keys.Select) {
+			if l.currentItem >= 0 && l.currentItem < len(l.items) {
 				item := l.items[l.currentItem]
 				if item.Enabled {
 					if item.Selected != nil {
@@ -922,43 +883,74 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 					}
 				}
 			}
-		case tcell.KeyRune:
-			ch := event.Rune()
-			if ch != ' ' {
-				// It's not a space bar. Is it a shortcut?
-				var found bool
-				for index, item := range l.items {
-					if item.Enabled && item.Shortcut == ch {
-						// We have a shortcut.
-						found = true
-						l.currentItem = index
-						break
-					}
-				}
-				if !found {
-					switch ch {
-					case 'g':
-						l.transform(TransformFirstItem)
-					case 'G':
-						l.transform(TransformLastItem)
-					case 'j':
-						l.transform(TransformNextItem)
-					case 'k':
-						l.transform(TransformPreviousItem)
-					}
+		} else if matchesKeys(event, Keys.ShowContextMenu) {
+			// Do we show any shortcuts?
+			var showShortcuts bool
+			for _, item := range l.items {
+				if item.Shortcut != 0 {
+					showShortcuts = true
 					break
 				}
 			}
-			item := l.items[l.currentItem]
-			if item.Selected != nil {
-				l.Unlock()
-				item.Selected()
-				l.Lock()
+
+			offsetX := 7
+			if showShortcuts {
+				offsetX += 4
 			}
-			if l.selected != nil {
-				l.Unlock()
-				l.selected(l.currentItem, item.MainText, item.SecondaryText, item.Shortcut)
-				l.Lock()
+			offsetY := l.currentItem
+			if l.showSecondaryText {
+				offsetY *= 2
+			}
+
+			x, y, _, _ := l.GetInnerRect()
+			defer l.ContextMenu.show(l.currentItem, x+offsetX, y+offsetY, setFocus)
+		} else if len(l.items) == 0 {
+			l.Unlock()
+			return
+		}
+
+		var matchesShortcut bool
+		if event.Key() == tcell.KeyRune {
+			ch := event.Rune()
+			if ch != ' ' {
+				// It's not a space bar. Is it a shortcut?
+				for index, item := range l.items {
+					if item.Enabled && item.Shortcut == ch {
+						// We have a shortcut.
+						matchesShortcut = true
+						l.currentItem = index
+
+						item := l.items[l.currentItem]
+						if item.Selected != nil {
+							l.Unlock()
+							item.Selected()
+							l.Lock()
+						}
+						if l.selected != nil {
+							l.Unlock()
+							l.selected(l.currentItem, item.MainText, item.SecondaryText, item.Shortcut)
+							l.Lock()
+						}
+
+						break
+					}
+				}
+			}
+		}
+
+		if !matchesShortcut {
+			if matchesKeys(event, Keys.FirstItem) {
+				l.transform(TransformFirstItem)
+			} else if matchesKeys(event, Keys.LastItem) {
+				l.transform(TransformLastItem)
+			} else if matchesKeys(event, Keys.PreviousItem) || matchesKeys(event, Keys.PreviousField) {
+				l.transform(TransformPreviousItem)
+			} else if matchesKeys(event, Keys.NextItem) || matchesKeys(event, Keys.NextField) {
+				l.transform(TransformNextItem)
+			} else if matchesKeys(event, Keys.PreviousPage) {
+				l.transform(TransformPreviousPage)
+			} else if matchesKeys(event, Keys.NextPage) {
+				l.transform(TransformNextPage)
 			}
 		}
 
