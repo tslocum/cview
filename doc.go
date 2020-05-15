@@ -141,6 +141,21 @@ When primitives are instantiated, they are initialized with colors taken from
 the global Styles variable. You may change this variable to adapt the look and
 feel of the primitives to your preferred style.
 
+Keyboard Shortcuts
+
+Widgets use keyboard shortcuts (a.k.a. keybindings) such as arrow keys and
+H/J/k/L by default. You may override these shortcuts globally by setting a
+handler with Application.SetInputCapture.
+
+cbind is a library which simplifies adding support for custom keybindings to
+your application. It allows setting handlers for tcell KeyEvents. It also
+parses human-readable strings such as "Alt+Enter" as tcell KeyEvents, or vice
+versa. This makes it possible to store keybindings in a configuration file.
+
+cbind: https://gitlab.com/tslocum/cbind
+
+cbind example: https://docs.rocketnine.space/gitlab.com/tslocum/cbind/#example_NewConfiguration
+
 Hello World
 
 The following is an example application which shows a box titled "Greetings"

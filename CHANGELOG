@@ -5,6 +5,7 @@ v1.4.6 (WIP)
 - Fix List not updating selected item before calling selected handlers
 - Do not handle right click on List when there is no context menu
 - Always initialize context menu List
+- Document how to override default keybindings
 
 v1.4.5 (2020-04-25)
 - Add multithreading support
