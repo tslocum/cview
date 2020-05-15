@@ -136,6 +136,9 @@ type TextView struct {
 	// The index of the first line shown in the text view.
 	lineOffset int
 
+	// The maximum number of liens the text view will hold (set to 0 for no limit)
+	maxLines int
+
 	// If set to true, the text view will always remain at the end of the content.
 	trackEnd bool
 
@@ -203,6 +206,7 @@ func NewTextView() *TextView {
 		textColor:     Styles.PrimaryTextColor,
 		regions:       false,
 		dynamicColors: false,
+		maxLines:      0,
 	}
 }
 
@@ -386,6 +390,23 @@ func (t *TextView) SetDoneFunc(handler func(key tcell.Key)) *TextView {
 // can only fire for regions that have existed during the last call to Draw().
 func (t *TextView) SetHighlightedFunc(handler func(added, removed, remaining []string)) *TextView {
 	t.highlighted = handler
+	return t
+}
+
+func (t *TextView) clipBuffer() {
+	if t.maxLines > 0 {
+		lenbuf := len(t.buffer)
+		if lenbuf > t.maxLines {
+			t.buffer = t.buffer[lenbuf-t.maxLines:]
+		}
+	}
+}
+
+// SetMaxLines establishes the maximum amount of lines the text view will hold
+// before discarding older data from the buffer
+func (t *TextView) SetMaxLines(maxLines int) *TextView {
+	t.maxLines = maxLines
+	t.clipBuffer()
 	return t
 }
 
@@ -721,6 +742,8 @@ func (t *TextView) write(p []byte) (n int, err error) {
 			t.buffer = append(t.buffer, line)
 		}
 	}
+
+	t.clipBuffer()
 
 	// Reset the index.
 	t.index = nil
