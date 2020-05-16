@@ -943,9 +943,9 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 				l.transform(TransformFirstItem)
 			} else if matchesKeys(event, Keys.LastItem) {
 				l.transform(TransformLastItem)
-			} else if matchesKeys(event, Keys.PreviousItem) || matchesKeys(event, Keys.PreviousField) {
+			} else if matchesKeys(event, Keys.PreviousItem, Keys.PreviousField) {
 				l.transform(TransformPreviousItem)
-			} else if matchesKeys(event, Keys.NextItem) || matchesKeys(event, Keys.NextField) {
+			} else if matchesKeys(event, Keys.NextItem, Keys.NextField) {
 				l.transform(TransformNextItem)
 			} else if matchesKeys(event, Keys.PreviousPage) {
 				l.transform(TransformPreviousPage)

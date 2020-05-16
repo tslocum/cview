@@ -696,16 +696,19 @@ func RenderScrollBar(screen tcell.Screen, visibility ScrollBarVisibility, x int,
 	Print(screen, scrollBar, x, y, 1, AlignLeft, color)
 }
 
-// matchesKeys returns whether the EventKey is present in the list of keybinds.
-func matchesKeys(event *tcell.EventKey, keybinds []string) bool {
+// matchesKeys returns whether the EventKey provided is present in one or more
+// set of keybindings.
+func matchesKeys(event *tcell.EventKey, keybindings ...[]string) bool {
 	enc, err := cbind.Encode(event.Modifiers(), event.Key(), event.Rune())
 	if err != nil {
 		return false
 	}
 
-	for _, k := range keybinds {
-		if k == enc {
-			return true
+	for _, binds := range keybindings {
+		for _, key := range binds {
+			if key == enc {
+				return true
+			}
 		}
 	}
 

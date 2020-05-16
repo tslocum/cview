@@ -36,9 +36,11 @@ each widget.
 
 Types
 
-This package is a fork of https://github.com/rivo/tview which is based on
-https://github.com/gdamore/tcell. It uses types and constants from tcell
-(e.g. colors and keyboard values).
+This package is built on top of tcell, which provides the types necessary to
+create a terminal-based application (e.g. EventKey). For information on
+inherited types see the tcell documentation.
+
+tcell: https://github.com/gdamore/tcell
 
 Concurrency
 
@@ -144,14 +146,15 @@ feel of the primitives to your preferred style.
 Keyboard Shortcuts
 
 Widgets use keyboard shortcuts (a.k.a. keybindings) such as arrow keys and
-H/J/k/L by default. You may replace these defaults by modifying the keybindings
+H/J/k/L by default. You may replace these defaults by modifying the shortcuts
 listed in Keys. You may also override keyboard shortcuts globally by setting a
 handler with Application.SetInputCapture.
 
-cbind is a library which simplifies adding support for custom keybindings to
-your application. It allows setting handlers for tcell KeyEvents. It also
-parses human-readable strings such as "Alt+Enter" as tcell KeyEvents, or vice
-versa. This makes it possible to store keybindings in a configuration file.
+cbind is a library which simplifies the process of adding support for custom
+keyboard shortcuts to your application. It allows setting handlers for
+EventKeys. It also translates between EventKeys and human-readable strings such
+as "Alt+Enter". This makes it possible to store keybindings in a configuration
+file.
 
 cbind: https://gitlab.com/tslocum/cbind
 

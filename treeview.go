@@ -889,7 +889,7 @@ func (t *TreeView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 
 		// Because the tree is flattened into a list only at drawing time, we also
 		// postpone the (selection) movement to drawing time.
-		if matchesKeys(event, Keys.Cancel) || matchesKeys(event, Keys.PreviousField) || matchesKeys(event, Keys.NextField) {
+		if matchesKeys(event, Keys.Cancel, Keys.PreviousField, Keys.NextField) {
 			if t.done != nil {
 				t.Unlock()
 				t.done(event.Key())
@@ -899,9 +899,9 @@ func (t *TreeView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 			t.movement = treeHome
 		} else if matchesKeys(event, Keys.LastItem) {
 			t.movement = treeEnd
-		} else if matchesKeys(event, Keys.PreviousItem) || matchesKeys(event, Keys.PreviousField) {
+		} else if matchesKeys(event, Keys.PreviousItem, Keys.PreviousField) {
 			t.movement = treeUp
-		} else if matchesKeys(event, Keys.NextItem) || matchesKeys(event, Keys.NextField) {
+		} else if matchesKeys(event, Keys.NextItem, Keys.NextField) {
 			t.movement = treeDown
 		} else if matchesKeys(event, Keys.PreviousPage) {
 			t.movement = treePageUp
