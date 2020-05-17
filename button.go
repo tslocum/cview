@@ -151,11 +151,11 @@ func (b *Button) Draw(screen tcell.Screen) {
 func (b *Button) InputHandler() func(event *tcell.EventKey, setFocus func(p Primitive)) {
 	return b.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p Primitive)) {
 		// Process key event.
-		if matchesKeys(event, Keys.Select) {
+		if HitShortcut(event, Keys.Select) {
 			if b.selected != nil {
 				b.selected()
 			}
-		} else if matchesKeys(event, Keys.Cancel, Keys.PreviousField, Keys.NextField) {
+		} else if HitShortcut(event, Keys.Cancel, Keys.PreviousField, Keys.NextField) {
 			if b.blur != nil {
 				b.blur(event.Key())
 			}

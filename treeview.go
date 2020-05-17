@@ -889,25 +889,25 @@ func (t *TreeView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 
 		// Because the tree is flattened into a list only at drawing time, we also
 		// postpone the (selection) movement to drawing time.
-		if matchesKeys(event, Keys.Cancel, Keys.PreviousField, Keys.NextField) {
+		if HitShortcut(event, Keys.Cancel, Keys.PreviousField, Keys.NextField) {
 			if t.done != nil {
 				t.Unlock()
 				t.done(event.Key())
 				t.Lock()
 			}
-		} else if matchesKeys(event, Keys.FirstItem) {
+		} else if HitShortcut(event, Keys.FirstItem) {
 			t.movement = treeHome
-		} else if matchesKeys(event, Keys.LastItem) {
+		} else if HitShortcut(event, Keys.LastItem) {
 			t.movement = treeEnd
-		} else if matchesKeys(event, Keys.PreviousItem, Keys.PreviousField) {
+		} else if HitShortcut(event, Keys.PreviousItem, Keys.PreviousField) {
 			t.movement = treeUp
-		} else if matchesKeys(event, Keys.NextItem, Keys.NextField) {
+		} else if HitShortcut(event, Keys.NextItem, Keys.NextField) {
 			t.movement = treeDown
-		} else if matchesKeys(event, Keys.PreviousPage) {
+		} else if HitShortcut(event, Keys.PreviousPage) {
 			t.movement = treePageUp
-		} else if matchesKeys(event, Keys.NextPage) {
+		} else if HitShortcut(event, Keys.NextPage) {
 			t.movement = treePageDown
-		} else if matchesKeys(event, Keys.Select) || event.Rune() == ' ' { // TODO space is hardcoded
+		} else if HitShortcut(event, Keys.Select) || event.Rune() == ' ' { // TODO space is hardcoded
 			t.Unlock()
 			selectNode()
 			t.Lock()

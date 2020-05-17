@@ -146,7 +146,7 @@ feel of the primitives to your preferred style.
 Keyboard Shortcuts
 
 Widgets use keyboard shortcuts (a.k.a. keybindings) such as arrow keys and
-H/J/k/L by default. You may replace these defaults by modifying the shortcuts
+H/J/K/L by default. You may replace these defaults by modifying the shortcuts
 listed in Keys. You may also override keyboard shortcuts globally by setting a
 handler with Application.SetInputCapture.
 

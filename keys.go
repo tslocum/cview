@@ -1,5 +1,10 @@
 package cview
 
+import (
+	"github.com/gdamore/tcell"
+	"gitlab.com/tslocum/cbind"
+)
+
 // Key defines the keyboard shortcuts of an application.
 type Key struct {
 	Cancel []string
@@ -38,4 +43,23 @@ var Keys = Key{
 	NextPage:     []string{"PageDown"},
 
 	ShowContextMenu: []string{"Alt+Enter"},
+}
+
+// HitShortcut returns whether the EventKey provided is present in one or more
+// sets of keybindings.
+func HitShortcut(event *tcell.EventKey, keybindings ...[]string) bool {
+	enc, err := cbind.Encode(event.Modifiers(), event.Key(), event.Rune())
+	if err != nil {
+		return false
+	}
+
+	for _, binds := range keybindings {
+		for _, key := range binds {
+			if key == enc {
+				return true
+			}
+		}
+	}
+
+	return false
 }

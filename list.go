@@ -852,7 +852,7 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 
 		previousItem := l.currentItem
 
-		if matchesKeys(event, Keys.Cancel) {
+		if HitShortcut(event, Keys.Cancel) {
 			if l.ContextMenu.open {
 				l.Unlock()
 
@@ -867,7 +867,7 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 				l.Unlock()
 			}
 			return
-		} else if matchesKeys(event, Keys.Select) {
+		} else if HitShortcut(event, Keys.Select) {
 			if l.currentItem >= 0 && l.currentItem < len(l.items) {
 				item := l.items[l.currentItem]
 				if item.Enabled {
@@ -883,7 +883,7 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 					}
 				}
 			}
-		} else if matchesKeys(event, Keys.ShowContextMenu) {
+		} else if HitShortcut(event, Keys.ShowContextMenu) {
 			// Do we show any shortcuts?
 			var showShortcuts bool
 			for _, item := range l.items {
@@ -939,17 +939,17 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 		}
 
 		if !matchesShortcut {
-			if matchesKeys(event, Keys.FirstItem) {
+			if HitShortcut(event, Keys.FirstItem) {
 				l.transform(TransformFirstItem)
-			} else if matchesKeys(event, Keys.LastItem) {
+			} else if HitShortcut(event, Keys.LastItem) {
 				l.transform(TransformLastItem)
-			} else if matchesKeys(event, Keys.PreviousItem, Keys.PreviousField) {
+			} else if HitShortcut(event, Keys.PreviousItem, Keys.PreviousField) {
 				l.transform(TransformPreviousItem)
-			} else if matchesKeys(event, Keys.NextItem, Keys.NextField) {
+			} else if HitShortcut(event, Keys.NextItem, Keys.NextField) {
 				l.transform(TransformNextItem)
-			} else if matchesKeys(event, Keys.PreviousPage) {
+			} else if HitShortcut(event, Keys.PreviousPage) {
 				l.transform(TransformPreviousPage)
-			} else if matchesKeys(event, Keys.NextPage) {
+			} else if HitShortcut(event, Keys.NextPage) {
 				l.transform(TransformNextPage)
 			}
 		}
