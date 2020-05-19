@@ -7,40 +7,42 @@ import (
 
 // Key defines the keyboard shortcuts of an application.
 type Key struct {
-	Cancel []string
-	Select []string
+	Select    []string
+	SelectAlt []string // SelectAlt is also used when not focusing a text input.
+	Cancel    []string
 
-	FirstItem []string
-	LastItem  []string
+	MoveUp    []string
+	MoveDown  []string
+	MoveLeft  []string
+	MoveRight []string
 
-	PreviousItem []string
-	NextItem     []string
-
-	PreviousField []string
-	NextField     []string
-
-	PreviousPage []string
-	NextPage     []string
+	MoveFirst         []string
+	MoveLast          []string
+	MovePreviousField []string
+	MoveNextField     []string
+	MovePreviousPage  []string
+	MoveNextPage      []string
 
 	ShowContextMenu []string
 }
 
 // Keys defines the keyboard shortcuts of an application.
 var Keys = Key{
-	Cancel: []string{"Escape"},
-	Select: []string{"Enter", "Ctrl+J"}, // Ctrl+J = keypad enter
+	Select:    []string{"Enter", "Ctrl+J"}, // Ctrl+J = keypad enter
+	SelectAlt: []string{"Space"},
+	Cancel:    []string{"Escape"},
 
-	FirstItem: []string{"Home", "g"},
-	LastItem:  []string{"End", "G"},
+	MoveUp:    []string{"Up", "k"},
+	MoveDown:  []string{"Down", "j"},
+	MoveLeft:  []string{"Left", "h"},
+	MoveRight: []string{"Right", "l"},
 
-	PreviousItem: []string{"Up", "k"},
-	NextItem:     []string{"Down", "j"},
-
-	PreviousField: []string{"Backtab"},
-	NextField:     []string{"Tab"},
-
-	PreviousPage: []string{"PageUp"},
-	NextPage:     []string{"PageDown"},
+	MoveFirst:         []string{"Home", "g"},
+	MoveLast:          []string{"End", "G"},
+	MovePreviousField: []string{"Backtab"},
+	MoveNextField:     []string{"Tab"},
+	MovePreviousPage:  []string{"PageUp", "Ctrl+B"},
+	MoveNextPage:      []string{"PageDown", "Ctrl+F"},
 
 	ShowContextMenu: []string{"Alt+Enter"},
 }

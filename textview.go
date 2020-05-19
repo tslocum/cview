@@ -1172,7 +1172,7 @@ func (t *TextView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 	return t.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p Primitive)) {
 		key := event.Key()
 
-		if key == tcell.KeyEscape || key == tcell.KeyEnter || key == tcell.KeyTab || key == tcell.KeyBacktab {
+		if HitShortcut(event, Keys.Cancel, Keys.Select, Keys.MovePreviousField, Keys.MoveNextField) {
 			if t.done != nil {
 				t.done(key)
 			}
@@ -1186,47 +1186,27 @@ func (t *TextView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 			return
 		}
 
-		switch key {
-		case tcell.KeyRune:
-			switch event.Rune() {
-			case 'g': // Home.
-				t.trackEnd = false
-				t.lineOffset = 0
-				t.columnOffset = 0
-			case 'G': // End.
-				t.trackEnd = true
-				t.columnOffset = 0
-			case 'j': // Down.
-				t.lineOffset++
-			case 'k': // Up.
-				t.trackEnd = false
-				t.lineOffset--
-			case 'h': // Left.
-				t.columnOffset--
-			case 'l': // Right.
-				t.columnOffset++
-			}
-		case tcell.KeyHome:
+		if HitShortcut(event, Keys.MoveFirst) {
 			t.trackEnd = false
 			t.lineOffset = 0
 			t.columnOffset = 0
-		case tcell.KeyEnd:
+		} else if HitShortcut(event, Keys.MoveLast) {
 			t.trackEnd = true
 			t.columnOffset = 0
-		case tcell.KeyUp:
+		} else if HitShortcut(event, Keys.MoveUp) {
 			t.trackEnd = false
 			t.lineOffset--
-		case tcell.KeyDown:
+		} else if HitShortcut(event, Keys.MoveDown) {
 			t.lineOffset++
-		case tcell.KeyLeft:
+		} else if HitShortcut(event, Keys.MoveLeft) {
 			t.columnOffset--
-		case tcell.KeyRight:
+		} else if HitShortcut(event, Keys.MoveRight) {
 			t.columnOffset++
-		case tcell.KeyPgDn, tcell.KeyCtrlF:
-			t.lineOffset += t.pageSize
-		case tcell.KeyPgUp, tcell.KeyCtrlB:
+		} else if HitShortcut(event, Keys.MovePreviousPage) {
 			t.trackEnd = false
 			t.lineOffset -= t.pageSize
+		} else if HitShortcut(event, Keys.MoveNextPage) {
+			t.lineOffset += t.pageSize
 		}
 	})
 }

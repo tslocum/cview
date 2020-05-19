@@ -939,17 +939,17 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 		}
 
 		if !matchesShortcut {
-			if HitShortcut(event, Keys.FirstItem) {
+			if HitShortcut(event, Keys.MoveFirst) {
 				l.transform(TransformFirstItem)
-			} else if HitShortcut(event, Keys.LastItem) {
+			} else if HitShortcut(event, Keys.MoveLast) {
 				l.transform(TransformLastItem)
-			} else if HitShortcut(event, Keys.PreviousItem, Keys.PreviousField) {
+			} else if HitShortcut(event, Keys.MoveUp, Keys.MovePreviousField) {
 				l.transform(TransformPreviousItem)
-			} else if HitShortcut(event, Keys.NextItem, Keys.NextField) {
+			} else if HitShortcut(event, Keys.MoveDown, Keys.MoveNextField) {
 				l.transform(TransformNextItem)
-			} else if HitShortcut(event, Keys.PreviousPage) {
+			} else if HitShortcut(event, Keys.MovePreviousPage) {
 				l.transform(TransformPreviousPage)
-			} else if HitShortcut(event, Keys.NextPage) {
+			} else if HitShortcut(event, Keys.MoveNextPage) {
 				l.transform(TransformNextPage)
 			}
 		}

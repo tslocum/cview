@@ -1379,39 +1379,23 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 			}
 		)
 
-		switch key {
-		case tcell.KeyRune:
-			switch event.Rune() {
-			case 'g':
-				home()
-			case 'G':
-				end()
-			case 'j':
-				down()
-			case 'k':
-				up()
-			case 'h':
-				left()
-			case 'l':
-				right()
-			}
-		case tcell.KeyHome:
+		if HitShortcut(event, Keys.MoveFirst) {
 			home()
-		case tcell.KeyEnd:
+		} else if HitShortcut(event, Keys.MoveLast) {
 			end()
-		case tcell.KeyUp:
+		} else if HitShortcut(event, Keys.MoveUp, Keys.MovePreviousField) {
 			up()
-		case tcell.KeyDown:
+		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveNextField) {
 			down()
-		case tcell.KeyLeft:
+		} else if HitShortcut(event, Keys.MoveLeft) {
 			left()
-		case tcell.KeyRight:
+		} else if HitShortcut(event, Keys.MoveRight) {
 			right()
-		case tcell.KeyPgDn, tcell.KeyCtrlF:
-			pageDown()
-		case tcell.KeyPgUp, tcell.KeyCtrlB:
+		} else if HitShortcut(event, Keys.MovePreviousPage) {
 			pageUp()
-		case tcell.KeyEnter:
+		} else if HitShortcut(event, Keys.MoveNextPage) {
+			pageDown()
+		} else if HitShortcut(event, Keys.Select) {
 			if (t.rowsSelectable || t.columnsSelectable) && t.selected != nil {
 				t.Unlock()
 				t.selected(t.selectedRow, t.selectedColumn)

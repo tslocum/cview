@@ -253,24 +253,19 @@ func (c *CheckBox) Draw(screen tcell.Screen) {
 // InputHandler returns the handler for this primitive.
 func (c *CheckBox) InputHandler() func(event *tcell.EventKey, setFocus func(p Primitive)) {
 	return c.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p Primitive)) {
-		// Process key event.
-		switch key := event.Key(); key {
-		case tcell.KeyRune, tcell.KeyEnter: // Check.
-			if key == tcell.KeyRune && event.Rune() != ' ' {
-				break
-			}
+		if HitShortcut(event, Keys.Select, Keys.SelectAlt) {
 			c.Lock()
 			c.checked = !c.checked
 			c.Unlock()
 			if c.changed != nil {
 				c.changed(c.checked)
 			}
-		case tcell.KeyTab, tcell.KeyBacktab, tcell.KeyEscape: // We're done.
+		} else if HitShortcut(event, Keys.Cancel, Keys.MovePreviousField, Keys.MoveNextField) {
 			if c.done != nil {
-				c.done(key)
+				c.done(event.Key())
 			}
 			if c.finished != nil {
-				c.finished(key)
+				c.finished(event.Key())
 			}
 		}
 	})

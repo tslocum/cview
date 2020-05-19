@@ -155,7 +155,7 @@ func (b *Button) InputHandler() func(event *tcell.EventKey, setFocus func(p Prim
 			if b.selected != nil {
 				b.selected()
 			}
-		} else if HitShortcut(event, Keys.Cancel, Keys.PreviousField, Keys.NextField) {
+		} else if HitShortcut(event, Keys.Cancel, Keys.MovePreviousField, Keys.MoveNextField) {
 			if b.blur != nil {
 				b.blur(event.Key())
 			}
