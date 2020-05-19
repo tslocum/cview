@@ -1379,23 +1379,23 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 			}
 		)
 
-		if HitShortcut(event, Keys.MoveFirst) {
+		if HitShortcut(event, Keys.MoveFirst, Keys.MoveFirst2) {
 			home()
-		} else if HitShortcut(event, Keys.MoveLast) {
+		} else if HitShortcut(event, Keys.MoveLast, Keys.MoveLast2) {
 			end()
-		} else if HitShortcut(event, Keys.MoveUp, Keys.MovePreviousField) {
+		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2, Keys.MovePreviousField) {
 			up()
-		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveNextField) {
+		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2, Keys.MoveNextField) {
 			down()
-		} else if HitShortcut(event, Keys.MoveLeft) {
+		} else if HitShortcut(event, Keys.MoveLeft, Keys.MoveLeft2) {
 			left()
-		} else if HitShortcut(event, Keys.MoveRight) {
+		} else if HitShortcut(event, Keys.MoveRight, Keys.MoveRight2) {
 			right()
 		} else if HitShortcut(event, Keys.MovePreviousPage) {
 			pageUp()
 		} else if HitShortcut(event, Keys.MoveNextPage) {
 			pageDown()
-		} else if HitShortcut(event, Keys.Select) {
+		} else if HitShortcut(event, Keys.Select, Keys.SelectAlt) {
 			if (t.rowsSelectable || t.columnsSelectable) && t.selected != nil {
 				t.Unlock()
 				t.selected(t.selectedRow, t.selectedColumn)

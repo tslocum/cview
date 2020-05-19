@@ -6,18 +6,26 @@ import (
 )
 
 // Key defines the keyboard shortcuts of an application.
+// Secondary shortcuts apply when not focusing a text input.
 type Key struct {
 	Select    []string
-	SelectAlt []string // SelectAlt is also used when not focusing a text input.
+	SelectAlt []string
 	Cancel    []string
 
-	MoveUp    []string
-	MoveDown  []string
-	MoveLeft  []string
-	MoveRight []string
+	MoveUp     []string
+	MoveUp2    []string
+	MoveDown   []string
+	MoveDown2  []string
+	MoveLeft   []string
+	MoveLeft2  []string
+	MoveRight  []string
+	MoveRight2 []string
 
-	MoveFirst         []string
-	MoveLast          []string
+	MoveFirst  []string
+	MoveFirst2 []string
+	MoveLast   []string
+	MoveLast2  []string
+
 	MovePreviousField []string
 	MoveNextField     []string
 	MovePreviousPage  []string
@@ -27,18 +35,26 @@ type Key struct {
 }
 
 // Keys defines the keyboard shortcuts of an application.
+// Secondary shortcuts apply when not focusing a text input.
 var Keys = Key{
 	Select:    []string{"Enter", "Ctrl+J"}, // Ctrl+J = keypad enter
 	SelectAlt: []string{"Space"},
 	Cancel:    []string{"Escape"},
 
-	MoveUp:    []string{"Up", "k"},
-	MoveDown:  []string{"Down", "j"},
-	MoveLeft:  []string{"Left", "h"},
-	MoveRight: []string{"Right", "l"},
+	MoveUp:     []string{"Up"},
+	MoveUp2:    []string{"k"},
+	MoveDown:   []string{"Down"},
+	MoveDown2:  []string{"j"},
+	MoveLeft:   []string{"Left"},
+	MoveLeft2:  []string{"h"},
+	MoveRight:  []string{"Right"},
+	MoveRight2: []string{"l"},
 
-	MoveFirst:         []string{"Home", "g"},
-	MoveLast:          []string{"End", "G"},
+	MoveFirst:  []string{"Home", "Ctrl+A"},
+	MoveFirst2: []string{"g"},
+	MoveLast:   []string{"End", "Ctrl+E"},
+	MoveLast2:  []string{"G"},
+
 	MovePreviousField: []string{"Backtab"},
 	MoveNextField:     []string{"Tab"},
 	MovePreviousPage:  []string{"PageUp", "Ctrl+B"},

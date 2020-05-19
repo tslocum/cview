@@ -324,17 +324,17 @@ func (g *Grid) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 		g.Lock()
 		defer g.Unlock()
 
-		if HitShortcut(event, Keys.MoveFirst) {
+		if HitShortcut(event, Keys.MoveFirst, Keys.MoveFirst2) {
 			g.rowOffset, g.columnOffset = 0, 0
-		} else if HitShortcut(event, Keys.MoveLast) {
+		} else if HitShortcut(event, Keys.MoveLast, Keys.MoveLast2) {
 			g.rowOffset = math.MaxInt32
-		} else if HitShortcut(event, Keys.MoveUp, Keys.MovePreviousField) {
+		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2, Keys.MovePreviousField) {
 			g.rowOffset--
-		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveNextField) {
+		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2, Keys.MoveNextField) {
 			g.rowOffset++
-		} else if HitShortcut(event, Keys.MoveLeft) {
+		} else if HitShortcut(event, Keys.MoveLeft, Keys.MoveLeft2) {
 			g.columnOffset--
-		} else if HitShortcut(event, Keys.MoveRight) {
+		} else if HitShortcut(event, Keys.MoveRight, Keys.MoveRight2) {
 			g.columnOffset++
 		}
 	})

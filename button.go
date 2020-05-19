@@ -151,7 +151,7 @@ func (b *Button) Draw(screen tcell.Screen) {
 func (b *Button) InputHandler() func(event *tcell.EventKey, setFocus func(p Primitive)) {
 	return b.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p Primitive)) {
 		// Process key event.
-		if HitShortcut(event, Keys.Select) {
+		if HitShortcut(event, Keys.Select, Keys.SelectAlt) {
 			if b.selected != nil {
 				b.selected()
 			}

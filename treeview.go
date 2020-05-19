@@ -895,13 +895,13 @@ func (t *TreeView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 				t.done(event.Key())
 				t.Lock()
 			}
-		} else if HitShortcut(event, Keys.MoveFirst) {
+		} else if HitShortcut(event, Keys.MoveFirst, Keys.MoveFirst2) {
 			t.movement = treeHome
-		} else if HitShortcut(event, Keys.MoveLast) {
+		} else if HitShortcut(event, Keys.MoveLast, Keys.MoveLast2) {
 			t.movement = treeEnd
-		} else if HitShortcut(event, Keys.MoveUp, Keys.MovePreviousField) {
+		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2, Keys.MovePreviousField) {
 			t.movement = treeUp
-		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveNextField) {
+		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2, Keys.MoveNextField) {
 			t.movement = treeDown
 		} else if HitShortcut(event, Keys.MovePreviousPage) {
 			t.movement = treePageUp

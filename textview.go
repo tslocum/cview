@@ -1172,7 +1172,7 @@ func (t *TextView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 	return t.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p Primitive)) {
 		key := event.Key()
 
-		if HitShortcut(event, Keys.Cancel, Keys.Select, Keys.MovePreviousField, Keys.MoveNextField) {
+		if HitShortcut(event, Keys.Cancel, Keys.Select, Keys.SelectAlt, Keys.MovePreviousField, Keys.MoveNextField) {
 			if t.done != nil {
 				t.done(key)
 			}
@@ -1186,21 +1186,21 @@ func (t *TextView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 			return
 		}
 
-		if HitShortcut(event, Keys.MoveFirst) {
+		if HitShortcut(event, Keys.MoveFirst, Keys.MoveFirst2) {
 			t.trackEnd = false
 			t.lineOffset = 0
 			t.columnOffset = 0
-		} else if HitShortcut(event, Keys.MoveLast) {
+		} else if HitShortcut(event, Keys.MoveLast, Keys.MoveLast2) {
 			t.trackEnd = true
 			t.columnOffset = 0
-		} else if HitShortcut(event, Keys.MoveUp) {
+		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2) {
 			t.trackEnd = false
 			t.lineOffset--
-		} else if HitShortcut(event, Keys.MoveDown) {
+		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2) {
 			t.lineOffset++
-		} else if HitShortcut(event, Keys.MoveLeft) {
+		} else if HitShortcut(event, Keys.MoveLeft, Keys.MoveLeft2) {
 			t.columnOffset--
-		} else if HitShortcut(event, Keys.MoveRight) {
+		} else if HitShortcut(event, Keys.MoveRight, Keys.MoveRight2) {
 			t.columnOffset++
 		} else if HitShortcut(event, Keys.MovePreviousPage) {
 			t.trackEnd = false

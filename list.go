@@ -867,7 +867,7 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 				l.Unlock()
 			}
 			return
-		} else if HitShortcut(event, Keys.Select) {
+		} else if HitShortcut(event, Keys.Select, Keys.SelectAlt) {
 			if l.currentItem >= 0 && l.currentItem < len(l.items) {
 				item := l.items[l.currentItem]
 				if item.Enabled {
@@ -939,13 +939,13 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 		}
 
 		if !matchesShortcut {
-			if HitShortcut(event, Keys.MoveFirst) {
+			if HitShortcut(event, Keys.MoveFirst, Keys.MoveFirst2) {
 				l.transform(TransformFirstItem)
-			} else if HitShortcut(event, Keys.MoveLast) {
+			} else if HitShortcut(event, Keys.MoveLast, Keys.MoveLast2) {
 				l.transform(TransformLastItem)
-			} else if HitShortcut(event, Keys.MoveUp, Keys.MovePreviousField) {
+			} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2, Keys.MovePreviousField) {
 				l.transform(TransformPreviousItem)
-			} else if HitShortcut(event, Keys.MoveDown, Keys.MoveNextField) {
+			} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2, Keys.MoveNextField) {
 				l.transform(TransformNextItem)
 			} else if HitShortcut(event, Keys.MovePreviousPage) {
 				l.transform(TransformPreviousPage)
