@@ -61,6 +61,9 @@ type List struct {
 	// If true, the selection must remain visible when scrolling.
 	selectedAlwaysVisible bool
 
+	// If true, the selection must remain centered when scrolling.
+	selectedAlwaysCentered bool
+
 	// If true, the entire row is highlighted when selected.
 	highlightFullLine bool
 
@@ -299,6 +302,16 @@ func (l *List) SetSelectedAlwaysVisible(alwaysVisible bool) *List {
 	defer l.Unlock()
 
 	l.selectedAlwaysVisible = alwaysVisible
+	return l
+}
+
+// SetSelectedAlwaysCentered sets a flag which determines whether the currently
+// selected list item must remain centered when scrolling.
+func (l *List) SetSelectedAlwaysCentered(alwaysCentered bool) *List {
+	l.Lock()
+	defer l.Unlock()
+
+	l.selectedAlwaysCentered = alwaysCentered
 	return l
 }
 
@@ -651,15 +664,30 @@ func (l *List) transform(tr Transformation) {
 func (l *List) updateOffset() {
 	_, _, _, l.height = l.GetInnerRect()
 
+	h := l.height
+	if l.selectedAlwaysCentered {
+		h /= 2
+	}
+
 	if l.currentItem < l.offset {
 		l.offset = l.currentItem
 	} else if l.showSecondaryText {
-		if 2*(l.currentItem-l.offset) >= l.height-1 {
-			l.offset = (2*l.currentItem + 3 - l.height) / 2
+		if 2*(l.currentItem-l.offset) >= h-1 {
+			l.offset = (2*l.currentItem + 3 - h) / 2
 		}
 	} else {
-		if l.currentItem-l.offset >= l.height {
-			l.offset = l.currentItem + 1 - l.height
+		if l.currentItem-l.offset >= h {
+			l.offset = l.currentItem + 1 - h
+		}
+	}
+
+	if l.showSecondaryText {
+		if l.offset > len(l.items)-(l.height/2) {
+			l.offset = len(l.items) - l.height/2
+		}
+	} else {
+		if l.offset > len(l.items)-l.height {
+			l.offset = len(l.items) - l.height
 		}
 	}
 }
@@ -702,7 +730,7 @@ func (l *List) Draw(screen tcell.Screen) {
 	}
 
 	// Adjust offset to keep the current selection in view.
-	if l.selectedAlwaysVisible {
+	if l.selectedAlwaysVisible || l.selectedAlwaysCentered {
 		l.updateOffset()
 	}
 

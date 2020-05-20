@@ -1,3 +1,6 @@
+v1.4.7 (WIP)
+- Add List.SetSelectedAlwaysCentered
+
 v1.4.6 (2020-05-18)
 - Add Box.ShowFocus
 - Add Keys to allow default keyboard shortcuts to be modified
