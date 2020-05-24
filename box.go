@@ -22,6 +22,9 @@ type Box struct {
 	// The box's background color.
 	backgroundColor tcell.Color
 
+	// Whether or not the box's background is transparent.
+	backgroundTransparent bool
+
 	// Whether or not a border is drawn, reducing the box's space for content by
 	// two in width and height.
 	border bool
@@ -293,6 +296,16 @@ func (b *Box) SetBackgroundColor(color tcell.Color) *Box {
 	return b
 }
 
+// SetBackgroundTransparent sets the flag indicating whether or not the box's
+// background is transparent.
+func (b *Box) SetBackgroundTransparent(transparent bool) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+
+	b.backgroundTransparent = transparent
+	return b
+}
+
 // SetBorder sets the flag indicating whether or not the box should have a
 // border.
 func (b *Box) SetBorder(show bool) *Box {
@@ -374,9 +387,11 @@ func (b *Box) Draw(screen tcell.Screen) {
 
 	// Fill background.
 	background := def.Background(b.backgroundColor)
-	for y := b.y; y < b.y+b.height; y++ {
-		for x := b.x; x < b.x+b.width; x++ {
-			screen.SetContent(x, y, ' ', nil, background)
+	if !b.backgroundTransparent {
+		for y := b.y; y < b.y+b.height; y++ {
+			for x := b.x; x < b.x+b.width; x++ {
+				screen.SetContent(x, y, ' ', nil, background)
+			}
 		}
 	}
 
