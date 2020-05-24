@@ -137,6 +137,10 @@ character that may be used in color or region tags will be recognized. Examples:
 
 You can use the Escape() function to insert brackets automatically where needed.
 
+Note that setting the background color of a primitive to tcell.ColorDefault is
+insufficient to achieve transparency (having one or more widgets behind another
+widget). Call SetBackgroundTransparent to enable transparency.
+
 Styles
 
 When primitives are instantiated, they are initialized with colors taken from
