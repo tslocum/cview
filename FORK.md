@@ -38,11 +38,9 @@ tview [blocks until the queued function returns](https://github.com/rivo/tview/b
 
 All clicks are handled as single clicks until an interval is set with [Application.SetDoubleClickInterval](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Application.SetDoubleClickInterval).
 
-## All primitives have non-transparent backgrounds by default
+## Setting a primitive's background color to `tcell.ColorDefault` does not result in transparency
 
-Setting background colors to `tcell.ColorDefault` is insufficient. Call
-`SetBackgroundTransparent(true)` to enable background transparency. See
-[#15](https://gitlab.com/tslocum/cview/-/issues/15) for more info.
+Call `SetBackgroundTransparent(true)` to enable background transparency.
 
 ## Lists and Forms do not wrap around by default
 

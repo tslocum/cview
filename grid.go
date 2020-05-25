@@ -61,15 +61,14 @@ type Grid struct {
 
 // NewGrid returns a new grid-based layout container with no initial primitives.
 //
-// Note that Box, the superclass of Grid, will have its background color set to
-// transparent so that any grid areas not covered by any primitives will leave
-// their background unchanged. To clear a Grid's background before any items are
-// drawn, set it to the desired color:
+// Note that Grid will have a transparent background by default so that any
+// areas not covered by any primitives will show primitives behind the Grid.
+// To disable this transparency:
 //
-//   grid.SetBackgroundColor(cview.Styles.PrimitiveBackgroundColor)
+//   grid.SetBackgroundTransparent(false)
 func NewGrid() *Grid {
 	g := &Grid{
-		Box:          NewBox().SetBackgroundColor(tcell.ColorDefault),
+		Box:          NewBox().SetBackgroundTransparent(true),
 		bordersColor: Styles.GraphicsColor,
 	}
 	g.focus = g

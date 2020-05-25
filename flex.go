@@ -44,15 +44,14 @@ type Flex struct {
 // direction set to FlexColumn. To add primitives to this layout, see AddItem().
 // To change the direction, see SetDirection().
 //
-// Note that Box, the superclass of Flex, will have its background color set to
-// transparent so that any nil flex items will leave their background unchanged.
-// To clear a Flex's background before any items are drawn, set it to the
-// desired color:
+// Note that Flex will have a transparent background by default so that any nil
+// flex items will show primitives behind the Flex.
+// To disable this transparency:
 //
-//   flex.SetBackgroundColor(cview.Styles.PrimitiveBackgroundColor)
+//   flex.SetBackgroundTransparent(false)
 func NewFlex() *Flex {
 	f := &Flex{
-		Box:       NewBox().SetBackgroundColor(tcell.ColorDefault),
+		Box:       NewBox().SetBackgroundTransparent(true),
 		direction: FlexColumn,
 	}
 	f.focus = f
