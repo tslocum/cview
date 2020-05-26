@@ -2,7 +2,7 @@
 Package cview implements rich widgets for terminal based user interfaces.
 
 See the demos folder and the example application provided with the
-Application.NewApplication documentation for usage examples.
+NewApplication documentation for usage examples.
 
 Widgets
 
@@ -26,6 +26,9 @@ The following widgets are available:
     also be highlighted.
   TreeView - A scrollable display for hierarchical data. Tree nodes can be
     highlighted, collapsed, expanded, and more.
+
+Widgets may be used without an application created via NewApplication, allowing
+them to be integrated into any tcell-based application.
 
 Base Primitive
 
@@ -52,6 +55,23 @@ avoid blocking.
 Unicode Support
 
 This package supports unicode characters including wide characters.
+
+Keyboard Shortcuts
+
+Widgets use keyboard shortcuts (a.k.a. keybindings) such as arrow keys and
+H/J/K/L by default. You may replace these defaults by modifying the shortcuts
+listed in Keys. You may also override keyboard shortcuts globally by setting a
+handler with Application.SetInputCapture.
+
+cbind is a library which simplifies the process of adding support for custom
+keyboard shortcuts to your application. It allows setting handlers for
+EventKeys. It also translates between EventKeys and human-readable strings such
+as "Alt+Enter". This makes it possible to store keybindings in a configuration
+file.
+
+cbind: https://gitlab.com/tslocum/cbind
+
+cbind example: https://docs.rocketnine.space/gitlab.com/tslocum/cbind/#example_NewConfiguration
 
 Mouse Support
 
@@ -146,23 +166,6 @@ Styles
 When primitives are instantiated, they are initialized with colors taken from
 the global Styles variable. You may change this variable to adapt the look and
 feel of the primitives to your preferred style.
-
-Keyboard Shortcuts
-
-Widgets use keyboard shortcuts (a.k.a. keybindings) such as arrow keys and
-H/J/K/L by default. You may replace these defaults by modifying the shortcuts
-listed in Keys. You may also override keyboard shortcuts globally by setting a
-handler with Application.SetInputCapture.
-
-cbind is a library which simplifies the process of adding support for custom
-keyboard shortcuts to your application. It allows setting handlers for
-EventKeys. It also translates between EventKeys and human-readable strings such
-as "Alt+Enter". This makes it possible to store keybindings in a configuration
-file.
-
-cbind: https://gitlab.com/tslocum/cbind
-
-cbind example: https://docs.rocketnine.space/gitlab.com/tslocum/cbind/#example_NewConfiguration
 
 Hello World
 

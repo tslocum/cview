@@ -26,11 +26,11 @@ maintainers and allowing code changes which may be outside of tview's scope.
 
 # Differences
 
-## cview is thread-safe
+## cview is [thread-safe](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#hdr-Concurrency)
 
 tview [is not thread-safe](https://godoc.org/github.com/rivo/tview#hdr-Concurrency).
 
-## Application.QueueUpdate and Application.QueueUpdateDraw do not block
+## [Application.QueueUpdate](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Application.QueueUpdate) and [Application.QueueUpdateDraw](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Application.QueueUpdateDraw) do not block
 
 tview [blocks until the queued function returns](https://github.com/rivo/tview/blob/fe3052019536251fd145835dbaa225b33b7d3088/application.go#L510).
 
@@ -40,11 +40,12 @@ All clicks are handled as single clicks until an interval is set with [Applicati
 
 ## Setting a primitive's background color to `tcell.ColorDefault` does not result in transparency
 
-Call `SetBackgroundTransparent(true)` to enable background transparency.
+Call [Box.SetBackgroundTransparent](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Box.SetBackgroundTransparent)
+to enable background transparency.
 
 ## Lists and Forms do not wrap around by default
 
-Call `SetWrapAround(true)` to wrap around when navigating.
+Call [List.SetWrapAround](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#List.SetWrapAround) to wrap around when navigating.
 
 # Merged pull requests
 
