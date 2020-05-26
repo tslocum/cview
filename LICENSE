@@ -27,6 +27,10 @@ Add support for displaying text next to a checkbox
 Sun Mar 29 21:43:46 2020 +0200
 Merge pull request #422 from rivo/mouse
 
+b4085a157266a69db1d3b92053d8f343714f2235
+Mon May 11 16:51:00 2020 -0400
+Fix ANSI colors 0-15
+
 ----------
 
 cview license:

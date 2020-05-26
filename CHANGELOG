@@ -2,6 +2,7 @@ v1.4.7 (WIP)
 - Add Box.SetBackgroundTransparent
 - Add List.SetSelectedAlwaysCentered
 - Fix default background transparency of Flex and Grid
+- Fix ANSI colors 0-15
 
 v1.4.6 (2020-05-18)
 - Add Box.ShowFocus

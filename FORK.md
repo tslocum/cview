@@ -50,6 +50,7 @@ Call `SetWrapAround(true)` to wrap around when navigating.
 
 The following tview pull requests have been merged into cview:
 
+- [#444 Fixed terminal colors](https://github.com/rivo/tview/pull/444)
 - [#378 Throttle resize handling](https://github.com/rivo/tview/pull/378)
 - [#368 Add support for displaying text next to a checkbox](https://github.com/rivo/tview/pull/368)
 - [#363 Mouse support](https://github.com/rivo/tview/pull/363)
