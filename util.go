@@ -293,32 +293,31 @@ func decomposeText(text []byte, findColors, findRegions bool) (colorIndices [][]
 	}
 
 	// Make a (sorted) list of all tags.
-	var allIndices [][]int
-	if findColors && findRegions {
-		allIndices = colorIndices
-		allIndices = make([][]int, len(colorIndices)+len(regionIndices))
-		copy(allIndices, colorIndices)
-		copy(allIndices[len(colorIndices):], regionIndices)
-		sort.Slice(allIndices, func(i int, j int) bool {
-			return allIndices[i][0] < allIndices[j][0]
-		})
-	} else if findColors {
-		allIndices = colorIndices
-	} else {
-		allIndices = regionIndices
+	allIndices := make([][3]int, 0, len(colorIndices)+len(regionIndices)+len(escapeIndices))
+	for indexType, index := range [][][]int{colorIndices, regionIndices, escapeIndices} {
+		for _, tag := range index {
+			allIndices = append(allIndices, [3]int{tag[0], tag[1], indexType})
+		}
 	}
+	sort.Slice(allIndices, func(i int, j int) bool {
+		return allIndices[i][0] < allIndices[j][0]
+	})
 
 	// Remove the tags from the original string.
 	var from int
 	buf := make([]byte, 0, len(text))
 	for _, indices := range allIndices {
-		buf = append(buf, text[from:indices[0]]...)
-		from = indices[1]
+		if indices[2] == 2 { // Escape sequences are not simply removed.
+			buf = append(buf, []byte(text[from:indices[1]-2])...)
+			buf = append(buf, ']')
+			from = indices[1]
+		} else {
+			buf = append(buf, []byte(text[from:indices[0]])...)
+			from = indices[1]
+		}
 	}
 	buf = append(buf, text[from:]...)
-
-	// Escape string.
-	stripped = escapePattern.ReplaceAll(buf, []byte("[$1$2]"))
+	stripped = buf
 
 	// Get the width of the stripped string.
 	width = runewidth.StringWidth(string(stripped))
@@ -637,8 +636,8 @@ func WordWrap(text string, width int) (lines []string) {
 // recognized and substituted by the print functions of this package. For
 // example, to include a tag-like string in a box title or in a TextView:
 //
-//   box.SetTitle(cview.Escape("[squarebrackets]"))
-//   fmt.Fprint(textView, cview.EscapeBytes(`["quoted"]`))
+//	box.SetTitle(cview.Escape("[squarebrackets]"))
+//	fmt.Fprint(textView, cview.EscapeBytes(`["quoted"]`))
 func EscapeBytes(text []byte) []byte {
 	return nonEscapePattern.ReplaceAll(text, []byte("$1[]"))
 }
@@ -647,8 +646,8 @@ func EscapeBytes(text []byte) []byte {
 // recognized and substituted by the print functions of this package. For
 // example, to include a tag-like string in a box title or in a TextView:
 //
-//   box.SetTitle(cview.Escape("[squarebrackets]"))
-//   fmt.Fprint(textView, cview.Escape(`["quoted"]`))
+//	box.SetTitle(cview.Escape("[squarebrackets]"))
+//	fmt.Fprint(textView, cview.Escape(`["quoted"]`))
 func Escape(text string) string {
 	return nonEscapePattern.ReplaceAllString(text, "$1[]")
 }
