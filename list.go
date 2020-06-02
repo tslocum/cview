@@ -217,6 +217,10 @@ func (l *List) SetOffset(offset int) *List {
 	l.Lock()
 	defer l.Unlock()
 
+	if offset < 0 {
+		offset = 0
+	}
+
 	l.offset = offset
 	return l
 }
@@ -689,6 +693,10 @@ func (l *List) updateOffset() {
 		if l.offset > len(l.items)-l.height {
 			l.offset = len(l.items) - l.height
 		}
+	}
+
+	if l.offset < 0 {
+		l.offset = 0
 	}
 }
 

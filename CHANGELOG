@@ -3,6 +3,7 @@ v1.4.7 (WIP)
 - Add List.SetSelectedAlwaysCentered
 - Fix default background transparency of Flex and Grid
 - Fix ANSI colors 0-15
+- Fix negative List offset and DropDown selection
 
 v1.4.6 (2020-05-18)
 - Add Box.ShowFocus
