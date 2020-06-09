@@ -253,17 +253,17 @@ func (p *Pages) SendToFront(name string) *Pages {
 				p.pages = append(append(p.pages[:index], p.pages[index+1:]...), page)
 			}
 			if page.Visible && p.changed != nil {
-				p.Lock()
-				p.changed()
 				p.Unlock()
+				p.changed()
+				p.Lock()
 			}
 			break
 		}
 	}
 	if hasFocus {
-		p.Lock()
-		p.Focus(p.setFocus)
 		p.Unlock()
+		p.Focus(p.setFocus)
+		p.Lock()
 	}
 	return p
 }
