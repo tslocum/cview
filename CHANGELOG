@@ -1,4 +1,4 @@
-v1.4.7 (WIP)
+v1.4.7 (2020-06-09)
 - Add Box.SetBackgroundTransparent
 - Add List.SetSelectedAlwaysCentered
 - Fix default background transparency of Flex and Grid
