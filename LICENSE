@@ -11,13 +11,13 @@ following merged commits:
 Fri Jun 7 04:38:19 2019 -0700
 Fixed TextView's reset [-] setting the wrong color
 
-9aa08ad7c7ec3eb820cc7b53ded6d36c882962e3
-Fri Sep 13 20:12:34 2019 -0400
-Handle ansi code 39 and 49
-
 6e0ac2dd4b5adbd656f16786949fc986d973037a
 Sat Aug 24 18:06:28 2019 -0500
 Don't skip regions at end of line
+
+9aa08ad7c7ec3eb820cc7b53ded6d36c882962e3
+Fri Sep 13 20:12:34 2019 -0400
+Handle ansi code 39 and 49
 
 commit 697baf37a8d105d9d9d9c9cc90356598d5c54300
 Thu Nov 14 10:48:40 2019 +0000
@@ -30,6 +30,10 @@ Merge pull request #422 from rivo/mouse
 b4085a157266a69db1d3b92053d8f343714f2235
 Mon May 11 16:51:00 2020 -0400
 Fix ANSI colors 0-15
+
+06a427a43af45cb113de2fe946403882f93b58d6
+Wed May 27 21:41:21 2020 +0200
+Bugfixes in ANSI escape sequence handling as well as TextView
 
 ----------
 
