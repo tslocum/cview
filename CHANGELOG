@@ -1,5 +1,6 @@
 v1.4.8 (WIP)
 - Add italic text formatting flag
+- Add Modal.GetForm and Modal.GetFrame
 
 v1.4.7 (2020-06-09)
 - Add Box.SetBackgroundTransparent

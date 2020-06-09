@@ -8,7 +8,8 @@ import (
 
 // Modal is a centered message window used to inform the user or prompt them
 // for an immediate decision. It needs to have at least one button (added via
-// AddButtons()) or it will never disappear.
+// AddButtons()) or it will never disappear. You may embed primitives within a
+// Modal by adding them to the Form returned by GetForm.
 type Modal struct {
 	*Box
 
@@ -115,6 +116,22 @@ func (m *Modal) SetText(text string) *Modal {
 	return m
 }
 
+// GetForm returns the form embedded in the window.
+func (m *Modal) GetForm() *Form {
+	m.Lock()
+	defer m.Unlock()
+
+	return m.form
+}
+
+// GetFrame returns the frame embedded in the window.
+func (m *Modal) GetFrame() *Frame {
+	m.Lock()
+	defer m.Unlock()
+
+	return m.frame
+}
+
 // AddButtons adds buttons to the window. There must be at least one button and
 // a "done" handler so the window can be closed again.
 func (m *Modal) AddButtons(labels []string) *Modal {
@@ -176,6 +193,8 @@ func (m *Modal) HasFocus() bool {
 
 // Draw draws this primitive onto the screen.
 func (m *Modal) Draw(screen tcell.Screen) {
+	formItemCount := m.form.GetFormItemCount()
+
 	m.Lock()
 	defer m.Unlock()
 
@@ -200,7 +219,7 @@ func (m *Modal) Draw(screen tcell.Screen) {
 	}
 
 	// Set the modal's position and size.
-	height := len(lines) + 6
+	height := len(lines) + (formItemCount * 2) + 6
 	width += 4
 	x := (screenWidth - width) / 2
 	y := (screenHeight - height) / 2
