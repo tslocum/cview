@@ -3,6 +3,7 @@ v1.4.7 (WIP)
 - Add List.SetSelectedAlwaysCentered
 - Fix default background transparency of Flex and Grid
 - Fix negative List offset and DropDown selection
+- Fix panic when clicking nil primitive in Flex
 - Fix ANSI colors 0-15
 - Fix ANSI SGR codes
 
