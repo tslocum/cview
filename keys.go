@@ -8,9 +8,10 @@ import (
 // Key defines the keyboard shortcuts of an application.
 // Secondary shortcuts apply when not focusing a text input.
 type Key struct {
-	Select    []string
-	SelectAlt []string
-	Cancel    []string
+	Cancel []string
+
+	Select  []string
+	Select2 []string
 
 	MoveUp     []string
 	MoveUp2    []string
@@ -37,9 +38,10 @@ type Key struct {
 // Keys defines the keyboard shortcuts of an application.
 // Secondary shortcuts apply when not focusing a text input.
 var Keys = Key{
-	Select:    []string{"Enter", "Ctrl+J"}, // Ctrl+J = keypad enter
-	SelectAlt: []string{"Space"},
-	Cancel:    []string{"Escape"},
+	Cancel: []string{"Escape"},
+
+	Select:  []string{"Enter", "Ctrl+J"}, // Ctrl+J = keypad enter
+	Select2: []string{"Space"},
 
 	MoveUp:     []string{"Up"},
 	MoveUp2:    []string{"k"},

@@ -1395,7 +1395,7 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 			pageUp()
 		} else if HitShortcut(event, Keys.MoveNextPage) {
 			pageDown()
-		} else if HitShortcut(event, Keys.Select, Keys.SelectAlt) {
+		} else if HitShortcut(event, Keys.Select, Keys.Select2) {
 			if (t.rowsSelectable || t.columnsSelectable) && t.selected != nil {
 				t.Unlock()
 				t.selected(t.selectedRow, t.selectedColumn)

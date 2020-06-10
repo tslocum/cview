@@ -253,7 +253,7 @@ func (c *CheckBox) Draw(screen tcell.Screen) {
 // InputHandler returns the handler for this primitive.
 func (c *CheckBox) InputHandler() func(event *tcell.EventKey, setFocus func(p Primitive)) {
 	return c.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p Primitive)) {
-		if HitShortcut(event, Keys.Select, Keys.SelectAlt) {
+		if HitShortcut(event, Keys.Select, Keys.Select2) {
 			c.Lock()
 			c.checked = !c.checked
 			c.Unlock()

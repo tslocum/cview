@@ -903,7 +903,7 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 				l.Unlock()
 			}
 			return
-		} else if HitShortcut(event, Keys.Select, Keys.SelectAlt) {
+		} else if HitShortcut(event, Keys.Select, Keys.Select2) {
 			if l.currentItem >= 0 && l.currentItem < len(l.items) {
 				item := l.items[l.currentItem]
 				if item.Enabled {

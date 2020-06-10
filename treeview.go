@@ -907,7 +907,7 @@ func (t *TreeView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 			t.movement = treePageUp
 		} else if HitShortcut(event, Keys.MoveNextPage) {
 			t.movement = treePageDown
-		} else if HitShortcut(event, Keys.Select, Keys.SelectAlt) {
+		} else if HitShortcut(event, Keys.Select, Keys.Select2) {
 			t.Unlock()
 			selectNode()
 			t.Lock()

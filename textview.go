@@ -1172,7 +1172,7 @@ func (t *TextView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 	return t.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p Primitive)) {
 		key := event.Key()
 
-		if HitShortcut(event, Keys.Cancel, Keys.Select, Keys.SelectAlt, Keys.MovePreviousField, Keys.MoveNextField) {
+		if HitShortcut(event, Keys.Cancel, Keys.Select, Keys.Select2, Keys.MovePreviousField, Keys.MoveNextField) {
 			if t.done != nil {
 				t.done(key)
 			}
