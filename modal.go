@@ -8,15 +8,15 @@ import (
 
 // Modal is a centered message window used to inform the user or prompt them
 // for an immediate decision. It needs to have at least one button (added via
-// AddButtons()) or it will never disappear. You may embed primitives within a
-// Modal by adding them to the Form returned by GetForm.
+// AddButtons) or it will never disappear. You may include additional elements
+// within the window by modifying the Form returned by GetForm.
 type Modal struct {
 	*Box
 
-	// The frame embedded in the modal.
+	// The Frame embedded in the Modal.
 	frame *Frame
 
-	// The form embedded in the modal's frame.
+	// The Form embedded in the Modal's Frame.
 	form *Form
 
 	// The message text (original, not word-wrapped).
@@ -32,7 +32,7 @@ type Modal struct {
 	sync.Mutex
 }
 
-// NewModal returns a new modal message window.
+// NewModal returns a new centered message window.
 func NewModal() *Modal {
 	m := &Modal{
 		Box:       NewBox(),
@@ -56,7 +56,7 @@ func NewModal() *Modal {
 	return m
 }
 
-// SetBackgroundColor sets the color of the modal frame background.
+// SetBackgroundColor sets the color of the Modal Frame background.
 func (m *Modal) SetBackgroundColor(color tcell.Color) *Modal {
 	m.Lock()
 	defer m.Unlock()
@@ -96,7 +96,7 @@ func (m *Modal) SetButtonTextColor(color tcell.Color) *Modal {
 // SetDoneFunc sets a handler which is called when one of the buttons was
 // pressed. It receives the index of the button as well as its label text. The
 // handler is also called when the user presses the Escape key. The index will
-// then be negative and the label text an emptry string.
+// then be negative and the label text an empty string.
 func (m *Modal) SetDoneFunc(handler func(buttonIndex int, buttonLabel string)) *Modal {
 	m.Lock()
 	defer m.Unlock()
@@ -116,7 +116,8 @@ func (m *Modal) SetText(text string) *Modal {
 	return m
 }
 
-// GetForm returns the form embedded in the window.
+// GetForm returns the Form embedded in the window. The returned Form may be
+// modified to include additional elements (e.g. AddInputField, AddFormItem).
 func (m *Modal) GetForm() *Form {
 	m.Lock()
 	defer m.Unlock()
@@ -124,7 +125,7 @@ func (m *Modal) GetForm() *Form {
 	return m.form
 }
 
-// GetFrame returns the frame embedded in the window.
+// GetFrame returns the Frame embedded in the window.
 func (m *Modal) GetFrame() *Frame {
 	m.Lock()
 	defer m.Unlock()
@@ -198,7 +199,7 @@ func (m *Modal) Draw(screen tcell.Screen) {
 	m.Lock()
 	defer m.Unlock()
 
-	// Calculate the width of this modal.
+	// Calculate the width of this Modal.
 	buttonsWidth := 0
 	for _, button := range m.form.buttons {
 		buttonsWidth += TaggedStringWidth(button.label) + 4 + 2
@@ -218,7 +219,7 @@ func (m *Modal) Draw(screen tcell.Screen) {
 		m.frame.AddText(line, true, AlignCenter, m.textColor)
 	}
 
-	// Set the modal's position and size.
+	// Set the Modal's position and size.
 	height := len(lines) + (formItemCount * 2) + 6
 	width += 4
 	x := (screenWidth - width) / 2
