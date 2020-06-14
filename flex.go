@@ -90,11 +90,16 @@ func (f *Flex) SetFullScreen(fullScreen bool) *Flex {
 // primitive receives focus. If multiple items have the "focus" flag set to
 // true, the first one will receive focus.
 //
-// You can provide a nil value for the primitive. This will still consume screen
-// space but nothing will be drawn.
+// You can provide a nil value for the primitive. This will fill the empty
+// screen space with the default background color. To show content behind the
+// space, add a Box with a transparent background instead.
 func (f *Flex) AddItem(item Primitive, fixedSize, proportion int, focus bool) *Flex {
 	f.Lock()
 	defer f.Unlock()
+
+	if item == nil {
+		item = NewBox()
+	}
 
 	f.items = append(f.items, &flexItem{Item: item, FixedSize: fixedSize, Proportion: proportion, Focus: focus})
 	return f
