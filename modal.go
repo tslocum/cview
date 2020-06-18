@@ -8,8 +8,10 @@ import (
 
 // Modal is a centered message window used to inform the user or prompt them
 // for an immediate decision. It needs to have at least one button (added via
-// AddButtons) or it will never disappear. You may include additional elements
-// within the window by modifying the Form returned by GetForm.
+// AddButtons) or it will never disappear. You may change the title and
+// appearance of the window by modifying the Frame returned by GetFrame. You
+// may include additional elements within the window by modifying the Form
+// returned by GetForm.
 type Modal struct {
 	*Box
 
