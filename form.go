@@ -332,7 +332,7 @@ func (f *Form) Clear(includeButtons bool) *Form {
 
 	f.items = nil
 	if includeButtons {
-		f.ClearButtons()
+		f.buttons = nil
 	}
 	f.focusedElement = 0
 	return f
