@@ -35,6 +35,10 @@ Fix ANSI colors 0-15
 Wed May 27 21:41:21 2020 +0200
 Bugfixes in ANSI escape sequence handling as well as TextView
 
+81c828bfe0be91864afdc55aa58adfb8cae787dc
+Sun Jul 12 13:34:19 2020 +0200
+TextView.GetText() and .GetRegionText() didn't filter out empty colour tags. Fixes #453
+
 ----------
 
 cview license:
