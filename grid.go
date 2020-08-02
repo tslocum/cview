@@ -56,7 +56,7 @@ type Grid struct {
 	// The color of the borders around grid items.
 	bordersColor tcell.Color
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewGrid returns a new grid-based layout container with no initial primitives.
@@ -272,8 +272,8 @@ func (g *Grid) SetOffset(rows, columns int) *Grid {
 // GetOffset returns the current row and column offset (see SetOffset() for
 // details).
 func (g *Grid) GetOffset() (rows, columns int) {
-	g.Lock()
-	defer g.Unlock()
+	g.RLock()
+	defer g.RUnlock()
 
 	return g.rowOffset, g.columnOffset
 }
@@ -306,8 +306,8 @@ func (g *Grid) Blur() {
 
 // HasFocus returns whether or not this primitive has focus.
 func (g *Grid) HasFocus() bool {
-	g.Lock()
-	defer g.Unlock()
+	g.RLock()
+	defer g.RUnlock()
 
 	for _, item := range g.items {
 		if item.visible && item.Item.GetFocusable().HasFocus() {

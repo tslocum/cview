@@ -31,7 +31,7 @@ type Modal struct {
 	// receives the index of the clicked button and the button's label.
 	done func(buttonIndex int, buttonLabel string)
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewModal returns a new centered message window.
@@ -121,16 +121,16 @@ func (m *Modal) SetText(text string) *Modal {
 // GetForm returns the Form embedded in the window. The returned Form may be
 // modified to include additional elements (e.g. AddInputField, AddFormItem).
 func (m *Modal) GetForm() *Form {
-	m.Lock()
-	defer m.Unlock()
+	m.RLock()
+	defer m.RUnlock()
 
 	return m.form
 }
 
 // GetFrame returns the Frame embedded in the window.
 func (m *Modal) GetFrame() *Frame {
-	m.Lock()
-	defer m.Unlock()
+	m.RLock()
+	defer m.RUnlock()
 
 	return m.frame
 }
@@ -188,10 +188,7 @@ func (m *Modal) Focus(delegate func(p Primitive)) {
 
 // HasFocus returns whether or not this primitive has focus.
 func (m *Modal) HasFocus() bool {
-	m.Lock()
-	defer m.Unlock()
-
-	return m.form.HasFocus()
+	return m.GetForm().HasFocus()
 }
 
 // Draw draws this primitive onto the screen.

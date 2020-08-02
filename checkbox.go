@@ -46,7 +46,7 @@ type CheckBox struct {
 	// this form item.
 	finished func(tcell.Key)
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewCheckBox returns a new input field.
@@ -70,8 +70,8 @@ func (c *CheckBox) SetChecked(checked bool) *CheckBox {
 
 // IsChecked returns whether or not the box is checked.
 func (c *CheckBox) IsChecked() bool {
-	c.Lock()
-	defer c.Unlock()
+	c.RLock()
+	defer c.RUnlock()
 
 	return c.checked
 }
@@ -87,8 +87,8 @@ func (c *CheckBox) SetLabel(label string) *CheckBox {
 
 // GetLabel returns the text to be displayed before the input area.
 func (c *CheckBox) GetLabel() string {
-	c.Lock()
-	defer c.Unlock()
+	c.RLock()
+	defer c.RUnlock()
 
 	return c.label
 }
@@ -104,8 +104,8 @@ func (c *CheckBox) SetMessage(message string) *CheckBox {
 
 // GetMessage returns the text to be displayed after the checkbox
 func (c *CheckBox) GetMessage() string {
-	c.Lock()
-	defer c.Unlock()
+	c.RLock()
+	defer c.RUnlock()
 
 	return c.message
 }
@@ -162,8 +162,8 @@ func (c *CheckBox) SetFormAttributes(labelWidth int, labelColor, bgColor, fieldT
 
 // GetFieldWidth returns this primitive's field width.
 func (c *CheckBox) GetFieldWidth() int {
-	c.Lock()
-	defer c.Unlock()
+	c.RLock()
+	defer c.RUnlock()
 
 	if c.message == "" {
 		return 1

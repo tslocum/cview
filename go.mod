@@ -8,5 +8,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.9
 	github.com/rivo/uniseg v0.1.0
 	gitlab.com/tslocum/cbind v0.1.1
-	golang.org/x/sys v0.0.0-20200610111108-226ff32320da // indirect
+	golang.org/x/sys v0.0.0-20200802091954-4b90ce9b60b3 // indirect
+	golang.org/x/text v0.3.3 // indirect
 )

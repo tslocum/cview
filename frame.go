@@ -28,7 +28,7 @@ type Frame struct {
 	// Border spacing.
 	top, bottom, header, footer, left, right int
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewFrame returns a new frame around the given primitive. The primitive's
@@ -167,8 +167,8 @@ func (f *Frame) Focus(delegate func(p Primitive)) {
 
 // HasFocus returns whether or not this primitive has focus.
 func (f *Frame) HasFocus() bool {
-	f.Lock()
-	defer f.Unlock()
+	f.RLock()
+	defer f.RUnlock()
 
 	focusable, ok := f.primitive.(Focusable)
 	if ok {

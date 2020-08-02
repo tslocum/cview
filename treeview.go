@@ -52,7 +52,7 @@ type TreeNode struct {
 	graphicsX int       // The x-coordinate of the left-most graphics rune.
 	textX     int       // The x-coordinate of the first rune of the text.
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewTreeNode returns a new tree node.
@@ -113,8 +113,8 @@ func (n *TreeNode) SetReference(reference interface{}) *TreeNode {
 
 // GetReference returns this node's reference object.
 func (n *TreeNode) GetReference() interface{} {
-	n.Lock()
-	defer n.Unlock()
+	n.RLock()
+	defer n.RUnlock()
 
 	return n.reference
 }
@@ -130,16 +130,16 @@ func (n *TreeNode) SetChildren(childNodes []*TreeNode) *TreeNode {
 
 // GetText returns this node's text.
 func (n *TreeNode) GetText() string {
-	n.Lock()
-	defer n.Unlock()
+	n.RLock()
+	defer n.RUnlock()
 
 	return n.text
 }
 
 // GetChildren returns this node's children.
 func (n *TreeNode) GetChildren() []*TreeNode {
-	n.Lock()
-	defer n.Unlock()
+	n.RLock()
+	defer n.RUnlock()
 
 	return n.children
 }
@@ -241,8 +241,8 @@ func (n *TreeNode) CollapseAll() *TreeNode {
 
 // IsExpanded returns whether the child nodes of this node are visible.
 func (n *TreeNode) IsExpanded() bool {
-	n.Lock()
-	defer n.Unlock()
+	n.RLock()
+	defer n.RUnlock()
 
 	return n.expanded
 }
@@ -258,8 +258,8 @@ func (n *TreeNode) SetText(text string) *TreeNode {
 
 // GetColor returns the node's color.
 func (n *TreeNode) GetColor() tcell.Color {
-	n.Lock()
-	defer n.Unlock()
+	n.RLock()
+	defer n.RUnlock()
 
 	return n.color
 }
@@ -363,7 +363,7 @@ type TreeView struct {
 	// The visible nodes, top-down, as set by process().
 	nodes []*TreeNode
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewTreeView returns a new tree view.
@@ -389,8 +389,8 @@ func (t *TreeView) SetRoot(root *TreeNode) *TreeView {
 // GetRoot returns the root node of the tree. If no such node was previously
 // set, nil is returned.
 func (t *TreeView) GetRoot() *TreeNode {
-	t.Lock()
-	defer t.Unlock()
+	t.RLock()
+	defer t.RUnlock()
 
 	return t.root
 }
@@ -416,8 +416,8 @@ func (t *TreeView) SetCurrentNode(node *TreeNode) *TreeView {
 // GetCurrentNode returns the currently selected node or nil of no node is
 // currently selected.
 func (t *TreeView) GetCurrentNode() *TreeNode {
-	t.Lock()
-	defer t.Unlock()
+	t.RLock()
+	defer t.RUnlock()
 
 	return t.currentNode
 }
@@ -532,8 +532,8 @@ func (t *TreeView) SetDoneFunc(handler func(key tcell.Key)) *TreeView {
 // of the tree view. Note that when the user navigates the tree view, this value
 // is only updated after the tree view has been redrawn.
 func (t *TreeView) GetScrollOffset() int {
-	t.Lock()
-	defer t.Unlock()
+	t.RLock()
+	defer t.RUnlock()
 
 	return t.offsetY
 }
@@ -543,8 +543,8 @@ func (t *TreeView) GetScrollOffset() int {
 // of collapsed nodes. Note that this value is only up to date after the tree
 // view has been drawn.
 func (t *TreeView) GetRowCount() int {
-	t.Lock()
-	defer t.Unlock()
+	t.RLock()
+	defer t.RUnlock()
 
 	return len(t.nodes)
 }

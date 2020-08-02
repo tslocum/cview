@@ -31,7 +31,7 @@ type Pages struct {
 	// pages changes.
 	changed func()
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewPages returns a new Pages object.
@@ -55,8 +55,8 @@ func (p *Pages) SetChangedFunc(handler func()) *Pages {
 
 // GetPageCount returns the number of pages currently stored in this object.
 func (p *Pages) GetPageCount() int {
-	p.Lock()
-	defer p.Unlock()
+	p.RLock()
+	defer p.RUnlock()
 
 	return len(p.pages)
 }
@@ -146,8 +146,8 @@ func (p *Pages) RemovePage(name string) *Pages {
 
 // HasPage returns true if a page with the given name exists in this object.
 func (p *Pages) HasPage(name string) bool {
-	p.Lock()
-	defer p.Unlock()
+	p.RLock()
+	defer p.RUnlock()
 
 	for _, page := range p.pages {
 		if page.Name == name {
@@ -301,8 +301,8 @@ func (p *Pages) SendToBack(name string) *Pages {
 // GetFrontPage returns the front-most visible page. If there are no visible
 // pages, ("", nil) is returned.
 func (p *Pages) GetFrontPage() (name string, item Primitive) {
-	p.Lock()
-	defer p.Unlock()
+	p.RLock()
+	defer p.RUnlock()
 
 	for index := len(p.pages) - 1; index >= 0; index-- {
 		if p.pages[index].Visible {
@@ -314,8 +314,8 @@ func (p *Pages) GetFrontPage() (name string, item Primitive) {
 
 // HasFocus returns whether or not this primitive has focus.
 func (p *Pages) HasFocus() bool {
-	p.Lock()
-	defer p.Unlock()
+	p.RLock()
+	defer p.RUnlock()
 
 	for _, page := range p.pages {
 		if page.Item.GetFocusable().HasFocus() {

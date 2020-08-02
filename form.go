@@ -84,7 +84,7 @@ type Form struct {
 	// An optional function which is called when the user hits Escape.
 	cancel func()
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewForm returns a new form.
@@ -285,8 +285,8 @@ func (f *Form) AddButton(label string, selected func()) *Form {
 // buttons have been specially prepared for this form and modifying some of
 // their attributes may have unintended side effects.
 func (f *Form) GetButton(index int) *Button {
-	f.Lock()
-	defer f.Unlock()
+	f.RLock()
+	defer f.RUnlock()
 
 	return f.buttons[index]
 }
@@ -303,8 +303,8 @@ func (f *Form) RemoveButton(index int) *Form {
 
 // GetButtonCount returns the number of buttons in this form.
 func (f *Form) GetButtonCount() int {
-	f.Lock()
-	defer f.Unlock()
+	f.RLock()
+	defer f.RUnlock()
 
 	return len(f.buttons)
 }
@@ -313,8 +313,8 @@ func (f *Form) GetButtonCount() int {
 // with 0 for the button that was added first. If no such label was found, -1
 // is returned.
 func (f *Form) GetButtonIndex(label string) int {
-	f.Lock()
-	defer f.Unlock()
+	f.RLock()
+	defer f.RUnlock()
 
 	for index, button := range f.buttons {
 		if button.GetLabel() == label {
@@ -368,8 +368,8 @@ func (f *Form) AddFormItem(item FormItem) *Form {
 // GetFormItemCount returns the number of items in the form (not including the
 // buttons).
 func (f *Form) GetFormItemCount() int {
-	f.Lock()
-	defer f.Unlock()
+	f.RLock()
+	defer f.RUnlock()
 
 	return len(f.items)
 }
@@ -378,8 +378,8 @@ func (f *Form) GetFormItemCount() int {
 // 0. Elements are referenced in the order they were added. Buttons are not
 // included.
 func (f *Form) GetFormItem(index int) FormItem {
-	f.Lock()
-	defer f.Unlock()
+	f.RLock()
+	defer f.RUnlock()
 
 	return f.items[index]
 }
@@ -399,8 +399,8 @@ func (f *Form) RemoveFormItem(index int) *Form {
 // no such element is found, nil is returned. Buttons are not searched and will
 // therefore not be returned.
 func (f *Form) GetFormItemByLabel(label string) FormItem {
-	f.Lock()
-	defer f.Unlock()
+	f.RLock()
+	defer f.RUnlock()
 
 	for _, item := range f.items {
 		if item.GetLabel() == label {
@@ -414,8 +414,8 @@ func (f *Form) GetFormItemByLabel(label string) FormItem {
 // label. If no such element is found, -1 is returned. Buttons are not searched
 // and will therefore not be returned.
 func (f *Form) GetFormItemIndex(label string) int {
-	f.Lock()
-	defer f.Unlock()
+	f.RLock()
+	defer f.RUnlock()
 
 	for index, item := range f.items {
 		if item.GetLabel() == label {
@@ -428,8 +428,8 @@ func (f *Form) GetFormItemIndex(label string) int {
 // GetFocusedItemIndex returns the indices of the form element or button which
 // currently has focus. If they don't, -1 is returned resepectively.
 func (f *Form) GetFocusedItemIndex() (formItem, button int) {
-	f.Lock()
-	defer f.Unlock()
+	f.RLock()
+	defer f.RUnlock()
 
 	index := f.focusIndex()
 	if index < 0 {

@@ -33,7 +33,7 @@ type ProgressBar struct {
 	// Progress required to fill the bar.
 	max int
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewProgressBar returns a new progress bar.
@@ -98,8 +98,8 @@ func (p *ProgressBar) SetMax(max int) {
 
 // GetMax returns the progress required to fill the bar.
 func (p *ProgressBar) GetMax() int {
-	p.Lock()
-	defer p.Unlock()
+	p.RLock()
+	defer p.RUnlock()
 
 	return p.max
 }
@@ -122,16 +122,16 @@ func (p *ProgressBar) SetProgress(progress int) {
 
 // GetProgress gets the current progress.
 func (p *ProgressBar) GetProgress() int {
-	p.Lock()
-	defer p.Unlock()
+	p.RLock()
+	defer p.RUnlock()
 
 	return p.progress
 }
 
 // Complete returns whether the progress bar has been filled.
 func (p *ProgressBar) Complete() bool {
-	p.Lock()
-	defer p.Unlock()
+	p.RLock()
+	defer p.RUnlock()
 
 	return p.progress >= p.max
 }

@@ -37,7 +37,7 @@ type Flex struct {
 	// instead its box dimensions.
 	fullScreen bool
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewFlex returns a new flexbox layout container with no primitives and its
@@ -217,8 +217,8 @@ func (f *Flex) Focus(delegate func(p Primitive)) {
 
 // HasFocus returns whether or not this primitive has focus.
 func (f *Flex) HasFocus() bool {
-	f.Lock()
-	defer f.Unlock()
+	f.RLock()
+	defer f.RUnlock()
 
 	for _, item := range f.items {
 		if item.Item != nil && item.Item.GetFocusable().HasFocus() {

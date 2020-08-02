@@ -46,7 +46,7 @@ type TableCell struct {
 	// The position and width of the cell the last time table was drawn.
 	x, y, width int
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewTableCell returns a new table cell with sensible defaults. That is, left
@@ -178,8 +178,8 @@ func (c *TableCell) SetReference(reference interface{}) *TableCell {
 
 // GetReference returns this cell's reference object.
 func (c *TableCell) GetReference() interface{} {
-	c.Lock()
-	defer c.Unlock()
+	c.RLock()
+	defer c.RUnlock()
 
 	return c.Reference
 }
@@ -193,8 +193,8 @@ func (c *TableCell) GetReference() interface{} {
 // SetSelectedFunc()) or a "selectionChanged" event (see
 // SetSelectionChangedFunc()).
 func (c *TableCell) GetLastPosition() (x, y, width int) {
-	c.Lock()
-	defer c.Unlock()
+	c.RLock()
+	defer c.RUnlock()
 
 	return c.x, c.y, c.width
 }
@@ -319,7 +319,7 @@ type Table struct {
 	// or Backtab. Also when the user presses Enter if nothing is selectable.
 	done func(key tcell.Key)
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewTable returns a new table.
@@ -440,8 +440,8 @@ func (t *Table) SetSelectable(rows, columns bool) *Table {
 // GetSelectable returns what can be selected in a table. Refer to
 // SetSelectable() for details.
 func (t *Table) GetSelectable() (rows, columns bool) {
-	t.Lock()
-	defer t.Unlock()
+	t.RLock()
+	defer t.RUnlock()
 
 	return t.rowsSelectable, t.columnsSelectable
 }
@@ -450,8 +450,8 @@ func (t *Table) GetSelectable() (rows, columns bool) {
 // If entire rows are selected, the column index is undefined.
 // Likewise for entire columns.
 func (t *Table) GetSelection() (row, column int) {
-	t.Lock()
-	defer t.Unlock()
+	t.RLock()
+	defer t.RUnlock()
 
 	return t.selectedRow, t.selectedColumn
 }
@@ -491,8 +491,8 @@ func (t *Table) SetOffset(row, column int) *Table {
 // GetOffset returns the current row and column offset. This indicates how many
 // rows and columns the table is scrolled down and to the right.
 func (t *Table) GetOffset() (row, column int) {
-	t.Lock()
-	defer t.Unlock()
+	t.RLock()
+	defer t.RUnlock()
 
 	return t.rowOffset, t.columnOffset
 }
@@ -588,8 +588,8 @@ func (t *Table) SetCellSimple(row, column int, text string) *Table {
 // be inserted. Therefore, repeated calls to this function may return different
 // pointers for uninitialized cells.
 func (t *Table) GetCell(row, column int) *TableCell {
-	t.Lock()
-	defer t.Unlock()
+	t.RLock()
+	defer t.RUnlock()
 
 	if row >= len(t.cells) || column >= len(t.cells[row]) {
 		return &TableCell{}
@@ -665,16 +665,16 @@ func (t *Table) InsertColumn(column int) *Table {
 
 // GetRowCount returns the number of rows in the table.
 func (t *Table) GetRowCount() int {
-	t.Lock()
-	defer t.Unlock()
+	t.RLock()
+	defer t.RUnlock()
 
 	return len(t.cells)
 }
 
 // GetColumnCount returns the (maximum) number of columns in the table.
 func (t *Table) GetColumnCount() int {
-	t.Lock()
-	defer t.Unlock()
+	t.RLock()
+	defer t.RUnlock()
 
 	if len(t.cells) == 0 {
 		return 0

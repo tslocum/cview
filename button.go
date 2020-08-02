@@ -29,7 +29,7 @@ type Button struct {
 	// key is provided indicating which key was pressed to leave (tab or backtab).
 	blur func(tcell.Key)
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 // NewButton returns a new input field.
@@ -56,8 +56,8 @@ func (b *Button) SetLabel(label string) *Button {
 
 // GetLabel returns the button text.
 func (b *Button) GetLabel() string {
-	b.Lock()
-	defer b.Unlock()
+	b.RLock()
+	defer b.RUnlock()
 
 	return b.label
 }

@@ -3,6 +3,7 @@ v1.4.8 (WIP)
 - Add Modal.GetForm and Modal.GetFrame
 - Fix Form.Clear deadlock
 - Fill nil Flex space with default background color
+- Use sync.RWMutex in all widgets
 
 v1.4.7 (2020-06-09)
 - Add Box.SetBackgroundTransparent
