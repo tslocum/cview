@@ -101,7 +101,8 @@ func (c *ContextMenu) SetContextSelectedFunc(handler func(index int, text string
 	return c
 }
 
-// ShowContextMenu shows the context menu.
+// ShowContextMenu shows the context menu. Provide -1 for both to position on
+// the selected item, or specify a 	position.
 func (c *ContextMenu) ShowContextMenu(item int, x int, y int, setFocus func(Primitive)) {
 	c.l.Lock()
 	defer c.l.Unlock()

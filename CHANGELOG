@@ -1,8 +1,9 @@
-v1.4.8 (WIP)
+v1.4.8 (2020-08-11)
 - Add italic text formatting flag
 - Add Modal.GetForm and Modal.GetFrame
 - Fix Form.Clear deadlock
 - Fill nil Flex space with default background color
+- Position ContextMenu on selected item when negative coordinates are provided
 - Use sync.RWMutex in all widgets
 
 v1.4.7 (2020-06-09)

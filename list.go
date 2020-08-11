@@ -857,13 +857,26 @@ func (l *List) Draw(screen tcell.Screen) {
 
 		cx, cy := l.ContextMenu.x, l.ContextMenu.y
 		if cx < 0 || cy < 0 {
-			cx = x + (width / 2)
-			cy = y + (height / 2)
+			offsetX := 7
+			if showShortcuts {
+				offsetX += 4
+			}
+			offsetY := l.currentItem
+			if l.showSecondaryText {
+				offsetY *= 2
+			}
+			x, y, _, _ := l.GetInnerRect()
+			cx, cy = x+offsetX, y+offsetY
 		}
 
 		_, sheight := screen.Size()
 		if cy+lheight >= sheight && cy-2 > lheight-cy {
-			cy = y - lheight
+			for i := (cy + lheight) - sheight; i > 0; i-- {
+				cy--
+				if cy+lheight < sheight {
+					break
+				}
+			}
 			if cy < 0 {
 				cy = 0
 			}
@@ -920,26 +933,7 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 				}
 			}
 		} else if HitShortcut(event, Keys.ShowContextMenu) {
-			// Do we show any shortcuts?
-			var showShortcuts bool
-			for _, item := range l.items {
-				if item.Shortcut != 0 {
-					showShortcuts = true
-					break
-				}
-			}
-
-			offsetX := 7
-			if showShortcuts {
-				offsetX += 4
-			}
-			offsetY := l.currentItem
-			if l.showSecondaryText {
-				offsetY *= 2
-			}
-
-			x, y, _, _ := l.GetInnerRect()
-			defer l.ContextMenu.show(l.currentItem, x+offsetX, y+offsetY, setFocus)
+			defer l.ContextMenu.show(l.currentItem, -1, -1, setFocus)
 		} else if len(l.items) == 0 {
 			l.Unlock()
 			return
