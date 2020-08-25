@@ -238,6 +238,22 @@ func (i *InputField) GetFieldWidth() int {
 	return i.fieldWidth
 }
 
+// GetCursorPosition returns the cursor position.
+func (i *InputField) GetCursorPosition() int {
+	i.RLock()
+	defer i.RUnlock()
+
+	return i.cursorPos
+}
+
+// SetCursorPosition sets the cursor position.
+func (i *InputField) SetCursorPosition(cursorPos int) {
+	i.Lock()
+	defer i.Unlock()
+
+	i.cursorPos = cursorPos
+}
+
 // SetMaskCharacter sets a character that masks user input on a screen. A value
 // of 0 disables masking.
 func (i *InputField) SetMaskCharacter(mask rune) *InputField {
