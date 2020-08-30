@@ -3,7 +3,7 @@ package cview
 import (
 	"sync"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 )
 
 // Tree navigation events.
@@ -855,7 +855,7 @@ func (t *TreeView) Draw(screen tcell.Screen) {
 		}
 
 		// Draw scroll bar.
-		RenderScrollBar(screen, t.scrollBarVisibility, x+(width-1), posY, height, rows, cursor, posY-y, t.hasFocus, tcell.ColorWhite)
+		RenderScrollBar(screen, t.scrollBarVisibility, x+(width-1), posY, height, rows, cursor, posY-y, t.hasFocus, tcell.ColorWhite.TrueColor())
 
 		// Advance.
 		posY++

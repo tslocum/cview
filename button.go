@@ -3,7 +3,7 @@ package cview
 import (
 	"sync"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 )
 
 // Button is labeled box that triggers an action when selected.

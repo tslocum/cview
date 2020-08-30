@@ -1,6 +1,6 @@
 package cview
 
-import "github.com/gdamore/tcell"
+import "github.com/gdamore/tcell/v2"
 
 // Theme defines the colors used when primitives are initialized.
 type Theme struct {
@@ -21,38 +21,38 @@ type Theme struct {
 	ContrastBackgroundColor     tcell.Color // Background color for contrasting elements.
 	MoreContrastBackgroundColor tcell.Color // Background color for even more contrasting elements.
 
+	// Scroll bar
+	ScrollBarColor tcell.Color // Scroll bar color.
+
 	// Context menu
 	ContextMenuPaddingTop    int // Top padding.
 	ContextMenuPaddingBottom int // Bottom padding.
 	ContextMenuPaddingLeft   int // Left padding.
 	ContextMenuPaddingRight  int // Right padding.
-
-	// Scroll bar
-	ScrollBarColor tcell.Color // Scroll bar color.
 }
 
 // Styles defines the appearance of an application. The default is for a black
 // background and some basic colors: black, white, yellow, green, cyan, and
 // blue.
 var Styles = Theme{
-	TitleColor:    tcell.ColorWhite,
-	BorderColor:   tcell.ColorWhite,
-	GraphicsColor: tcell.ColorWhite,
+	TitleColor:    tcell.ColorWhite.TrueColor(),
+	BorderColor:   tcell.ColorWhite.TrueColor(),
+	GraphicsColor: tcell.ColorWhite.TrueColor(),
 
-	PrimaryTextColor:           tcell.ColorWhite,
-	SecondaryTextColor:         tcell.ColorYellow,
-	TertiaryTextColor:          tcell.ColorGreen,
-	InverseTextColor:           tcell.ColorBlue,
-	ContrastSecondaryTextColor: tcell.ColorDarkCyan,
+	PrimaryTextColor:           tcell.ColorWhite.TrueColor(),
+	SecondaryTextColor:         tcell.ColorYellow.TrueColor(),
+	TertiaryTextColor:          tcell.ColorGreen.TrueColor(),
+	InverseTextColor:           tcell.ColorBlue.TrueColor(),
+	ContrastSecondaryTextColor: tcell.ColorDarkCyan.TrueColor(),
 
-	PrimitiveBackgroundColor:    tcell.ColorBlack,
-	ContrastBackgroundColor:     tcell.ColorBlue,
-	MoreContrastBackgroundColor: tcell.ColorGreen,
+	PrimitiveBackgroundColor:    tcell.ColorBlack.TrueColor(),
+	ContrastBackgroundColor:     tcell.ColorBlue.TrueColor(),
+	MoreContrastBackgroundColor: tcell.ColorGreen.TrueColor(),
+
+	ScrollBarColor: tcell.ColorWhite.TrueColor(),
 
 	ContextMenuPaddingTop:    0,
 	ContextMenuPaddingBottom: 0,
 	ContextMenuPaddingLeft:   1,
 	ContextMenuPaddingRight:  1,
-
-	ScrollBarColor: tcell.ColorWhite,
 }

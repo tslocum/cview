@@ -4,7 +4,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"gitlab.com/tslocum/cview"
 )
 
@@ -37,7 +37,7 @@ func (r *RadioButtons) Draw(screen tcell.Screen) {
 			radioButton = "\u25c9" // Checked.
 		}
 		line := fmt.Sprintf(`%s[white]  %s`, radioButton, option)
-		cview.Print(screen, line, x, y+index, width, cview.AlignLeft, tcell.ColorYellow)
+		cview.Print(screen, line, x, y+index, width, cview.AlignLeft, tcell.ColorYellow.TrueColor())
 	}
 }
 

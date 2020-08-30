@@ -5,7 +5,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 )
 
 // listItem represents one item in a List.
@@ -763,11 +763,11 @@ func (l *List) Draw(screen tcell.Screen) {
 		} else if !item.Enabled { // Disabled item
 			// Shortcuts.
 			if showShortcuts && item.Shortcut != 0 {
-				Print(screen, fmt.Sprintf("(%s)", string(item.Shortcut)), x-5, y, 4, AlignRight, tcell.ColorDarkSlateGray)
+				Print(screen, fmt.Sprintf("(%s)", string(item.Shortcut)), x-5, y, 4, AlignRight, tcell.ColorDarkSlateGray.TrueColor())
 			}
 
 			// Main text.
-			Print(screen, item.MainText, x, y, width, AlignLeft, tcell.ColorGray)
+			Print(screen, item.MainText, x, y, width, AlignLeft, tcell.ColorGray.TrueColor())
 
 			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, index-l.offset, l.hasFocus, l.scrollBarColor)
 			y++
@@ -797,7 +797,7 @@ func (l *List) Draw(screen tcell.Screen) {
 				if fg == l.mainTextColor {
 					fg = l.selectedTextColor
 				}
-				style = style.Background(l.selectedBackgroundColor).Foreground(fg) | tcell.Style(l.selectedTextAttributes)
+				style = SetAttributes(style.Background(l.selectedBackgroundColor).Foreground(fg), l.selectedTextAttributes)
 				screen.SetContent(x+bx, y, m, c, style)
 			}
 		}

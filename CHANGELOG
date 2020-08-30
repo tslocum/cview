@@ -1,5 +1,6 @@
 v1.4.9 (WIP)
 - Add InputField.GetCursorPosition and InputField.SetCursorPosition
+- Upgrade tcell to v2
 
 v1.4.8 (2020-08-11)
 - Add italic text formatting flag

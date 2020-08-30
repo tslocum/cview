@@ -3,7 +3,7 @@ package main
 import (
 	"strings"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"gitlab.com/tslocum/cview"
 )
 
@@ -119,9 +119,9 @@ func TreeView(nextSlide func()) (title string, content cview.Primitive) {
 			SetExpanded(target == rootNode).
 			SetReference(target)
 		if target.expand {
-			node.SetColor(tcell.ColorGreen)
+			node.SetColor(tcell.ColorGreen.TrueColor())
 		} else if target.selected != nil {
-			node.SetColor(tcell.ColorRed)
+			node.SetColor(tcell.ColorRed.TrueColor())
 		}
 		for _, child := range target.children {
 			node.AddChild(add(child))

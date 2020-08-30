@@ -4,7 +4,7 @@ package main
 import (
 	"strings"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"gitlab.com/tslocum/cview"
 )
 
@@ -17,9 +17,9 @@ func main() {
 	word := 0
 	for r := 0; r < rows; r++ {
 		for c := 0; c < cols; c++ {
-			color := tcell.ColorWhite
+			color := tcell.ColorWhite.TrueColor()
 			if c < 1 || r < 1 {
-				color = tcell.ColorYellow
+				color = tcell.ColorYellow.TrueColor()
 			}
 			table.SetCell(r, c,
 				cview.NewTableCell(lorem[word]).
@@ -36,7 +36,7 @@ func main() {
 			table.SetSelectable(true, true)
 		}
 	}).SetSelectedFunc(func(row int, column int) {
-		table.GetCell(row, column).SetTextColor(tcell.ColorRed)
+		table.GetCell(row, column).SetTextColor(tcell.ColorRed.TrueColor())
 		table.SetSelectable(false, false)
 	})
 	if err := app.SetRoot(table, true).EnableMouse(true).Run(); err != nil {

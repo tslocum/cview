@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	runewidth "github.com/mattn/go-runewidth"
 	"github.com/rivo/uniseg"
 )
@@ -142,14 +142,14 @@ func overlayStyle(background tcell.Color, defaultStyle tcell.Style, fgColor, bgC
 		if fgColor == "-" {
 			style = style.Foreground(defFg)
 		} else {
-			style = style.Foreground(tcell.GetColor(fgColor))
+			style = style.Foreground(tcell.GetColor(fgColor).TrueColor())
 		}
 	}
 
 	if bgColor == "-" || bgColor == "" && defBg != tcell.ColorDefault {
 		style = style.Background(defBg)
 	} else if bgColor != "" {
-		style = style.Background(tcell.GetColor(bgColor))
+		style = style.Background(tcell.GetColor(bgColor).TrueColor())
 	}
 
 	if attributes == "-" {
@@ -180,6 +180,17 @@ func overlayStyle(background tcell.Color, defaultStyle tcell.Style, fgColor, bgC
 	}
 
 	return style
+}
+
+// SetAttributes sets attributes on a style.
+func SetAttributes(style tcell.Style, attrs tcell.AttrMask) tcell.Style {
+	return style.
+		Blink(attrs&tcell.AttrBlink != 0).
+		Bold(attrs&tcell.AttrBold != 0).
+		Dim(attrs&tcell.AttrDim != 0).
+		Italic(attrs&tcell.AttrItalic != 0).
+		Reverse(attrs&tcell.AttrReverse != 0).
+		Underline(attrs&tcell.AttrUnderline != 0)
 }
 
 // decomposeString returns information about a string which may contain color

@@ -3,7 +3,7 @@ package cview
 import (
 	"sync"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 )
 
 // Box is the base Primitive for all widgets. It has a background color and
@@ -397,7 +397,7 @@ func (b *Box) Draw(screen tcell.Screen) {
 
 	// Draw border.
 	if b.border && b.width >= 2 && b.height >= 2 {
-		border := background.Foreground(b.borderColor) | tcell.Style(b.borderAttributes)
+		border := SetAttributes(background.Foreground(b.borderColor), b.borderAttributes)
 		var vertical, horizontal, topLeft, topRight, bottomLeft, bottomRight rune
 
 		var hasFocus bool

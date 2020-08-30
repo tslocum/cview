@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"gitlab.com/tslocum/cview"
 )
 
@@ -13,7 +13,7 @@ import (
 func main() {
 	rootDir := "."
 	root := cview.NewTreeNode(rootDir).
-		SetColor(tcell.ColorRed)
+		SetColor(tcell.ColorRed.TrueColor())
 	tree := cview.NewTreeView().
 		SetRoot(root).
 		SetCurrentNode(root)
@@ -30,7 +30,7 @@ func main() {
 				SetReference(filepath.Join(path, file.Name())).
 				SetSelectable(file.IsDir())
 			if file.IsDir() {
-				node.SetColor(tcell.ColorGreen)
+				node.SetColor(tcell.ColorGreen.TrueColor())
 			}
 			target.AddChild(node)
 		}

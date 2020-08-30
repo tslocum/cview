@@ -3,7 +3,7 @@ package cview
 import (
 	"sync"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 )
 
 // page represents one page of a Pages object.

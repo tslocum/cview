@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"gitlab.com/tslocum/cview"
 )
 
@@ -58,11 +58,11 @@ const tableBasic = `[green]func[white] [yellow]main[white]() {
         [yellow]SetFixed[white]([red]1[white], [red]1[white])
     [yellow]for[white] row := [red]0[white]; row < [red]40[white]; row++ {
         [yellow]for[white] column := [red]0[white]; column < [red]7[white]; column++ {
-            color := tcell.ColorWhite
+            color := tcell.ColorWhite.TrueColor()
             [yellow]if[white] row == [red]0[white] {
-                color = tcell.ColorYellow
+                color = tcell.ColorYellow.TrueColor()
             } [yellow]else[white] [yellow]if[white] column == [red]0[white] {
-                color = tcell.ColorDarkCyan
+                color = tcell.ColorDarkCyan.TrueColor()
             }
             align := cview.AlignLeft
             [yellow]if[white] row == [red]0[white] {
@@ -90,11 +90,11 @@ const tableSeparator = `[green]func[white] [yellow]main[white]() {
         [yellow]SetSeparator[white](Borders.Vertical)
     [yellow]for[white] row := [red]0[white]; row < [red]40[white]; row++ {
         [yellow]for[white] column := [red]0[white]; column < [red]7[white]; column++ {
-            color := tcell.ColorWhite
+            color := tcell.ColorWhite.TrueColor()
             [yellow]if[white] row == [red]0[white] {
-                color = tcell.ColorYellow
+                color = tcell.ColorYellow.TrueColor()
             } [yellow]else[white] [yellow]if[white] column == [red]0[white] {
-                color = tcell.ColorDarkCyan
+                color = tcell.ColorDarkCyan.TrueColor()
             }
             align := cview.AlignLeft
             [yellow]if[white] row == [red]0[white] {
@@ -122,11 +122,11 @@ const tableBorders = `[green]func[white] [yellow]main[white]() {
         [yellow]SetBorders[white](true)
     [yellow]for[white] row := [red]0[white]; row < [red]40[white]; row++ {
         [yellow]for[white] column := [red]0[white]; column < [red]7[white]; column++ {
-            color := tcell.ColorWhite
+            color := tcell.ColorWhite.TrueColor()
             [yellow]if[white] row == [red]0[white] {
-                color = tcell.ColorYellow
+                color = tcell.ColorYellow.TrueColor()
             } [yellow]else[white] [yellow]if[white] column == [red]0[white] {
-                color = tcell.ColorDarkCyan
+                color = tcell.ColorDarkCyan.TrueColor()
             }
             align := cview.AlignLeft
             [yellow]if[white] row == [red]0[white] {
@@ -154,11 +154,11 @@ const tableSelectRow = `[green]func[white] [yellow]main[white]() {
         [yellow]SetSelectable[white](true, false)
     [yellow]for[white] row := [red]0[white]; row < [red]40[white]; row++ {
         [yellow]for[white] column := [red]0[white]; column < [red]7[white]; column++ {
-            color := tcell.ColorWhite
+            color := tcell.ColorWhite.TrueColor()
             [yellow]if[white] row == [red]0[white] {
-                color = tcell.ColorYellow
+                color = tcell.ColorYellow.TrueColor()
             } [yellow]else[white] [yellow]if[white] column == [red]0[white] {
-                color = tcell.ColorDarkCyan
+                color = tcell.ColorDarkCyan.TrueColor()
             }
             align := cview.AlignLeft
             [yellow]if[white] row == [red]0[white] {
@@ -187,11 +187,11 @@ const tableSelectColumn = `[green]func[white] [yellow]main[white]() {
         [yellow]SetSelectable[white](false, true)
     [yellow]for[white] row := [red]0[white]; row < [red]40[white]; row++ {
         [yellow]for[white] column := [red]0[white]; column < [red]7[white]; column++ {
-            color := tcell.ColorWhite
+            color := tcell.ColorWhite.TrueColor()
             [yellow]if[white] row == [red]0[white] {
-                color = tcell.ColorYellow
+                color = tcell.ColorYellow.TrueColor()
             } [yellow]else[white] [yellow]if[white] column == [red]0[white] {
-                color = tcell.ColorDarkCyan
+                color = tcell.ColorDarkCyan.TrueColor()
             }
             align := cview.AlignLeft
             [yellow]if[white] row == [red]0[white] {
@@ -220,11 +220,11 @@ const tableSelectCell = `[green]func[white] [yellow]main[white]() {
         [yellow]SetSelectable[white](true, true)
     [yellow]for[white] row := [red]0[white]; row < [red]40[white]; row++ {
         [yellow]for[white] column := [red]0[white]; column < [red]7[white]; column++ {
-            color := tcell.ColorWhite
+            color := tcell.ColorWhite.TrueColor()
             [yellow]if[white] row == [red]0[white] {
-                color = tcell.ColorYellow
+                color = tcell.ColorYellow.TrueColor()
             } [yellow]else[white] [yellow]if[white] column == [red]0[white] {
-                color = tcell.ColorDarkCyan
+                color = tcell.ColorDarkCyan.TrueColor()
             }
             align := cview.AlignLeft
             [yellow]if[white] row == [red]0[white] {
@@ -253,11 +253,11 @@ func Table(nextSlide func()) (title string, content cview.Primitive) {
 		SetFixed(1, 1)
 	for row, line := range strings.Split(tableData, "\n") {
 		for column, cell := range strings.Split(line, "|") {
-			color := tcell.ColorWhite
+			color := tcell.ColorWhite.TrueColor()
 			if row == 0 {
-				color = tcell.ColorYellow
+				color = tcell.ColorYellow.TrueColor()
 			} else if column == 0 {
-				color = tcell.ColorDarkCyan
+				color = tcell.ColorDarkCyan.TrueColor()
 			}
 			align := cview.AlignLeft
 			if row == 0 {

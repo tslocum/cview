@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"gitlab.com/tslocum/cview"
 )
 
@@ -34,7 +34,7 @@ func Cover(nextSlide func()) (title string, content cview.Primitive) {
 		}
 	}
 	logoBox := cview.NewTextView().
-		SetTextColor(tcell.ColorGreen).
+		SetTextColor(tcell.ColorGreen.TrueColor()).
 		SetDoneFunc(func(key tcell.Key) {
 			nextSlide()
 		})
@@ -43,10 +43,10 @@ func Cover(nextSlide func()) (title string, content cview.Primitive) {
 	// Create a frame for the subtitle and navigation infos.
 	frame := cview.NewFrame(cview.NewBox()).
 		SetBorders(0, 0, 0, 0, 0, 0).
-		AddText(subtitle, true, cview.AlignCenter, tcell.ColorWhite).
-		AddText("", true, cview.AlignCenter, tcell.ColorWhite).
-		AddText(mouse, true, cview.AlignCenter, tcell.ColorDarkMagenta).
-		AddText(navigation, true, cview.AlignCenter, tcell.ColorDarkMagenta)
+		AddText(subtitle, true, cview.AlignCenter, tcell.ColorWhite.TrueColor()).
+		AddText("", true, cview.AlignCenter, tcell.ColorWhite.TrueColor()).
+		AddText(mouse, true, cview.AlignCenter, tcell.ColorDarkMagenta.TrueColor()).
+		AddText(navigation, true, cview.AlignCenter, tcell.ColorDarkMagenta.TrueColor())
 
 	// Create a Flex layout that centers the logo and subtitle.
 	flex := cview.NewFlex().

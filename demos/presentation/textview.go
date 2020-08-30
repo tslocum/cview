@@ -5,14 +5,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"gitlab.com/tslocum/cview"
 )
 
 const textView1 = `[green]func[white] [yellow]main[white]() {
 	app := cview.[yellow]NewApplication[white]()
     textView := cview.[yellow]NewTextView[white]().
-        [yellow]SetTextColor[white](tcell.ColorYellow).
+        [yellow]SetTextColor[white](tcell.ColorYellow.TrueColor()).
         [yellow]SetScrollable[white](false).
         [yellow]SetChangedFunc[white]([yellow]func[white]() {
             app.[yellow]Draw[white]()
@@ -32,7 +32,7 @@ const textView1 = `[green]func[white] [yellow]main[white]() {
 // TextView1 demonstrates the basic text view.
 func TextView1(nextSlide func()) (title string, content cview.Primitive) {
 	textView := cview.NewTextView().
-		SetTextColor(tcell.ColorYellow).
+		SetTextColor(tcell.ColorYellow.TrueColor()).
 		SetScrollable(false).
 		SetDoneFunc(func(key tcell.Key) {
 			nextSlide()

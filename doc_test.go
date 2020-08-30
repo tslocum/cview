@@ -3,7 +3,7 @@ package cview
 import (
 	"fmt"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 )
 
 // Example of an application with multiple layouts.

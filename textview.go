@@ -7,7 +7,7 @@ import (
 	"sync"
 	"unicode/utf8"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/mattn/go-runewidth"
 	"github.com/rivo/uniseg"
@@ -1126,9 +1126,9 @@ func (t *TextView) Draw(screen tcell.Screen) {
 						c := colorful.Color{R: float64(r) / 255, G: float64(g) / 255, B: float64(b) / 255}
 						_, _, li := c.Hcl()
 						if li < .5 {
-							bg = tcell.ColorWhite
+							bg = tcell.ColorWhite.TrueColor()
 						} else {
-							bg = tcell.ColorBlack
+							bg = tcell.ColorBlack.TrueColor()
 						}
 					}
 					style = style.Background(fg).Foreground(bg)

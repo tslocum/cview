@@ -4,7 +4,7 @@ import (
 	"math"
 	"sync"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 )
 
 // gridItem represents one primitive and its possible position on a grid.

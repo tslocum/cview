@@ -4,7 +4,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 )
 
 // dropDownOption is one option that can be selected in a drop-down primitive.
