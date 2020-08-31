@@ -159,6 +159,7 @@ func overlayStyle(background tcell.Color, defaultStyle tcell.Style, fgColor, bgC
 		style = style.Italic(defAttr&tcell.AttrItalic > 0)
 		style = style.Reverse(defAttr&tcell.AttrReverse > 0)
 		style = style.Underline(defAttr&tcell.AttrUnderline > 0)
+		style = style.StrikeOut(defAttr&tcell.AttrStrikeOut > 0)
 	} else if attributes != "" {
 		style = style.Normal()
 		for _, flag := range attributes {
@@ -175,6 +176,8 @@ func overlayStyle(background tcell.Color, defaultStyle tcell.Style, fgColor, bgC
 				style = style.Reverse(true)
 			case 'u':
 				style = style.Underline(true)
+			case 's':
+				style = style.StrikeOut(true)
 			}
 		}
 	}
