@@ -129,7 +129,7 @@ terminal):
   i: italic
   r: reverse (switch foreground and background color)
   u: underline
-  s: strikeout
+  s: strikethrough
 
 Examples:
 
