@@ -43,6 +43,10 @@ All clicks are handled as single clicks until an interval is set with [Applicati
 Call [Box.SetBackgroundTransparent](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Box.SetBackgroundTransparent)
 to enable background transparency.
 
+## Tables are sorted when a fixed row is clicked by default
+
+Call [Table.SetSortClicked] to disable this behavior.
+
 ## Lists and Forms do not wrap around by default
 
 Call [List.SetWrapAround](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#List.SetWrapAround) to wrap around when navigating.

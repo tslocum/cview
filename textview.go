@@ -109,6 +109,9 @@ type TextView struct {
 	// to be re-indexed.
 	index []*textViewIndex
 
+	// If set to true, the buffer will be reindexed each time it is modified.
+	reindex bool
+
 	// The text alignment, one of AlignLeft, AlignCenter, or AlignRight.
 	align int
 
@@ -200,6 +203,7 @@ func NewTextView() *TextView {
 		Box:        NewBox(),
 		highlights: make(map[string]struct{}),
 		lineOffset: -1,
+		reindex:    true,
 		scrollable: true,
 		align:      AlignLeft,
 		wrap:       true,
@@ -478,7 +482,9 @@ func (t *TextView) Clear() *TextView {
 func (t *TextView) clear() *TextView {
 	t.buffer = nil
 	t.recentBytes = nil
-	t.index = nil
+	if t.reindex {
+		t.index = nil
+	}
 	return t
 }
 
@@ -752,9 +758,28 @@ func (t *TextView) write(p []byte) (n int, err error) {
 	t.clipBuffer()
 
 	// Reset the index.
-	t.index = nil
+	if t.reindex {
+		t.index = nil
+	}
 
 	return len(p), nil
+}
+
+// SetReindexBuffer set a flag controlling whether the buffer is reindexed when
+// it is modified. This improves the performance of TextViews whose contents
+// always have line-breaks in the same location. This must be called after the
+// buffer has been indexed.
+func (t *TextView) SetReindexBuffer(reindex bool) *TextView {
+	t.Lock()
+	defer t.Unlock()
+
+	t.reindex = reindex
+
+	if reindex {
+		t.index = nil
+	}
+
+	return t
 }
 
 // reindexBuffer re-indexes the buffer such that we can use it to easily draw
