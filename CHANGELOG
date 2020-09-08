@@ -2,6 +2,7 @@ v1.4.9 (WIP)
 - Add InputField.GetCursorPosition and InputField.SetCursorPosition
 - Add Table.Sort, Table.SetSortFunc and Table.SetSortClicked
 - Add TextView.SetReindexBuffer
+- Base List PageUp and PageDown on the number of items displayed
 - Upgrade tcell to v2: includes strikethrough support
 
 v1.4.8 (2020-08-11)

@@ -614,6 +614,14 @@ func (l *List) Transform(tr Transformation) {
 func (l *List) transform(tr Transformation) {
 	var decreasing bool
 
+	pageItems := l.height
+	if l.showSecondaryText {
+		pageItems /= 2
+	}
+	if pageItems < 1 {
+		pageItems = 1
+	}
+
 	switch tr {
 	case TransformFirstItem:
 		l.currentItem = 0
@@ -627,10 +635,11 @@ func (l *List) transform(tr Transformation) {
 	case TransformNextItem:
 		l.currentItem += 1
 	case TransformPreviousPage:
-		l.currentItem -= 5
+		l.currentItem -= pageItems
 		decreasing = true
 	case TransformNextPage:
-		l.currentItem += 5
+		l.currentItem += pageItems
+		l.offset += pageItems
 	}
 
 	for i := 0; i < len(l.items); i++ {
