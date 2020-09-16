@@ -10,11 +10,12 @@ import (
 
 // ListItem represents an item in a List.
 type ListItem struct {
-	enabled       bool   // Whether or not the list item is selectable.
-	mainText      string // The main text of the list item.
-	secondaryText string // A secondary text to be shown underneath the main text.
-	shortcut      rune   // The key to select the list item directly, 0 if there is no shortcut.
-	selected      func() // The optional function which is called when the item is selected.
+	enabled       bool        // Whether or not the list item is selectable.
+	mainText      string      // The main text of the list item.
+	secondaryText string      // A secondary text to be shown underneath the main text.
+	shortcut      rune        // The key to select the list item directly, 0 if there is no shortcut.
+	selected      func()      // The optional function which is called when the item is selected.
+	reference     interface{} // An optional reference object.
 }
 
 // NewListItem returns a new item for the list.
@@ -62,6 +63,17 @@ func (l *ListItem) GetShortcut() rune {
 func (l *ListItem) SetSelectedFunc(handler func()) *ListItem {
 	l.selected = handler
 	return l
+}
+
+// SetReference allows you to store a reference of any type in the item
+func (l *ListItem) SetReference(val interface{}) *ListItem {
+	l.reference = val
+	return l
+}
+
+// GetReference returns the item's reference object.
+func (l *ListItem) GetReference() interface{} {
+	return l.reference
 }
 
 // List displays rows of items, each of which can be selected.
