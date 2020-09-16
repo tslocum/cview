@@ -14,6 +14,7 @@ type Theme struct {
 	SecondaryTextColor         tcell.Color // Secondary text (e.g. labels).
 	TertiaryTextColor          tcell.Color // Tertiary text (e.g. subtitles, notes).
 	InverseTextColor           tcell.Color // Text on primary-colored backgrounds.
+	ContrastPrimaryTextColor   tcell.Color // Primary text for contrasting elements.
 	ContrastSecondaryTextColor tcell.Color // Secondary text on ContrastBackgroundColor-colored backgrounds.
 
 	// Background
@@ -46,6 +47,7 @@ var Styles = Theme{
 	SecondaryTextColor:         tcell.ColorYellow.TrueColor(),
 	TertiaryTextColor:          tcell.ColorGreen.TrueColor(),
 	InverseTextColor:           tcell.ColorBlue.TrueColor(),
+	ContrastPrimaryTextColor:   tcell.ColorBlack.TrueColor(),
 	ContrastSecondaryTextColor: tcell.ColorDarkCyan.TrueColor(),
 
 	PrimitiveBackgroundColor:    tcell.ColorBlack.TrueColor(),
