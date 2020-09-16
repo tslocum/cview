@@ -29,6 +29,9 @@ type Theme struct {
 	ContextMenuPaddingBottom int // Bottom padding.
 	ContextMenuPaddingLeft   int // Left padding.
 	ContextMenuPaddingRight  int // Right padding.
+
+	// Check box
+	CheckBoxCheckedRune rune
 }
 
 // Styles defines the appearance of an application. The default is for a black
@@ -55,4 +58,6 @@ var Styles = Theme{
 	ContextMenuPaddingBottom: 0,
 	ContextMenuPaddingLeft:   1,
 	ContextMenuPaddingRight:  1,
+
+	CheckBoxCheckedRune: 'X',
 }

@@ -46,6 +46,9 @@ type CheckBox struct {
 	// this form item.
 	finished func(tcell.Key)
 
+	// The rune to show when the checkbox is checked
+	checkedRune rune
+
 	sync.RWMutex
 }
 
@@ -56,6 +59,7 @@ func NewCheckBox() *CheckBox {
 		labelColor:           Styles.SecondaryTextColor,
 		fieldBackgroundColor: Styles.ContrastBackgroundColor,
 		fieldTextColor:       Styles.PrimaryTextColor,
+		checkedRune:          Styles.CheckBoxCheckedRune,
 	}
 }
 
@@ -65,6 +69,15 @@ func (c *CheckBox) SetChecked(checked bool) *CheckBox {
 	defer c.Unlock()
 
 	c.checked = checked
+	return c
+}
+
+// SetCheckedRune sets the rune to show when the checkbox is checked.
+func (c *CheckBox) SetCheckedRune(rune rune) *CheckBox {
+	c.Lock()
+	defer c.Unlock()
+
+	c.checkedRune = rune
 	return c
 }
 
@@ -239,7 +252,8 @@ func (c *CheckBox) Draw(screen tcell.Screen) {
 	if c.focus.HasFocus() {
 		fieldStyle = fieldStyle.Background(c.fieldTextColor).Foreground(c.fieldBackgroundColor)
 	}
-	checkedRune := 'X'
+
+	checkedRune := c.checkedRune
 	if !c.checked {
 		checkedRune = ' '
 	}
