@@ -257,10 +257,12 @@ func (c *CheckBox) Draw(screen tcell.Screen) {
 	if !c.checked {
 		checkedRune = ' '
 	}
-	screen.SetContent(x, y, checkedRune, nil, fieldStyle)
+	screen.SetContent(x, y, ' ', nil, fieldStyle)
+	screen.SetContent(x+1, y, checkedRune, nil, fieldStyle)
+	screen.SetContent(x+2, y, ' ', nil, fieldStyle)
 
 	if c.message != "" {
-		Print(screen, c.message, x+2, y, len(c.message), AlignLeft, c.labelColor)
+		Print(screen, c.message, x+4, y, len(c.message), AlignLeft, c.labelColor)
 	}
 }
 
