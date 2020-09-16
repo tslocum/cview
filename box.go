@@ -313,6 +313,14 @@ func (b *Box) SetBackgroundTransparent(transparent bool) *Box {
 	return b
 }
 
+// GetBorder returns a value indicating whether the box have a border
+// or not.
+func (b *Box) GetBorder() bool {
+	b.l.RLock()
+	defer b.l.RUnlock()
+	return b.border
+}
+
 // SetBorder sets the flag indicating whether or not the box should have a
 // border.
 func (b *Box) SetBorder(show bool) *Box {
