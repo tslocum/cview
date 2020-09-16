@@ -303,6 +303,13 @@ func (b *Box) SetBackgroundColor(color tcell.Color) *Box {
 	return b
 }
 
+// GetBackgroundColor returns the box's background color.
+func (b *Box) GetBackgroundColor() tcell.Color {
+	b.l.RLock()
+	defer b.l.RUnlock()
+	return b.backgroundColor
+}
+
 // SetBackgroundTransparent sets the flag indicating whether or not the box's
 // background is transparent.
 func (b *Box) SetBackgroundTransparent(transparent bool) *Box {
