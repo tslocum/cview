@@ -19,6 +19,9 @@ type Box struct {
 	// Border padding.
 	paddingTop, paddingBottom, paddingLeft, paddingRight int
 
+	// The border color when the box has focus.
+	borderColorFocused tcell.Color
+
 	// The box's background color.
 	backgroundColor tcell.Color
 
@@ -73,14 +76,15 @@ type Box struct {
 // NewBox returns a Box without a border.
 func NewBox() *Box {
 	b := &Box{
-		width:           15,
-		height:          10,
-		innerX:          -1, // Mark as uninitialized.
-		backgroundColor: Styles.PrimitiveBackgroundColor,
-		borderColor:     Styles.BorderColor,
-		titleColor:      Styles.TitleColor,
-		titleAlign:      AlignCenter,
-		showFocus:       true,
+		width:              15,
+		height:             10,
+		innerX:             -1, // Mark as uninitialized.
+		backgroundColor:    Styles.PrimitiveBackgroundColor,
+		borderColor:        Styles.BorderColor,
+		borderColorFocused: Styles.BorderColor,
+		titleColor:         Styles.TitleColor,
+		titleAlign:         AlignCenter,
+		showFocus:          true,
 	}
 	b.focus = b
 	return b
@@ -347,6 +351,14 @@ func (b *Box) SetBorderColor(color tcell.Color) *Box {
 	return b
 }
 
+// SetBorderColorFocused sets the box's border color when the box is focused.
+func (b *Box) SetBorderColorFocused(color tcell.Color) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+	b.borderColorFocused = color
+	return b
+}
+
 // SetBorderAttributes sets the border's style attributes. You can combine
 // different attributes using bitmask operations:
 //
@@ -428,6 +440,11 @@ func (b *Box) Draw(screen tcell.Screen) {
 		} else {
 			hasFocus = b.focus.HasFocus()
 		}
+
+		if hasFocus {
+			border = SetAttributes(background.Foreground(b.borderColorFocused), b.borderAttributes)
+		}
+
 		if hasFocus && b.showFocus {
 			horizontal = Borders.HorizontalFocus
 			vertical = Borders.VerticalFocus
