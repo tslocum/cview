@@ -268,6 +268,42 @@ func (d *DropDown) SetFieldTextColorFocused(color tcell.Color) *DropDown {
 	return d
 }
 
+// SetDropDownTextColor sets text color of the drop down list.
+func (d *DropDown) SetDropDownTextColor(color tcell.Color) *DropDown {
+	d.Lock()
+	defer d.Unlock()
+
+	d.list.SetMainTextColor(color)
+	return d
+}
+
+// SetDropDownBackgroundColor sets the background color of the drop list.
+func (d *DropDown) SetDropDownBackgroundColor(color tcell.Color) *DropDown {
+	d.Lock()
+	defer d.Unlock()
+
+	d.list.SetBackgroundColor(color)
+	return d
+}
+
+// The text color of the selected option in the drop down list.
+func (d *DropDown) SetDropDownSelectedTextColor(color tcell.Color) *DropDown {
+	d.Lock()
+	defer d.Unlock()
+
+	d.list.SetSelectedTextColor(color)
+	return d
+}
+
+// The background color of the selected option in the drop down list.
+func (d *DropDown) SetDropDownSelectedBackgroundColor(color tcell.Color) *DropDown {
+	d.Lock()
+	defer d.Unlock()
+
+	d.list.SetSelectedBackgroundColor(color)
+	return d
+}
+
 // SetPrefixTextColor sets the color of the prefix string. The prefix string is
 // shown when the user starts typing text, which directly selects the first
 // option that starts with the typed string.
