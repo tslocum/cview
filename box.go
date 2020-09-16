@@ -86,6 +86,13 @@ func NewBox() *Box {
 	return b
 }
 
+// GetBorderPadding returns the size of the borders around the box content.
+func (b *Box) GetBorderPadding() (top, bottom, left, right int) {
+	b.l.RLock()
+	defer b.l.RUnlock()
+	return b.paddingTop, b.paddingBottom, b.paddingLeft, b.paddingRight
+}
+
 // SetBorderPadding sets the size of the borders around the box content.
 func (b *Box) SetBorderPadding(top, bottom, left, right int) *Box {
 	b.l.Lock()
