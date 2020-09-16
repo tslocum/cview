@@ -61,6 +61,21 @@ type InputField struct {
 	// The text color of the placeholder.
 	placeholderTextColor tcell.Color
 
+	// The text color of the placeholder when focused.
+	placeholderTextColorFocused tcell.Color
+
+	// The text color of the list items.
+	autocompleteListTextColor tcell.Color
+
+	// The background color of the autocomplete list.
+	autocompleteListBackgroundColor tcell.Color
+
+	// The text color of the selected ListItem.
+	autocompleteListSelectedTextColor tcell.Color
+
+	// The background color of the selected ListItem.
+	autocompleteListSelectedBackgroundColor tcell.Color
+
 	// The screen width of the label area. A value of 0 means use the width of
 	// the label text.
 	labelWidth int
@@ -112,14 +127,19 @@ type InputField struct {
 // NewInputField returns a new input field.
 func NewInputField() *InputField {
 	return &InputField{
-		Box:                         NewBox(),
-		labelColor:                  Styles.SecondaryTextColor,
-		labelColorFocused:           Styles.SecondaryTextColor,
-		fieldBackgroundColor:        Styles.ContrastBackgroundColor,
-		fieldBackgroundColorFocused: Styles.ContrastBackgroundColor,
-		fieldTextColor:              Styles.PrimaryTextColor,
-		fieldTextColorFocused:       Styles.PrimaryTextColor,
-		placeholderTextColor:        Styles.ContrastSecondaryTextColor,
+		Box:                                     NewBox(),
+		labelColor:                              Styles.SecondaryTextColor,
+		labelColorFocused:                       Styles.SecondaryTextColor,
+		fieldBackgroundColor:                    Styles.ContrastBackgroundColor,
+		fieldBackgroundColorFocused:             Styles.ContrastBackgroundColor,
+		fieldTextColor:                          Styles.PrimaryTextColor,
+		fieldTextColorFocused:                   Styles.PrimaryTextColor,
+		placeholderTextColor:                    Styles.ContrastSecondaryTextColor,
+		placeholderTextColorFocused:             Styles.ContrastSecondaryTextColor,
+		autocompleteListTextColor:               Styles.PrimitiveBackgroundColor,
+		autocompleteListBackgroundColor:         Styles.MoreContrastBackgroundColor,
+		autocompleteListSelectedTextColor:       Styles.PrimitiveBackgroundColor,
+		autocompleteListSelectedBackgroundColor: Styles.PrimaryTextColor,
 	}
 }
 
@@ -246,6 +266,48 @@ func (i *InputField) SetPlaceholderTextColor(color tcell.Color) *InputField {
 	return i
 }
 
+// SetPlaceholderTextColorFocused sets the text color of placeholder text when focused.
+func (i *InputField) SetPlaceholderTextColorFocused(color tcell.Color) *InputField {
+	i.placeholderTextColorFocused = color
+	return i
+}
+
+// SetAutocompleteListTextColor sets the text color of the ListItems.
+func (i *InputField) SetAutocompleteListTextColor(color tcell.Color) *InputField {
+	i.Lock()
+	defer i.Unlock()
+
+	i.autocompleteListTextColor = color
+	return i
+}
+
+// SetAutocompleteListBackgroundColor sets the background color of the autocomplete list.
+func (i *InputField) SetAutocompleteListBackgroundColor(color tcell.Color) *InputField {
+	i.Lock()
+	defer i.Unlock()
+
+	i.autocompleteListBackgroundColor = color
+	return i
+}
+
+// SetAutocompleteListSelectedTextColor sets the text color of the selected ListItem.
+func (i *InputField) SetAutocompleteListSelectedTextColor(color tcell.Color) *InputField {
+	i.Lock()
+	defer i.Unlock()
+
+	i.autocompleteListSelectedTextColor = color
+	return i
+}
+
+// SetAutocompleteListSelectedBackgroundColor sets the background of the selected ListItem.
+func (i *InputField) SetAutocompleteListSelectedBackgroundColor(color tcell.Color) *InputField {
+	i.Lock()
+	defer i.Unlock()
+
+	i.autocompleteListSelectedBackgroundColor = color
+	return i
+}
+
 // SetFormAttributes sets attributes shared by all form items.
 func (i *InputField) SetFormAttributes(labelWidth int, bgColor, labelColor, labelColorFocused, fieldTextColor, fieldTextColorFocused, fieldBgColor, fieldBgColorFocused tcell.Color) FormItem {
 	i.Lock()
@@ -352,12 +414,13 @@ func (i *InputField) Autocomplete() *InputField {
 	// Make a list if we have none.
 	if i.autocompleteList == nil {
 		i.autocompleteList = NewList()
-		i.autocompleteList.ShowSecondaryText(false).
-			SetMainTextColor(Styles.PrimitiveBackgroundColor).
-			SetSelectedTextColor(Styles.PrimitiveBackgroundColor).
-			SetSelectedBackgroundColor(Styles.PrimaryTextColor).
+		i.autocompleteList.
+			ShowSecondaryText(false).
+			SetMainTextColor(i.autocompleteListTextColor).
+			SetSelectedTextColor(i.autocompleteListSelectedTextColor).
+			SetSelectedBackgroundColor(i.autocompleteListSelectedBackgroundColor).
 			SetHighlightFullLine(true).
-			SetBackgroundColor(Styles.MoreContrastBackgroundColor)
+			SetBackgroundColor(i.autocompleteListBackgroundColor)
 	}
 
 	// Fill it with the entries.
