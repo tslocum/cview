@@ -43,11 +43,20 @@ type InputField struct {
 	// The label color.
 	labelColor tcell.Color
 
+	// The label color when focused.
+	labelColorFocused tcell.Color
+
 	// The background color of the input area.
 	fieldBackgroundColor tcell.Color
 
+	// The background color of the input area when focused.
+	fieldBackgroundColorFocused tcell.Color
+
 	// The text color of the input area.
 	fieldTextColor tcell.Color
+
+	// The text color of the input area when focused.
+	fieldTextColorFocused tcell.Color
 
 	// The text color of the placeholder.
 	placeholderTextColor tcell.Color
@@ -103,11 +112,14 @@ type InputField struct {
 // NewInputField returns a new input field.
 func NewInputField() *InputField {
 	return &InputField{
-		Box:                  NewBox(),
-		labelColor:           Styles.SecondaryTextColor,
-		fieldBackgroundColor: Styles.ContrastBackgroundColor,
-		fieldTextColor:       Styles.PrimaryTextColor,
-		placeholderTextColor: Styles.ContrastSecondaryTextColor,
+		Box:                         NewBox(),
+		labelColor:                  Styles.SecondaryTextColor,
+		labelColorFocused:           Styles.SecondaryTextColor,
+		fieldBackgroundColor:        Styles.ContrastBackgroundColor,
+		fieldBackgroundColorFocused: Styles.ContrastBackgroundColor,
+		fieldTextColor:              Styles.PrimaryTextColor,
+		fieldTextColorFocused:       Styles.PrimaryTextColor,
+		placeholderTextColor:        Styles.ContrastSecondaryTextColor,
 	}
 }
 
@@ -180,6 +192,15 @@ func (i *InputField) SetLabelColor(color tcell.Color) *InputField {
 	return i
 }
 
+// SetLabelColorFocused sets the color of the label when focused.
+func (i *InputField) SetLabelColorFocused(color tcell.Color) *InputField {
+	i.Lock()
+	defer i.Unlock()
+
+	i.labelColorFocused = color
+	return i
+}
+
 // SetFieldBackgroundColor sets the background color of the input area.
 func (i *InputField) SetFieldBackgroundColor(color tcell.Color) *InputField {
 	i.Lock()
@@ -189,12 +210,30 @@ func (i *InputField) SetFieldBackgroundColor(color tcell.Color) *InputField {
 	return i
 }
 
+// SetFieldBackgroundColorFocused sets the background color of the input area when focused.
+func (i *InputField) SetFieldBackgroundColorFocused(color tcell.Color) *InputField {
+	i.Lock()
+	defer i.Unlock()
+
+	i.fieldBackgroundColorFocused = color
+	return i
+}
+
 // SetFieldTextColor sets the text color of the input area.
 func (i *InputField) SetFieldTextColor(color tcell.Color) *InputField {
 	i.Lock()
 	defer i.Unlock()
 
 	i.fieldTextColor = color
+	return i
+}
+
+// SetFieldTextColorFocused sets the text color of the input area when focused.
+func (i *InputField) SetFieldTextColorFocused(color tcell.Color) *InputField {
+	i.Lock()
+	defer i.Unlock()
+
+	i.fieldTextColorFocused = color
 	return i
 }
 
@@ -208,15 +247,18 @@ func (i *InputField) SetPlaceholderTextColor(color tcell.Color) *InputField {
 }
 
 // SetFormAttributes sets attributes shared by all form items.
-func (i *InputField) SetFormAttributes(labelWidth int, labelColor, bgColor, fieldTextColor, fieldBgColor tcell.Color) FormItem {
+func (i *InputField) SetFormAttributes(labelWidth int, bgColor, labelColor, labelColorFocused, fieldTextColor, fieldTextColorFocused, fieldBgColor, fieldBgColorFocused tcell.Color) FormItem {
 	i.Lock()
 	defer i.Unlock()
 
 	i.labelWidth = labelWidth
-	i.labelColor = labelColor
 	i.backgroundColor = bgColor
+	i.labelColor = labelColor
+	i.labelColorFocused = labelColorFocused
 	i.fieldTextColor = fieldTextColor
+	i.fieldTextColorFocused = fieldTextColorFocused
 	i.fieldBackgroundColor = fieldBgColor
+	i.fieldBackgroundColorFocused = fieldBgColorFocused
 	return i
 }
 
@@ -392,6 +434,16 @@ func (i *InputField) Draw(screen tcell.Screen) {
 	i.Lock()
 	defer i.Unlock()
 
+	// Select colors
+	labelColor := i.labelColor
+	fieldBackgroundColor := i.fieldBackgroundColor
+	fieldTextColor := i.fieldTextColor
+	if i.GetFocusable().HasFocus() {
+		labelColor = i.labelColorFocused
+		fieldBackgroundColor = i.fieldBackgroundColorFocused
+		fieldTextColor = i.fieldTextColorFocused
+	}
+
 	// Prepare
 	x, y, width, height := i.GetInnerRect()
 	rightLimit := x + width
@@ -405,10 +457,10 @@ func (i *InputField) Draw(screen tcell.Screen) {
 		if labelWidth > rightLimit-x {
 			labelWidth = rightLimit - x
 		}
-		Print(screen, i.label, x, y, labelWidth, AlignLeft, i.labelColor)
+		Print(screen, i.label, x, y, labelWidth, AlignLeft, labelColor)
 		x += labelWidth
 	} else {
-		_, drawnWidth := Print(screen, i.label, x, y, rightLimit-x, AlignLeft, i.labelColor)
+		_, drawnWidth := Print(screen, i.label, x, y, rightLimit-x, AlignLeft, labelColor)
 		x += drawnWidth
 	}
 
@@ -421,7 +473,7 @@ func (i *InputField) Draw(screen tcell.Screen) {
 	if rightLimit-x < fieldWidth {
 		fieldWidth = rightLimit - x
 	}
-	fieldStyle := tcell.StyleDefault.Background(i.fieldBackgroundColor)
+	fieldStyle := tcell.StyleDefault.Background(fieldBackgroundColor)
 	for index := 0; index < fieldWidth; index++ {
 		screen.SetContent(x+index, y, ' ', nil, fieldStyle)
 	}
@@ -440,7 +492,7 @@ func (i *InputField) Draw(screen tcell.Screen) {
 		}
 		if fieldWidth >= stringWidth(text) {
 			// We have enough space for the full text.
-			Print(screen, Escape(text), x, y, fieldWidth, AlignLeft, i.fieldTextColor)
+			Print(screen, Escape(text), x, y, fieldWidth, AlignLeft, fieldTextColor)
 			i.offset = 0
 			iterateString(text, func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
 				if textPos >= i.cursorPos {
@@ -478,7 +530,7 @@ func (i *InputField) Draw(screen tcell.Screen) {
 				}
 				return false
 			})
-			Print(screen, Escape(text[i.offset:]), x, y, fieldWidth, AlignLeft, i.fieldTextColor)
+			Print(screen, Escape(text[i.offset:]), x, y, fieldWidth, AlignLeft, fieldTextColor)
 		}
 	}
 
