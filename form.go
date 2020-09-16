@@ -374,6 +374,18 @@ func (f *Form) GetFormItemCount() int {
 	return len(f.items)
 }
 
+// IndexOfFormItem returns the index of the given FormItem.
+func (f *Form) IndexOfFormItem(item FormItem) int {
+	f.l.RLock()
+	defer f.l.RUnlock()
+	for index, formItem := range f.items {
+		if item == formItem {
+			return index
+		}
+	}
+	return -1
+}
+
 // GetFormItem returns the form item at the given position, starting with index
 // 0. Elements are referenced in the order they were added. Buttons are not
 // included.
