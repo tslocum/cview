@@ -12,13 +12,13 @@ func main() {
 	reset := func() {
 		list.
 			Clear().
-			AddItem("List item 1", "Some explanatory text", 'a', nil).
-			AddItem("List item 2", "Some explanatory text", 'b', nil).
-			AddItem("List item 3", "Some explanatory text", 'c', nil).
-			AddItem("List item 4", "Some explanatory text", 'd', nil).
-			AddItem("Quit", "Press to exit", 'q', func() {
+			AddItem(cview.NewListItem("List item 1").SetSecondaryText("Some explanatory text").SetShortcut('a')).
+			AddItem(cview.NewListItem("List item 2").SetSecondaryText("Some explanatory text").SetShortcut('b')).
+			AddItem(cview.NewListItem("List item 3").SetSecondaryText("Some explanatory text").SetShortcut('c')).
+			AddItem(cview.NewListItem("List item 4").SetSecondaryText("Some explanatory text").SetShortcut('d')).
+			AddItem(cview.NewListItem("Quit").SetSecondaryText("Press to exit").SetShortcut('q').SetSelectedFunc(func() {
 				app.Stop()
-			})
+			}))
 
 		list.ContextMenuList().SetItemEnabled(3, false)
 	}

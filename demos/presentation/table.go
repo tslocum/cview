@@ -341,14 +341,14 @@ func Table(nextSlide func()) (title string, content cview.Primitive) {
 	}
 
 	list.ShowSecondaryText(false).
-		AddItem("Basic table", "", 'b', basic).
-		AddItem("Table with separator", "", 's', separator).
-		AddItem("Table with borders", "", 'o', borders).
-		AddItem("Selectable rows", "", 'r', selectRow).
-		AddItem("Selectable columns", "", 'c', selectColumn).
-		AddItem("Selectable cells", "", 'l', selectCell).
-		AddItem("Navigate", "", 'n', navigate).
-		AddItem("Next slide", "", 'x', nextSlide)
+		AddItem(cview.NewListItem("Basic table").SetShortcut('b').SetSelectedFunc(basic)).
+		AddItem(cview.NewListItem("Table with separator").SetShortcut('s').SetSelectedFunc(separator)).
+		AddItem(cview.NewListItem("Table with borders").SetShortcut('o').SetSelectedFunc(borders)).
+		AddItem(cview.NewListItem("Selectable rows").SetShortcut('r').SetSelectedFunc(selectRow)).
+		AddItem(cview.NewListItem("Selectable columns").SetShortcut('c').SetSelectedFunc(selectColumn)).
+		AddItem(cview.NewListItem("Selectable cells").SetShortcut('l').SetSelectedFunc(selectCell)).
+		AddItem(cview.NewListItem("Navigate").SetShortcut('n').SetSelectedFunc(navigate)).
+		AddItem(cview.NewListItem("Next slide").SetShortcut('x').SetSelectedFunc(nextSlide))
 	list.SetBorderPadding(1, 1, 2, 2)
 
 	basic()

@@ -28,7 +28,7 @@ type DropDown struct {
 	// currently selected.
 	currentOption int
 
-	// Strings to be placed beefore and after the current option.
+	// Strings to be placed before and after the current option.
 	currentOptionPrefix, currentOptionSuffix string
 
 	// The text to be displayed when no option has yet been selected.
@@ -370,7 +370,7 @@ func (d *DropDown) AddOption(text string, selected func()) *DropDown {
 
 func (d *DropDown) addOption(text string, selected func()) *DropDown {
 	d.options = append(d.options, &dropDownOption{Text: text, Selected: selected})
-	d.list.AddItem(d.optionPrefix+text+d.optionSuffix, "", 0, nil)
+	d.list.AddItem(NewListItem(d.optionPrefix + text + d.optionSuffix))
 	return d
 }
 
@@ -507,7 +507,7 @@ func (d *DropDown) Draw(screen tcell.Screen) {
 		// Show the prefix.
 		currentOptionPrefixWidth := TaggedStringWidth(d.currentOptionPrefix)
 		prefixWidth := stringWidth(d.prefix)
-		listItemText := d.options[d.list.GetCurrentItem()].Text
+		listItemText := d.options[d.list.GetCurrentItemIndex()].Text
 		Print(screen, d.currentOptionPrefix, x, y, fieldWidth, AlignLeft, fieldTextColor)
 		Print(screen, d.prefix, x+currentOptionPrefixWidth, y, fieldWidth-currentOptionPrefixWidth, AlignLeft, d.prefixTextColor)
 		if len(d.prefix) < len(listItemText) {
@@ -598,7 +598,7 @@ func (d *DropDown) openList(setFocus func(Primitive)) {
 	d.open = true
 	optionBefore := d.currentOption
 
-	d.list.SetSelectedFunc(func(index int, mainText, secondaryText string, shortcut rune) {
+	d.list.SetSelectedFunc(func(index int, item *ListItem) {
 		if d.dragging {
 			return // If we're dragging the mouse, we don't want to trigger any events.
 		}
