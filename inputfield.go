@@ -609,10 +609,10 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 			})
 		}
 		moveWordLeft := func() {
-			i.cursorPos = len(regexp.MustCompile(`\S+\s*$`).ReplaceAllString(i.text[:i.cursorPos], ""))
+			i.cursorPos = len(regexp.MustCompile(`(\w*|\W)$`).ReplaceAllString(i.text[:i.cursorPos], ""))
 		}
 		moveWordRight := func() {
-			i.cursorPos = len(i.text) - len(regexp.MustCompile(`^\s*\S+\s*`).ReplaceAllString(i.text[i.cursorPos:], ""))
+			i.cursorPos = len(i.text) - len(regexp.MustCompile(`^(\W|\w*)`).ReplaceAllString(i.text[i.cursorPos:], ""))
 		}
 
 		// Add character function. Returns whether or not the rune character is
@@ -670,7 +670,7 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 		case tcell.KeyCtrlK: // Delete until the end of the line.
 			i.text = i.text[:i.cursorPos]
 		case tcell.KeyCtrlW: // Delete last word.
-			lastWord := regexp.MustCompile(`\S+\s*$`)
+			lastWord := regexp.MustCompile(`(\w*|\W)$`)
 			newText := lastWord.ReplaceAllString(i.text[:i.cursorPos], "") + i.text[i.cursorPos:]
 			i.cursorPos -= len(i.text) - len(newText)
 			i.text = newText
