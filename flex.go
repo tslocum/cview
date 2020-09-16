@@ -113,6 +113,21 @@ func (f *Flex) AddItem(item Primitive, fixedSize, proportion int, focus bool) *F
 	return f
 }
 
+// AddItemAtIndex adds an item to the flex at a given index.
+// For more information see AddItem.
+func (f *Flex) AddItemAtIndex(index int, item Primitive, fixedSize, proportion int, focus bool) *Flex {
+	f.Lock()
+	defer f.Unlock()
+	newItem := &flexItem{Item: item, FixedSize: fixedSize, Proportion: proportion, Focus: focus}
+
+	if index == 0 {
+		f.items = append([]*flexItem{newItem}, f.items...)
+	} else {
+		f.items = append(f.items[:index], append([]*flexItem{newItem}, f.items[index:]...)...)
+	}
+	return f
+}
+
 // RemoveItem removes all items for the given primitive from the container,
 // keeping the order of the remaining items intact.
 func (f *Flex) RemoveItem(p Primitive) *Flex {
