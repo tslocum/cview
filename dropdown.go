@@ -127,6 +127,9 @@ type DropDown struct {
 	// The chars to show when the option's text gets shortened.
 	abbreviationChars string
 
+	// The symbol to draw at the end of the field.
+	dropDownSymbol rune
+
 	sync.RWMutex
 }
 
@@ -151,11 +154,21 @@ func NewDropDown() *DropDown {
 		fieldTextColor:              Styles.PrimaryTextColor,
 		fieldTextColorFocused:       Styles.PrimaryTextColor,
 		prefixTextColor:             Styles.ContrastSecondaryTextColor,
+		dropDownSymbol:              Styles.DropDownSymbol,
 		abbreviationChars:           Styles.DropDownAbbreviationChars,
 	}
 
 	d.focus = d
 
+	return d
+}
+
+// SetDropDownSymbolRune sets the rune to be drawn at the end of the dropdown field
+// to indicate that this field is a dropdown.
+func (d *DropDown) SetDropDownSymbolRune(symbol rune) *DropDown {
+	d.Lock()
+	defer d.Unlock()
+	d.dropDownSymbol = symbol
 	return d
 }
 
@@ -398,6 +411,7 @@ func (d *DropDown) getFieldWidth() int {
 	}
 	fieldWidth += len(d.optionPrefix) + len(d.optionSuffix)
 	fieldWidth += len(d.currentOptionPrefix) + len(d.currentOptionSuffix)
+	fieldWidth += 3 // space + dropDownSymbol + space
 	return fieldWidth
 }
 
@@ -588,6 +602,9 @@ func (d *DropDown) Draw(screen tcell.Screen) {
 		// Just show the current selection.
 		Print(screen, text, x, y, fieldWidth, AlignLeft, color)
 	}
+
+	// Draw drop down symbol
+	screen.SetContent(x+fieldWidth-2, y, d.dropDownSymbol, nil, new(tcell.Style).Foreground(fieldTextColor).Background(fieldBackgroundColor))
 
 	// Draw options list.
 	if hasFocus && d.open {
