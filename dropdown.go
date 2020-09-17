@@ -382,7 +382,10 @@ func (d *DropDown) SetFieldWidth(width int) *DropDown {
 func (d *DropDown) GetFieldWidth() int {
 	d.RLock()
 	defer d.RUnlock()
+	return d.getFieldWidth()
+}
 
+func (d *DropDown) getFieldWidth() int {
 	if d.fieldWidth > 0 {
 		return d.fieldWidth
 	}
@@ -537,7 +540,7 @@ func (d *DropDown) Draw(screen tcell.Screen) {
 	}
 
 	// Draw selection area.
-	fieldWidth := d.fieldWidth
+	fieldWidth := d.getFieldWidth()
 	if fieldWidth == 0 {
 		fieldWidth = maxWidth
 		if d.currentOption < 0 {
