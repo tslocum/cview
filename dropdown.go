@@ -666,6 +666,7 @@ func (d *DropDown) openList(setFocus func(Primitive)) {
 			d.evalPrefix()
 		} else if event.Key() == tcell.KeyEscape {
 			d.currentOption = optionBefore
+			d.list.SetCurrentItem(d.currentOption)
 			d.closeList(setFocus)
 		} else {
 			d.prefix = ""
