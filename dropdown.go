@@ -403,6 +403,11 @@ func (d *DropDown) SetFieldWidth(width int) *DropDown {
 	return d
 }
 
+// GetFieldHeight returns the height of the field.
+func (d *DropDown) GetFieldHeight() int {
+	return 1
+}
+
 // GetFieldWidth returns this primitive's field screen width.
 func (d *DropDown) GetFieldWidth() int {
 	d.RLock()

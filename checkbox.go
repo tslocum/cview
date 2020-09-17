@@ -215,6 +215,11 @@ func (c *CheckBox) SetFormAttributes(labelWidth int, bgColor, labelColor, labelC
 	return c
 }
 
+// GetFieldHeight returns the height of the field.
+func (c *CheckBox) GetFieldHeight() int {
+	return 1
+}
+
 // GetFieldWidth returns this primitive's field width.
 func (c *CheckBox) GetFieldWidth() int {
 	c.RLock()

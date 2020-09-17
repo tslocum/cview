@@ -79,6 +79,12 @@ type InputField struct {
 	// The text color of the suggestion.
 	autocompleteSuggestionTextColor tcell.Color
 
+	// The text color of the note below the input field.
+	fieldNoteTextColor tcell.Color
+
+	// The note to show below the input field.
+	fieldNote string
+
 	// The screen width of the label area. A value of 0 means use the width of
 	// the label text.
 	labelWidth int
@@ -147,6 +153,7 @@ func NewInputField() *InputField {
 		autocompleteListSelectedTextColor:       Styles.PrimitiveBackgroundColor,
 		autocompleteListSelectedBackgroundColor: Styles.PrimaryTextColor,
 		autocompleteSuggestionTextColor:         Styles.ContrastPrimaryTextColor,
+		fieldNoteTextColor:                      Styles.SecondaryTextColor,
 	}
 }
 
@@ -321,6 +328,30 @@ func (i *InputField) SetAutocompleteSuggestionTextColor(color tcell.Color) *Inpu
 	return i
 }
 
+// SetFieldNoteTextColor sets the text color of the note.
+func (i *InputField) SetFieldNoteTextColor(color tcell.Color) *InputField {
+	i.Lock()
+	defer i.Unlock()
+	i.fieldNoteTextColor = color
+	return i
+}
+
+// SetFieldNote sets the text to show below the input field, e.g. when the input is invalid.
+func (i *InputField) SetFieldNote(note string) *InputField {
+	i.Lock()
+	defer i.Unlock()
+	i.fieldNote = note
+	return i
+}
+
+// ResetFieldNote sets the note to an empty string.
+func (i *InputField) ResetFieldNote() *InputField {
+	i.Lock()
+	defer i.Unlock()
+	i.fieldNote = ""
+	return i
+}
+
 // SetFormAttributes sets attributes shared by all form items.
 func (i *InputField) SetFormAttributes(labelWidth int, bgColor, labelColor, labelColorFocused, fieldTextColor, fieldTextColorFocused, fieldBgColor, fieldBgColorFocused tcell.Color) FormItem {
 	i.Lock()
@@ -353,6 +384,16 @@ func (i *InputField) GetFieldWidth() int {
 	defer i.RUnlock()
 
 	return i.fieldWidth
+}
+
+// GetFieldHeight returns the height of the field.
+func (i *InputField) GetFieldHeight() int {
+	i.RLock()
+	defer i.RUnlock()
+	if i.fieldNote == "" {
+		return 1
+	}
+	return 2
 }
 
 // GetCursorPosition returns the cursor position.
@@ -628,6 +669,11 @@ func (i *InputField) Draw(screen tcell.Screen) {
 		if i.maskCharacter == 0 && i.autocompleteListSuggestion != "" {
 			Print(screen, i.autocompleteListSuggestion, x+stringWidth(drawnText), y, fieldWidth-stringWidth(drawnText), AlignLeft, i.autocompleteSuggestionTextColor)
 		}
+	}
+
+	// Draw field note
+	if i.fieldNote != "" {
+		Print(screen, i.fieldNote, x, y+1, fieldWidth, AlignLeft, i.fieldNoteTextColor)
 	}
 
 	// Draw autocomplete list.
