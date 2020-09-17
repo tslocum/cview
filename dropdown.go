@@ -124,6 +124,9 @@ type DropDown struct {
 	// Set to true when mouse dragging is in progress.
 	dragging bool
 
+	// The chars to show when the option's text gets shortened.
+	abbreviationChars string
+
 	sync.RWMutex
 }
 
@@ -148,6 +151,7 @@ func NewDropDown() *DropDown {
 		fieldTextColor:              Styles.PrimaryTextColor,
 		fieldTextColorFocused:       Styles.PrimaryTextColor,
 		prefixTextColor:             Styles.ContrastSecondaryTextColor,
+		abbreviationChars:           Styles.DropDownAbbreviationChars,
 	}
 
 	d.focus = d
@@ -389,6 +393,8 @@ func (d *DropDown) GetFieldWidth() int {
 			fieldWidth = width
 		}
 	}
+	fieldWidth += len(d.optionPrefix) + len(d.optionSuffix)
+	fieldWidth += len(d.currentOptionPrefix) + len(d.currentOptionSuffix)
 	return fieldWidth
 }
 
@@ -571,6 +577,11 @@ func (d *DropDown) Draw(screen tcell.Screen) {
 		if d.currentOption >= 0 && d.currentOption < len(d.options) {
 			text = d.currentOptionPrefix + d.options[d.currentOption].text + d.currentOptionSuffix
 		}
+		// Abbreviate text when not fitting
+		if fieldWidth > len(d.abbreviationChars)+3 && len(text) > fieldWidth {
+			text = text[0:fieldWidth-3-len(d.abbreviationChars)] + d.abbreviationChars
+		}
+
 		// Just show the current selection.
 		Print(screen, text, x, y, fieldWidth, AlignLeft, color)
 	}

@@ -33,6 +33,9 @@ type Theme struct {
 
 	// Check box
 	CheckBoxCheckedRune rune
+
+	// Drop down
+	DropDownAbbreviationChars string // The chars to show when the option's text gets shortened.
 }
 
 // Styles defines the appearance of an application. The default is for a black
@@ -62,4 +65,6 @@ var Styles = Theme{
 	ContextMenuPaddingRight:  1,
 
 	CheckBoxCheckedRune: 'X',
+
+	DropDownAbbreviationChars: "...",
 }
