@@ -9,8 +9,9 @@ import (
 
 // DropDownOption is one option that can be selected in a drop-down primitive.
 type DropDownOption struct {
-	text     string                                  // The text to be displayed in the drop-down.
-	selected func(index int, option *DropDownOption) // The (optional) callback for when this option was selected.
+	text      string                                  // The text to be displayed in the drop-down.
+	selected  func(index int, option *DropDownOption) // The (optional) callback for when this option was selected.
+	reference interface{}                             // An optional reference object.
 }
 
 func NewDropDownOption(text string) *DropDownOption {
@@ -31,6 +32,17 @@ func (d *DropDownOption) SetText(text string) *DropDownOption {
 // SetSelectedFunc sets the handler to be called when this option is selected.
 func (d *DropDownOption) SetSelectedFunc(handler func(index int, option *DropDownOption)) *DropDownOption {
 	d.selected = handler
+	return d
+}
+
+// GetReference returns the reference object of this dropdown option.
+func (d *DropDownOption) GetReference() interface{} {
+	return d.reference
+}
+
+// SetReference allows you to store a reference of any type in this option.
+func (d *DropDownOption) SetReference(reference interface{}) *DropDownOption {
+	d.reference = reference
 	return d
 }
 
