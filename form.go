@@ -687,8 +687,8 @@ func (f *Form) Draw(screen tcell.Screen) {
 			buttonWidth = space
 		}
 		button.SetLabelColor(f.buttonTextColor).
-			SetLabelColorFocused(f.buttonBackgroundColor).
-			SetBackgroundColorFocused(f.buttonTextColor).
+			SetLabelColorFocused(f.buttonTextColorFocused).
+			SetBackgroundColorFocused(f.buttonBackgroundColorFocused).
 			SetBackgroundColor(f.buttonBackgroundColor)
 
 		buttonIndex := index + len(f.items)
@@ -735,6 +735,7 @@ func (f *Form) Draw(screen tcell.Screen) {
 
 	// Draw buttons.
 	for index, button := range f.buttons {
+
 		// Set position.
 		buttonIndex := index + len(f.items)
 		y := positions[buttonIndex].y - offset
