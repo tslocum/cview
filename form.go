@@ -305,17 +305,32 @@ func (f *Form) AddPasswordField(label, value string, fieldWidth int, mask rune, 
 	return f
 }
 
-// AddDropDown adds a drop-down element to the form. It has a label, options,
+// AddDropDownSimple adds a drop-down element to the form. It has a label, options,
 // and an (optional) callback function which is invoked when an option was
 // selected. The initial option may be a negative value to indicate that no
 // option is currently selected.
-func (f *Form) AddDropDown(label string, options []string, initialOption int, selected func(option string, optionIndex int)) *Form {
+func (f *Form) AddDropDownSimple(label string, initialOption int, selected func(index int, option *DropDownOption), options ...string) *Form {
 	f.Lock()
 	defer f.Unlock()
 
 	f.items = append(f.items, NewDropDown().
 		SetLabel(label).
-		SetOptions(options, selected).
+		SetOptionsSimple(selected, options...).
+		SetCurrentOption(initialOption))
+	return f
+}
+
+// AddDropDown adds a drop-down element to the form. It has a label, options,
+// and an (optional) callback function which is invoked when an option was
+// selected. The initial option may be a negative value to indicate that no
+// option is currently selected.
+func (f *Form) AddDropDown(label string, initialOption int, selected func(index int, option *DropDownOption), options []*DropDownOption) *Form {
+	f.Lock()
+	defer f.Unlock()
+
+	f.items = append(f.items, NewDropDown().
+		SetLabel(label).
+		SetOptions(selected, options...).
 		SetCurrentOption(initialOption))
 	return f
 }

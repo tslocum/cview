@@ -12,15 +12,15 @@ func main() {
 	pages := cview.NewPages()
 
 	form := cview.NewForm()
-	form.AddDropDown("称谓", []string{"先生", "女士", "博士", "老师", "师傅"}, 0, nil).
+	form.AddDropDownSimple("称谓", 0, nil, "先生", "女士", "博士", "老师", "师傅").
 		AddInputField("姓名", "", 20, nil, nil).
 		AddPasswordField("密码", "", 10, '*', nil).
 		AddCheckBox("", "年龄 18+", false, nil).
 		AddButton("保存", func() {
-			_, title := form.GetFormItem(0).(*cview.DropDown).GetCurrentOption()
+			_, option := form.GetFormItem(0).(*cview.DropDown).GetCurrentOption()
 			userName := form.GetFormItem(1).(*cview.InputField).GetText()
 
-			alert(pages, "alert-dialog", fmt.Sprintf("保存成功，%s %s！", userName, title))
+			alert(pages, "alert-dialog", fmt.Sprintf("保存成功，%s %s！", userName, option.GetText()))
 		}).
 		AddButton("退出", func() {
 			app.Stop()
