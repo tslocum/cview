@@ -34,6 +34,18 @@ func (d *DropDownOption) SetSelectedFunc(handler func(index int, option *DropDow
 	return d
 }
 
+// SetChangedFunc sets a handler which is called when the user changes the
+// drop-down's option. This handler will be called in addition and prior to
+// an option's optional individual handler. The handler is provided with the
+// selected option's index and the option itself. If "no option" was selected, these values
+// are -1 and nil.
+func (d *DropDown) SetChangedFunc(handler func(index int, option *DropDownOption)) *DropDown {
+	d.list.SetChangedFunc(func(index int, item *ListItem) {
+		handler(index, d.options[index])
+	})
+	return d
+}
+
 // DropDown implements a selection widget whose options become visible in a
 // drop-down list when activated.
 type DropDown struct {
