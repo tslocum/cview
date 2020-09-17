@@ -466,12 +466,14 @@ func (f *Form) IndexOfFormItem(item FormItem) int {
 }
 
 // GetFormItem returns the form item at the given position, starting with index
-// 0. Elements are referenced in the order they were added. Buttons are not
-// included.
+// 0. Elements are referenced in the order they were added. Buttons are not included.
+// If index is out of bounds it returns nil.
 func (f *Form) GetFormItem(index int) FormItem {
 	f.RLock()
 	defer f.RUnlock()
-
+	if index > len(f.items)-1 || index < 0 {
+		return nil
+	}
 	return f.items[index]
 }
 
