@@ -266,6 +266,24 @@ func (d *DropDown) GetLabel() string {
 	return d.label
 }
 
+// SetAttributes sets the given attributes on the drop down.
+func (d *DropDown) SetAttributes(attributes ...FormItemAttribute) {
+	allAttributes := newFormItemAttributes()
+	for _, attribute := range attributes {
+		attribute.apply(allAttributes)
+	}
+
+	allAttributes.setLabelWidth(&d.labelWidth)
+	allAttributes.setBackgroundColor(&d.backgroundColor)
+	allAttributes.setLabelColor(&d.labelColor)
+	allAttributes.setLabelColorFocused(&d.labelColorFocused)
+	allAttributes.setFieldTextColor(&d.fieldTextColor)
+	allAttributes.setFieldTextColorFocused(&d.fieldTextColorFocused)
+	allAttributes.setFieldBackgroundColor(&d.fieldBackgroundColor)
+	allAttributes.setFieldBackgroundColorFocused(&d.fieldBackgroundColorFocused)
+	allAttributes.setFinishedFunc(&d.finished)
+}
+
 // SetLabelWidth sets the screen width of the label. A value of 0 will cause the
 // primitive to use the width of the label string.
 func (d *DropDown) SetLabelWidth(width int) *DropDown {
@@ -273,6 +291,12 @@ func (d *DropDown) SetLabelWidth(width int) *DropDown {
 	defer d.Unlock()
 
 	d.labelWidth = width
+	return d
+}
+
+// SetBackgroundColor sets the background color.
+func (d *DropDown) SetBackgroundColor(color tcell.Color) *DropDown {
+	d.Box.SetBackgroundColor(color)
 	return d
 }
 
@@ -374,22 +398,6 @@ func (d *DropDown) SetPrefixTextColor(color tcell.Color) *DropDown {
 	defer d.Unlock()
 
 	d.prefixTextColor = color
-	return d
-}
-
-// SetFormAttributes sets attributes shared by all form items.
-func (d *DropDown) SetFormAttributes(labelWidth int, bgColor, labelColor, labelColorFocused, fieldTextColor, fieldTextColorFocused, fieldBgColor, fieldBgColorFocused tcell.Color) FormItem {
-	d.Lock()
-	defer d.Unlock()
-
-	d.labelWidth = labelWidth
-	d.backgroundColor = bgColor
-	d.labelColor = labelColor
-	d.labelColorFocused = labelColorFocused
-	d.fieldTextColor = fieldTextColor
-	d.fieldTextColorFocused = fieldTextColorFocused
-	d.fieldBackgroundColor = fieldBgColor
-	d.fieldBackgroundColorFocused = fieldBgColorFocused
 	return d
 }
 
@@ -514,7 +522,7 @@ func (d *DropDown) SetDoneFunc(handler func(key tcell.Key)) *DropDown {
 }
 
 // SetFinishedFunc sets a callback invoked when the user leaves this form item.
-func (d *DropDown) SetFinishedFunc(handler func(key tcell.Key)) FormItem {
+func (d *DropDown) SetFinishedFunc(handler func(key tcell.Key)) *DropDown {
 	d.Lock()
 	defer d.Unlock()
 

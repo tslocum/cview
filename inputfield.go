@@ -198,6 +198,24 @@ func (i *InputField) GetLabel() string {
 	return i.label
 }
 
+// SetAttributes sets the given attributes on the input field.
+func (i *InputField) SetAttributes(attributes ...FormItemAttribute) {
+	allAttributes := newFormItemAttributes()
+	for _, attribute := range attributes {
+		attribute.apply(allAttributes)
+	}
+
+	allAttributes.setLabelWidth(&i.labelWidth)
+	allAttributes.setBackgroundColor(&i.backgroundColor)
+	allAttributes.setLabelColor(&i.labelColor)
+	allAttributes.setLabelColorFocused(&i.labelColorFocused)
+	allAttributes.setFieldTextColor(&i.fieldTextColor)
+	allAttributes.setFieldTextColorFocused(&i.fieldTextColorFocused)
+	allAttributes.setFieldBackgroundColor(&i.fieldBackgroundColor)
+	allAttributes.setFieldBackgroundColorFocused(&i.fieldBackgroundColorFocused)
+	allAttributes.setFinishedFunc(&i.finished)
+}
+
 // SetLabelWidth sets the screen width of the label. A value of 0 will cause the
 // primitive to use the width of the label string.
 func (i *InputField) SetLabelWidth(width int) *InputField {
@@ -205,6 +223,12 @@ func (i *InputField) SetLabelWidth(width int) *InputField {
 	defer i.Unlock()
 
 	i.labelWidth = width
+	return i
+}
+
+// SetBackgroundColor sets the background color.
+func (i *InputField) SetBackgroundColor(color tcell.Color) *InputField {
+	i.Box.SetBackgroundColor(color)
 	return i
 }
 
@@ -349,22 +373,6 @@ func (i *InputField) ResetFieldNote() *InputField {
 	i.Lock()
 	defer i.Unlock()
 	i.fieldNote = ""
-	return i
-}
-
-// SetFormAttributes sets attributes shared by all form items.
-func (i *InputField) SetFormAttributes(labelWidth int, bgColor, labelColor, labelColorFocused, fieldTextColor, fieldTextColorFocused, fieldBgColor, fieldBgColorFocused tcell.Color) FormItem {
-	i.Lock()
-	defer i.Unlock()
-
-	i.labelWidth = labelWidth
-	i.backgroundColor = bgColor
-	i.labelColor = labelColor
-	i.labelColorFocused = labelColorFocused
-	i.fieldTextColor = fieldTextColor
-	i.fieldTextColorFocused = fieldTextColorFocused
-	i.fieldBackgroundColor = fieldBgColor
-	i.fieldBackgroundColorFocused = fieldBgColorFocused
 	return i
 }
 
@@ -549,7 +557,7 @@ func (i *InputField) SetDoneFunc(handler func(key tcell.Key)) *InputField {
 }
 
 // SetFinishedFunc sets a callback invoked when the user leaves this form item.
-func (i *InputField) SetFinishedFunc(handler func(key tcell.Key)) FormItem {
+func (i *InputField) SetFinishedFunc(handler func(key tcell.Key)) *InputField {
 	i.Lock()
 	defer i.Unlock()
 

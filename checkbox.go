@@ -135,6 +135,24 @@ func (c *CheckBox) GetMessage() string {
 	return c.message
 }
 
+// SetAttributes sets the given attributes on the check box.
+func (c *CheckBox) SetAttributes(attributes ...FormItemAttribute) {
+	allAttributes := newFormItemAttributes()
+	for _, attribute := range attributes {
+		attribute.apply(allAttributes)
+	}
+
+	allAttributes.setLabelWidth(&c.labelWidth)
+	allAttributes.setBackgroundColor(&c.backgroundColor)
+	allAttributes.setLabelColor(&c.labelColor)
+	allAttributes.setLabelColorFocused(&c.labelColorFocused)
+	allAttributes.setFieldTextColor(&c.fieldTextColor)
+	allAttributes.setFieldTextColorFocused(&c.fieldTextColorFocused)
+	allAttributes.setFieldBackgroundColor(&c.fieldBackgroundColor)
+	allAttributes.setFieldBackgroundColorFocused(&c.fieldBackgroundColorFocused)
+	allAttributes.setFinishedFunc(&c.finished)
+}
+
 // SetLabelWidth sets the screen width of the label. A value of 0 will cause the
 // primitive to use the width of the label string.
 func (c *CheckBox) SetLabelWidth(width int) *CheckBox {
@@ -142,6 +160,12 @@ func (c *CheckBox) SetLabelWidth(width int) *CheckBox {
 	defer c.Unlock()
 
 	c.labelWidth = width
+	return c
+}
+
+// SetBackgroundColor sets the background color.
+func (c *CheckBox) SetBackgroundColor(color tcell.Color) *CheckBox {
+	c.Box.SetBackgroundColor(color)
 	return c
 }
 
@@ -199,22 +223,6 @@ func (c *CheckBox) SetFieldTextColorFocused(color tcell.Color) *CheckBox {
 	return c
 }
 
-// SetFormAttributes sets attributes shared by all form items.
-func (c *CheckBox) SetFormAttributes(labelWidth int, bgColor, labelColor, labelColorFocused, fieldTextColor, fieldTextColorFocused, fieldBgColor, fieldBgColorFocused tcell.Color) FormItem {
-	c.Lock()
-	defer c.Unlock()
-
-	c.labelWidth = labelWidth
-	c.backgroundColor = bgColor
-	c.labelColor = labelColor
-	c.labelColorFocused = labelColorFocused
-	c.fieldTextColor = fieldTextColor
-	c.fieldTextColorFocused = fieldTextColorFocused
-	c.fieldBackgroundColor = fieldBgColor
-	c.fieldBackgroundColorFocused = fieldBgColorFocused
-	return c
-}
-
 // GetFieldHeight returns the height of the field.
 func (c *CheckBox) GetFieldHeight() int {
 	return 1
@@ -259,7 +267,7 @@ func (c *CheckBox) SetDoneFunc(handler func(key tcell.Key)) *CheckBox {
 }
 
 // SetFinishedFunc sets a callback invoked when the user leaves this form item.
-func (c *CheckBox) SetFinishedFunc(handler func(key tcell.Key)) FormItem {
+func (c *CheckBox) SetFinishedFunc(handler func(key tcell.Key)) *CheckBox {
 	c.Lock()
 	defer c.Unlock()
 
