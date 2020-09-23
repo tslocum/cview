@@ -661,6 +661,9 @@ func (d *DropDown) Draw(screen tcell.Screen) {
 		if d.list.scrollBarVisibility == ScrollBarAlways || (d.list.scrollBarVisibility == ScrollBarAuto && len(d.options) > lheight) {
 			lwidth++ // Add space for scroll bar
 		}
+		if lwidth < fieldWidth {
+			lwidth = fieldWidth
+		}
 		d.list.SetRect(lx, ly, lwidth, lheight)
 		d.list.Draw(screen)
 	}
