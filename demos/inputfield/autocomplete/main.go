@@ -28,7 +28,7 @@ func main() {
 				entries = append(entries, cview.NewListItem(word))
 			}
 		}
-		if len(entries) <= 1 {
+		if len(entries) == 0 {
 			entries = nil
 		}
 		return

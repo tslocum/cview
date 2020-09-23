@@ -1,5 +1,12 @@
 v1.5.0 (WIP)
 - Add scroll bar to TextView
+- Add focus-driven style options
+- Add InputField autocomplete style options
+- Add arrow symbol to DropDown
+- Add Makefile
+- Revamp FormItem styling as FormItem.SetAttributes
+- Provide DropDownOption in DropDown handlers
+- Provide ListItem in List handlers
 
 v1.4.9 (2020-09-08)
 - Add InputField.GetCursorPosition and InputField.SetCursorPosition

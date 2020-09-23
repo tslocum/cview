@@ -61,8 +61,8 @@ func NewFlex() *Flex {
 // GetDirection returns the direction in which the contained primitives are
 // distributed. This can be either FlexColumn (default) or FlexRow.
 func (f *Flex) GetDirection() int {
-	f.l.RLock()
-	defer f.l.RUnlock()
+	f.RLock()
+	defer f.RUnlock()
 	return f.direction
 }
 

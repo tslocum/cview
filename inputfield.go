@@ -510,11 +510,12 @@ func (i *InputField) Autocomplete() *InputField {
 // autocompleteChanged gets called when another item in the
 // autocomplete list has been selected.
 func (i *InputField) autocompleteChanged(_ int, item *ListItem) {
-	if referenceVal, isString := item.reference.(string); isString {
-		i.autocompleteListSuggestion = referenceVal[len(i.text):]
-	} else {
-		i.autocompleteListSuggestion = item.mainText[len(i.text):]
+	if len(i.text) >= len(item.mainText) {
+		i.autocompleteListSuggestion = ""
+		return
 	}
+
+	i.autocompleteListSuggestion = item.mainText[len(i.text):]
 }
 
 // SetAcceptanceFunc sets a handler which may reject the last character that was
@@ -857,11 +858,7 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 			if i.autocompleteList != nil {
 				currentItem := i.autocompleteList.GetCurrentItem()
 				i.Unlock()
-				if referenceVal, isString := currentItem.reference.(string); isString {
-					i.SetText(referenceVal)
-				} else {
-					i.SetText(currentItem.mainText)
-				}
+				i.SetText(currentItem.mainText)
 				i.Lock()
 				i.autocompleteList = nil
 				i.autocompleteListSuggestion = ""
