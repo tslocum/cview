@@ -268,7 +268,8 @@ func (i *InputField) SetFieldBackgroundColor(color tcell.Color) *InputField {
 	return i
 }
 
-// SetFieldBackgroundColorFocused sets the background color of the input area when focused.
+// SetFieldBackgroundColorFocused sets the background color of the input area
+// when focused.
 func (i *InputField) SetFieldBackgroundColorFocused(color tcell.Color) *InputField {
 	i.Lock()
 	defer i.Unlock()
@@ -304,7 +305,8 @@ func (i *InputField) SetPlaceholderTextColor(color tcell.Color) *InputField {
 	return i
 }
 
-// SetPlaceholderTextColorFocused sets the text color of placeholder text when focused.
+// SetPlaceholderTextColorFocused sets the text color of placeholder text when
+// focused.
 func (i *InputField) SetPlaceholderTextColorFocused(color tcell.Color) *InputField {
 	i.placeholderTextColorFocused = color
 	return i
@@ -319,7 +321,8 @@ func (i *InputField) SetAutocompleteListTextColor(color tcell.Color) *InputField
 	return i
 }
 
-// SetAutocompleteListBackgroundColor sets the background color of the autocomplete list.
+// SetAutocompleteListBackgroundColor sets the background color of the
+// autocomplete list.
 func (i *InputField) SetAutocompleteListBackgroundColor(color tcell.Color) *InputField {
 	i.Lock()
 	defer i.Unlock()
@@ -328,7 +331,8 @@ func (i *InputField) SetAutocompleteListBackgroundColor(color tcell.Color) *Inpu
 	return i
 }
 
-// SetAutocompleteListSelectedTextColor sets the text color of the selected ListItem.
+// SetAutocompleteListSelectedTextColor sets the text color of the selected
+// ListItem.
 func (i *InputField) SetAutocompleteListSelectedTextColor(color tcell.Color) *InputField {
 	i.Lock()
 	defer i.Unlock()
@@ -337,7 +341,8 @@ func (i *InputField) SetAutocompleteListSelectedTextColor(color tcell.Color) *In
 	return i
 }
 
-// SetAutocompleteListSelectedBackgroundColor sets the background of the selected ListItem.
+// SetAutocompleteListSelectedBackgroundColor sets the background of the
+// selected ListItem.
 func (i *InputField) SetAutocompleteListSelectedBackgroundColor(color tcell.Color) *InputField {
 	i.Lock()
 	defer i.Unlock()
@@ -346,7 +351,8 @@ func (i *InputField) SetAutocompleteListSelectedBackgroundColor(color tcell.Colo
 	return i
 }
 
-// SetAutocompleteSuggestionColor sets the text color of the autocomplete suggestion in the input field.
+// SetAutocompleteSuggestionTextColor sets the text color of the autocomplete
+// suggestion in the input field.
 func (i *InputField) SetAutocompleteSuggestionTextColor(color tcell.Color) *InputField {
 	i.autocompleteSuggestionTextColor = color
 	return i
@@ -360,7 +366,8 @@ func (i *InputField) SetFieldNoteTextColor(color tcell.Color) *InputField {
 	return i
 }
 
-// SetFieldNote sets the text to show below the input field, e.g. when the input is invalid.
+// SetFieldNote sets the text to show below the input field, e.g. when the
+// input is invalid.
 func (i *InputField) SetFieldNote(note string) *InputField {
 	i.Lock()
 	defer i.Unlock()

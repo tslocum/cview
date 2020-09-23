@@ -12,14 +12,20 @@ type DropDownOption struct {
 	text      string                                  // The text to be displayed in the drop-down.
 	selected  func(index int, option *DropDownOption) // The (optional) callback for when this option was selected.
 	reference interface{}                             // An optional reference object.
+
+	sync.RWMutex
 }
 
+// NewDropDownOption returns a new option for a dropdown.
 func NewDropDownOption(text string) *DropDownOption {
 	return &DropDownOption{text: text}
 }
 
 // GetText returns the text of this dropdown option.
 func (d *DropDownOption) GetText() string {
+	d.RLock()
+	defer d.RUnlock()
+
 	return d.text
 }
 
@@ -37,24 +43,15 @@ func (d *DropDownOption) SetSelectedFunc(handler func(index int, option *DropDow
 
 // GetReference returns the reference object of this dropdown option.
 func (d *DropDownOption) GetReference() interface{} {
+	d.RLock()
+	defer d.RUnlock()
+
 	return d.reference
 }
 
 // SetReference allows you to store a reference of any type in this option.
 func (d *DropDownOption) SetReference(reference interface{}) *DropDownOption {
 	d.reference = reference
-	return d
-}
-
-// SetChangedFunc sets a handler which is called when the user changes the
-// drop-down's option. This handler will be called in addition and prior to
-// an option's optional individual handler. The handler is provided with the
-// selected option's index and the option itself. If "no option" was selected, these values
-// are -1 and nil.
-func (d *DropDown) SetChangedFunc(handler func(index int, option *DropDownOption)) *DropDown {
-	d.list.SetChangedFunc(func(index int, item *ListItem) {
-		handler(index, d.options[index])
-	})
 	return d
 }
 
@@ -266,7 +263,7 @@ func (d *DropDown) GetLabel() string {
 	return d.label
 }
 
-// SetAttributes sets the given attributes on the drop down.
+// SetAttributes sets the given attributes on the drop-down.
 func (d *DropDown) SetAttributes(attributes ...FormItemAttribute) {
 	allAttributes := newFormItemAttributes()
 	for _, attribute := range attributes {
@@ -354,7 +351,7 @@ func (d *DropDown) SetFieldTextColorFocused(color tcell.Color) *DropDown {
 	return d
 }
 
-// SetDropDownTextColor sets text color of the drop down list.
+// SetDropDownTextColor sets text color of the drop-down list.
 func (d *DropDown) SetDropDownTextColor(color tcell.Color) *DropDown {
 	d.Lock()
 	defer d.Unlock()
@@ -363,7 +360,7 @@ func (d *DropDown) SetDropDownTextColor(color tcell.Color) *DropDown {
 	return d
 }
 
-// SetDropDownBackgroundColor sets the background color of the drop list.
+// SetDropDownBackgroundColor sets the background color of the drop-down list.
 func (d *DropDown) SetDropDownBackgroundColor(color tcell.Color) *DropDown {
 	d.Lock()
 	defer d.Unlock()
@@ -372,7 +369,8 @@ func (d *DropDown) SetDropDownBackgroundColor(color tcell.Color) *DropDown {
 	return d
 }
 
-// The text color of the selected option in the drop down list.
+// SetDropDownSelectedTextColor sets the text color of the selected option in
+// the drop-down list.
 func (d *DropDown) SetDropDownSelectedTextColor(color tcell.Color) *DropDown {
 	d.Lock()
 	defer d.Unlock()
@@ -381,7 +379,8 @@ func (d *DropDown) SetDropDownSelectedTextColor(color tcell.Color) *DropDown {
 	return d
 }
 
-// The background color of the selected option in the drop down list.
+// SetDropDownSelectedBackgroundColor sets the background color of the selected
+// option in the drop-down list.
 func (d *DropDown) SetDropDownSelectedBackgroundColor(color tcell.Color) *DropDown {
 	d.Lock()
 	defer d.Unlock()
@@ -440,7 +439,7 @@ func (d *DropDown) getFieldWidth() int {
 	return fieldWidth
 }
 
-// AddOptions adds new selectable options to this drop-down.
+// AddOptionsSimple adds new selectable options to this drop-down.
 func (d *DropDown) AddOptionsSimple(options ...string) *DropDown {
 	optionsToAdd := make([]*DropDownOption, len(options))
 	for i, option := range options {
@@ -493,7 +492,18 @@ func (d *DropDown) SetOptions(selected func(index int, option *DropDownOption), 
 	return d
 }
 
-// SetSelectedFunc sets a handler which is called when the user changes the
+// SetChangedFunc sets a handler which is called when the user changes the
+// focused drop-down option. The handler is provided with the selected option's
+// index and the option itself. If "no option" was selected, these values are
+// -1 and nil.
+func (d *DropDown) SetChangedFunc(handler func(index int, option *DropDownOption)) *DropDown {
+	d.list.SetChangedFunc(func(index int, item *ListItem) {
+		handler(index, d.options[index])
+	})
+	return d
+}
+
+// SetSelectedFunc sets a handler which is called when the user selects a
 // drop-down's option. This handler will be called in addition and prior to
 // an option's optional individual handler. The handler is provided with the
 // selected option's index and the option itself. If "no option" was selected, these values
@@ -628,12 +638,12 @@ func (d *DropDown) Draw(screen tcell.Screen) {
 		Print(screen, text, x, y, fieldWidth, AlignLeft, color)
 	}
 
-	// Draw drop down symbol
+	// Draw drop-down symbol
 	screen.SetContent(x+fieldWidth-2, y, d.dropDownSymbol, nil, new(tcell.Style).Foreground(fieldTextColor).Background(fieldBackgroundColor))
 
 	// Draw options list.
 	if hasFocus && d.open {
-		// We prefer to drop down but if there is no space, maybe drop up?
+		// We prefer to drop-down but if there is no space, maybe drop up?
 		lx := x
 		ly := y + 1
 		lheight := len(d.options)

@@ -16,9 +16,11 @@ type ListItem struct {
 	shortcut      rune        // The key to select the list item directly, 0 if there is no shortcut.
 	selected      func()      // The optional function which is called when the item is selected.
 	reference     interface{} // An optional reference object.
+
+	sync.RWMutex
 }
 
-// NewListItem returns a new item for the list.
+// NewListItem returns a new item for a list.
 func NewListItem(mainText string) *ListItem {
 	return &ListItem{
 		mainText: mainText,
@@ -28,51 +30,78 @@ func NewListItem(mainText string) *ListItem {
 
 // SetMainText sets the main text of the list item.
 func (l *ListItem) SetMainText(val string) *ListItem {
+	l.Lock()
+	defer l.Unlock()
+
 	l.mainText = val
 	return l
 }
 
 // GetMainText returns the item's main text.
 func (l *ListItem) GetMainText() string {
+	l.RLock()
+	defer l.RUnlock()
+
 	return l.mainText
 }
 
 // SetSecondaryText sets a secondary text to be shown underneath the main text.
 func (l *ListItem) SetSecondaryText(val string) *ListItem {
+	l.Lock()
+	defer l.Unlock()
+
 	l.secondaryText = val
 	return l
 }
 
 // GetSecondaryText returns the item's secondary text.
 func (l *ListItem) GetSecondaryText() string {
+	l.RLock()
+	defer l.RUnlock()
+
 	return l.secondaryText
 }
 
 // SetShortcut sets the key to select the ListItem directly, 0 if there is no shortcut.
 func (l *ListItem) SetShortcut(val rune) *ListItem {
+	l.Lock()
+	defer l.Unlock()
+
 	l.shortcut = val
 	return l
 }
 
 // GetShortcut returns the ListItem's shortcut.
 func (l *ListItem) GetShortcut() rune {
+	l.RLock()
+	defer l.RUnlock()
+
 	return l.shortcut
 }
 
 // SetSelectedFunc sets a function which is called when the ListItem is selected.
 func (l *ListItem) SetSelectedFunc(handler func()) *ListItem {
+	l.Lock()
+	defer l.Unlock()
+
 	l.selected = handler
 	return l
 }
 
 // SetReference allows you to store a reference of any type in the item
 func (l *ListItem) SetReference(val interface{}) *ListItem {
+	l.Lock()
+	defer l.Unlock()
+
 	l.reference = val
 	return l
 }
 
 // GetReference returns the item's reference object.
 func (l *ListItem) GetReference() interface{} {
+	l.RLock()
+	defer l.RUnlock()
+
 	return l.reference
 }
 
@@ -708,10 +737,10 @@ func (l *List) transform(tr Transformation) {
 	case TransformLastItem:
 		l.currentItem = len(l.items) - 1
 	case TransformPreviousItem:
-		l.currentItem -= 1
+		l.currentItem--
 		decreasing = true
 	case TransformNextItem:
-		l.currentItem += 1
+		l.currentItem++
 	case TransformPreviousPage:
 		l.currentItem -= pageItems
 		decreasing = true

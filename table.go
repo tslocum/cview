@@ -810,9 +810,8 @@ func (t *Table) Sort(column int, descending bool) *Table {
 
 		if !descending {
 			return t.sortFunc(column, i, j)
-		} else {
-			return t.sortFunc(column, j, i)
 		}
+		return t.sortFunc(column, j, i)
 	})
 
 	return t

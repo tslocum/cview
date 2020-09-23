@@ -1,9 +1,7 @@
-# cview
+# cview - Terminal-based user interface toolkit
 [![GoDoc](https://gitlab.com/tslocum/godoc-static/-/raw/master/badge.svg)](https://docs.rocketnine.space/gitlab.com/tslocum/cview)
 [![CI status](https://gitlab.com/tslocum/cview/badges/master/pipeline.svg)](https://gitlab.com/tslocum/cview/commits/master)
 [![Donate](https://img.shields.io/liberapay/receives/rocketnine.space.svg?logo=liberapay)](https://liberapay.com/rocketnine.space)
-
-Terminal-based user interface toolkit
 
 This package is a fork of [tview](https://github.com/rivo/tview).
 See [FORK.md](https://gitlab.com/tslocum/cview/blob/master/FORK.md) for more information.
