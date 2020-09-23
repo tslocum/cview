@@ -60,11 +60,11 @@ func (c *ContextMenu) AddContextItem(text string, shortcut rune, selected func(i
 
 	c.initializeList()
 
-	c.list.AddItem(text, "", shortcut, c.wrap(selected))
+	c.list.AddItem(NewListItem(text).SetShortcut(shortcut).SetSelectedFunc(c.wrap(selected)))
 	if text == "" && shortcut == 0 {
 		c.list.Lock()
 		index := len(c.list.items) - 1
-		c.list.items[index].Enabled = false
+		c.list.items[index].enabled = false
 		c.list.Unlock()
 	}
 
@@ -139,14 +139,14 @@ func (c *ContextMenu) show(item int, x int, y int, setFocus func(Primitive)) {
 
 	c.list.Lock()
 	for i, item := range c.list.items {
-		if item.Enabled {
+		if item.enabled {
 			c.list.currentItem = i
 			break
 		}
 	}
 	c.list.Unlock()
 
-	c.list.SetSelectedFunc(func(index int, mainText, secondaryText string, shortcut rune) {
+	c.list.SetSelectedFunc(func(index int, item *ListItem) {
 		c.l.Lock()
 
 		// A context item was selected. Close the menu.
@@ -154,7 +154,7 @@ func (c *ContextMenu) show(item int, x int, y int, setFocus func(Primitive)) {
 
 		if c.selected != nil {
 			c.l.Unlock()
-			c.selected(index, mainText, shortcut)
+			c.selected(index, item.mainText, item.shortcut)
 		} else {
 			c.l.Unlock()
 		}

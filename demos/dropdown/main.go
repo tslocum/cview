@@ -7,7 +7,12 @@ func main() {
 	app := cview.NewApplication()
 	dropdown := cview.NewDropDown().
 		SetLabel("Select an option (hit Enter): ").
-		SetOptions([]string{"First", "Second", "Third", "Fourth", "Fifth"}, nil)
+		SetOptions(nil,
+			cview.NewDropDownOption("First"),
+			cview.NewDropDownOption("Second"),
+			cview.NewDropDownOption("Third"),
+			cview.NewDropDownOption("Fourth"),
+			cview.NewDropDownOption("Fifth"))
 	if err := app.SetRoot(dropdown, true).EnableMouse(true).Run(); err != nil {
 		panic(err)
 	}

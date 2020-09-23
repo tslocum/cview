@@ -33,7 +33,7 @@ func Form(nextSlide func()) (title string, content cview.Primitive) {
 	f := cview.NewForm().
 		AddInputField("First name:", "", 20, nil, nil).
 		AddInputField("Last name:", "", 20, nil, nil).
-		AddDropDown("Role:", []string{"Engineer", "Manager", "Administration"}, 0, nil).
+		AddDropDownSimple("Role:", 0, nil, "Engineer", "Manager", "Administration").
 		AddPasswordField("Password:", "", 10, '*', nil).
 		AddCheckBox("", "On vacation", false, nil).
 		AddButton("Save", nextSlide).

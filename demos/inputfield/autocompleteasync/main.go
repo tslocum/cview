@@ -26,8 +26,8 @@ func main() {
 
 	// Set up autocomplete function.
 	var mutex sync.Mutex
-	prefixMap := make(map[string][]string)
-	inputField.SetAutocompleteFunc(func(currentText string) []string {
+	prefixMap := make(map[string][]*cview.ListItem)
+	inputField.SetAutocompleteFunc(func(currentText string) []*cview.ListItem {
 		// Ignore empty text.
 		prefix := strings.TrimSpace(strings.ToLower(currentText))
 		if prefix == "" {
@@ -57,9 +57,9 @@ func main() {
 			if err := dec.Decode(&companies); err != nil {
 				return
 			}
-			entries := make([]string, 0, len(companies))
+			entries := make([]*cview.ListItem, 0, len(companies))
 			for _, c := range companies {
-				entries = append(entries, c.Name)
+				entries = append(entries, cview.NewListItem(c.Name))
 			}
 			mutex.Lock()
 			prefixMap[prefix] = entries

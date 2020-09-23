@@ -8,9 +8,13 @@ import (
 func main() {
 	app := cview.NewApplication()
 	form := cview.NewForm().
-		AddDropDown("Title", []string{"Mr.", "Ms.", "Mrs.", "Dr.", "Prof."}, 0, nil).
+		AddDropDownSimple("Title", 0, nil, "Mr.", "Ms.", "Mrs.", "Dr.", "Prof.").
 		AddInputField("First name", "", 20, nil, nil).
 		AddInputField("Last name", "", 20, nil, nil).
+		AddFormItem(cview.NewInputField().
+			SetLabel("Address").
+			SetFieldWidth(30).
+			SetFieldNote("Your complete address")).
 		AddPasswordField("Password", "", 10, '*', nil).
 		AddCheckBox("", "Age 18+", false, nil).
 		AddButton("Save", nil).

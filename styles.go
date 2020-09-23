@@ -14,6 +14,7 @@ type Theme struct {
 	SecondaryTextColor         tcell.Color // Secondary text (e.g. labels).
 	TertiaryTextColor          tcell.Color // Tertiary text (e.g. subtitles, notes).
 	InverseTextColor           tcell.Color // Text on primary-colored backgrounds.
+	ContrastPrimaryTextColor   tcell.Color // Primary text for contrasting elements.
 	ContrastSecondaryTextColor tcell.Color // Secondary text on ContrastBackgroundColor-colored backgrounds.
 
 	// Background
@@ -29,6 +30,13 @@ type Theme struct {
 	ContextMenuPaddingBottom int // Bottom padding.
 	ContextMenuPaddingLeft   int // Left padding.
 	ContextMenuPaddingRight  int // Right padding.
+
+	// Check box
+	CheckBoxCheckedRune rune
+
+	// Drop down
+	DropDownAbbreviationChars string // The chars to show when the option's text gets shortened.
+	DropDownSymbol            rune   // The symbol to draw at the end of the field.
 }
 
 // Styles defines the appearance of an application. The default is for a black
@@ -43,6 +51,7 @@ var Styles = Theme{
 	SecondaryTextColor:         tcell.ColorYellow.TrueColor(),
 	TertiaryTextColor:          tcell.ColorGreen.TrueColor(),
 	InverseTextColor:           tcell.ColorBlue.TrueColor(),
+	ContrastPrimaryTextColor:   tcell.ColorBlack.TrueColor(),
 	ContrastSecondaryTextColor: tcell.ColorDarkCyan.TrueColor(),
 
 	PrimitiveBackgroundColor:    tcell.ColorBlack.TrueColor(),
@@ -55,4 +64,9 @@ var Styles = Theme{
 	ContextMenuPaddingBottom: 0,
 	ContextMenuPaddingLeft:   1,
 	ContextMenuPaddingRight:  1,
+
+	CheckBoxCheckedRune: 'X',
+
+	DropDownAbbreviationChars: "...",
+	DropDownSymbol:            '▼',
 }

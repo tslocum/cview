@@ -18,17 +18,17 @@ func TestList(t *testing.T) {
 	l := NewList()
 	if l.GetItemCount() != 0 {
 		t.Errorf("failed to initialize List: expected item count 0, got %d", l.GetItemCount())
-	} else if l.GetCurrentItem() != 0 {
-		t.Errorf("failed to initialize List: expected current item 0, got %d", l.GetCurrentItem())
+	} else if l.GetCurrentItemIndex() != 0 {
+		t.Errorf("failed to initialize List: expected current item 0, got %d", l.GetCurrentItemIndex())
 	}
 
 	// Add item 0
 
-	l.AddItem(listTextA, listTextB, 'a', nil)
+	l.AddItem(NewListItem(listTextA).SetSecondaryText(listTextB).SetShortcut('a'))
 	if l.GetItemCount() != 1 {
 		t.Errorf("failed to update List: expected item count 1, got %d", l.GetItemCount())
-	} else if l.GetCurrentItem() != 0 {
-		t.Errorf("failed to update List: expected current item 0, got %d", l.GetCurrentItem())
+	} else if l.GetCurrentItemIndex() != 0 {
+		t.Errorf("failed to update List: expected current item 0, got %d", l.GetCurrentItemIndex())
 	}
 
 	// Get item 0 text
@@ -42,11 +42,11 @@ func TestList(t *testing.T) {
 
 	// Add item 1
 
-	l.AddItem(listTextB, listTextC, 'a', nil)
+	l.AddItem(NewListItem(listTextB).SetSecondaryText(listTextC).SetShortcut('a'))
 	if l.GetItemCount() != 2 {
 		t.Errorf("failed to update List: expected item count 1, got %v", l.GetItemCount())
-	} else if l.GetCurrentItem() != 0 {
-		t.Errorf("failed to update List: expected current item 0, got %v", l.GetCurrentItem())
+	} else if l.GetCurrentItemIndex() != 0 {
+		t.Errorf("failed to update List: expected current item 0, got %v", l.GetCurrentItemIndex())
 	}
 
 	// Get item 1 text

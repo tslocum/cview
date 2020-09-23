@@ -342,6 +342,12 @@ type TreeView struct {
 	// If set to true, the tree structure is drawn using lines.
 	graphics bool
 
+	// The text color for selected items.
+	selectedTextColor *tcell.Color
+
+	// The background color for selected items.
+	selectedBackgroundColor *tcell.Color
+
 	// The color of the lines.
 	graphicsColor tcell.Color
 
@@ -468,6 +474,22 @@ func (t *TreeView) SetGraphics(showGraphics bool) *TreeView {
 	defer t.Unlock()
 
 	t.graphics = showGraphics
+	return t
+}
+
+// SetSelectedTextColor sets the text color of selected items.
+func (t *TreeView) SetSelectedTextColor(color tcell.Color) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+	t.selectedTextColor = &color
+	return t
+}
+
+// SetSelectedBackgroundColor sets the background color of selected items.
+func (t *TreeView) SetSelectedBackgroundColor(color tcell.Color) *TreeView {
+	t.Lock()
+	defer t.Unlock()
+	t.selectedBackgroundColor = &color
 	return t
 }
 
@@ -848,14 +870,22 @@ func (t *TreeView) Draw(screen tcell.Screen) {
 			if node.textX+prefixWidth < width {
 				style := tcell.StyleDefault.Foreground(node.color)
 				if node == t.currentNode {
-					style = tcell.StyleDefault.Background(node.color).Foreground(t.backgroundColor)
+					backgroundColor := node.color
+					foregroundColor := t.backgroundColor
+					if t.selectedTextColor != nil {
+						foregroundColor = *t.selectedTextColor
+					}
+					if t.selectedBackgroundColor != nil {
+						backgroundColor = *t.selectedBackgroundColor
+					}
+					style = tcell.StyleDefault.Background(backgroundColor).Foreground(foregroundColor)
 				}
 				printWithStyle(screen, node.text, x+node.textX+prefixWidth, posY, width-node.textX-prefixWidth, AlignLeft, style)
 			}
 		}
 
 		// Draw scroll bar.
-		RenderScrollBar(screen, t.scrollBarVisibility, x+(width-1), posY, height, rows, cursor, posY-y, t.hasFocus, tcell.ColorWhite.TrueColor())
+		RenderScrollBar(screen, t.scrollBarVisibility, x+(width-1), posY, height, rows, cursor, posY-y, t.hasFocus, t.scrollBarColor)
 
 		// Advance.
 		posY++

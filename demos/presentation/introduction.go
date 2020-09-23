@@ -9,12 +9,12 @@ func Introduction(nextSlide func()) (title string, content cview.Primitive) {
 	reset := func() {
 		list.
 			Clear().
-			AddItem("A Go package for terminal based UIs", "with a special focus on rich interactive widgets", '1', nextSlide).
-			AddItem("Based on github.com/gdamore/tcell", "Like termbox but better (see tcell docs)", '2', nextSlide).
-			AddItem("Designed to be simple", `"Hello world" is 5 lines of code`, '3', nextSlide).
-			AddItem("Good for data entry", `For charts, use "termui" - for low-level views, use "gocui" - ...`, '4', nextSlide).
-			AddItem("Supports context menus", "Right click on one of these items or press Alt+Enter", '5', nextSlide).
-			AddItem("Extensive documentation", "Demo code is available for each widget", '6', nextSlide)
+			AddItem(cview.NewListItem("A Go package for terminal based UIs").SetSecondaryText("with a special focus on rich interactive widgets").SetShortcut('1').SetSelectedFunc(nextSlide)).
+			AddItem(cview.NewListItem("Based on github.com/gdamore/tcell").SetSecondaryText("Like termbox but better (see tcell docs)").SetShortcut('2').SetSelectedFunc(nextSlide)).
+			AddItem(cview.NewListItem("Designed to be simple").SetSecondaryText(`"Hello world" is 5 lines of code`).SetShortcut('3').SetSelectedFunc(nextSlide)).
+			AddItem(cview.NewListItem("Good for data entry").SetSecondaryText(`For charts, use "termui" - for low-level views, use "gocui" - ...`).SetShortcut('4').SetSelectedFunc(nextSlide)).
+			AddItem(cview.NewListItem("Supports context menus").SetSecondaryText("Right click on one of these items or press Alt+Enter").SetShortcut('5').SetSelectedFunc(nextSlide)).
+			AddItem(cview.NewListItem("Extensive documentation").SetSecondaryText("Demo code is available for each widget").SetShortcut('6').SetSelectedFunc(nextSlide))
 
 		list.ContextMenuList().SetItemEnabled(3, false)
 	}

@@ -19,13 +19,13 @@ func main() {
 		SetDoneFunc(func(key tcell.Key) {
 			app.Stop()
 		})
-	inputField.SetAutocompleteFunc(func(currentText string) (entries []string) {
+	inputField.SetAutocompleteFunc(func(currentText string) (entries []*cview.ListItem) {
 		if len(currentText) == 0 {
 			return
 		}
 		for _, word := range words {
 			if strings.HasPrefix(strings.ToLower(word), strings.ToLower(currentText)) {
-				entries = append(entries, word)
+				entries = append(entries, cview.NewListItem(word))
 			}
 		}
 		if len(entries) <= 1 {

@@ -19,6 +19,9 @@ type Box struct {
 	// Border padding.
 	paddingTop, paddingBottom, paddingLeft, paddingRight int
 
+	// The border color when the box has focus.
+	borderColorFocused tcell.Color
+
 	// The box's background color.
 	backgroundColor tcell.Color
 
@@ -73,17 +76,25 @@ type Box struct {
 // NewBox returns a Box without a border.
 func NewBox() *Box {
 	b := &Box{
-		width:           15,
-		height:          10,
-		innerX:          -1, // Mark as uninitialized.
-		backgroundColor: Styles.PrimitiveBackgroundColor,
-		borderColor:     Styles.BorderColor,
-		titleColor:      Styles.TitleColor,
-		titleAlign:      AlignCenter,
-		showFocus:       true,
+		width:              15,
+		height:             10,
+		innerX:             -1, // Mark as uninitialized.
+		backgroundColor:    Styles.PrimitiveBackgroundColor,
+		borderColor:        Styles.BorderColor,
+		borderColorFocused: Styles.BorderColor,
+		titleColor:         Styles.TitleColor,
+		titleAlign:         AlignCenter,
+		showFocus:          true,
 	}
 	b.focus = b
 	return b
+}
+
+// GetBorderPadding returns the size of the borders around the box content.
+func (b *Box) GetBorderPadding() (top, bottom, left, right int) {
+	b.l.RLock()
+	defer b.l.RUnlock()
+	return b.paddingTop, b.paddingBottom, b.paddingLeft, b.paddingRight
 }
 
 // SetBorderPadding sets the size of the borders around the box content.
@@ -296,6 +307,13 @@ func (b *Box) SetBackgroundColor(color tcell.Color) *Box {
 	return b
 }
 
+// GetBackgroundColor returns the box's background color.
+func (b *Box) GetBackgroundColor() tcell.Color {
+	b.l.RLock()
+	defer b.l.RUnlock()
+	return b.backgroundColor
+}
+
 // SetBackgroundTransparent sets the flag indicating whether or not the box's
 // background is transparent.
 func (b *Box) SetBackgroundTransparent(transparent bool) *Box {
@@ -304,6 +322,14 @@ func (b *Box) SetBackgroundTransparent(transparent bool) *Box {
 
 	b.backgroundTransparent = transparent
 	return b
+}
+
+// GetBorder returns a value indicating whether the box have a border
+// or not.
+func (b *Box) GetBorder() bool {
+	b.l.RLock()
+	defer b.l.RUnlock()
+	return b.border
 }
 
 // SetBorder sets the flag indicating whether or not the box should have a
@@ -322,6 +348,14 @@ func (b *Box) SetBorderColor(color tcell.Color) *Box {
 	defer b.l.Unlock()
 
 	b.borderColor = color
+	return b
+}
+
+// SetBorderColorFocused sets the box's border color when the box is focused.
+func (b *Box) SetBorderColorFocused(color tcell.Color) *Box {
+	b.l.Lock()
+	defer b.l.Unlock()
+	b.borderColorFocused = color
 	return b
 }
 
@@ -406,6 +440,11 @@ func (b *Box) Draw(screen tcell.Screen) {
 		} else {
 			hasFocus = b.focus.HasFocus()
 		}
+
+		if hasFocus {
+			border = SetAttributes(background.Foreground(b.borderColorFocused), b.borderAttributes)
+		}
+
 		if hasFocus && b.showFocus {
 			horizontal = Borders.HorizontalFocus
 			vertical = Borders.VerticalFocus

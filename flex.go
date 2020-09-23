@@ -58,6 +58,14 @@ func NewFlex() *Flex {
 	return f
 }
 
+// GetDirection returns the direction in which the contained primitives are
+// distributed. This can be either FlexColumn (default) or FlexRow.
+func (f *Flex) GetDirection() int {
+	f.l.RLock()
+	defer f.l.RUnlock()
+	return f.direction
+}
+
 // SetDirection sets the direction in which the contained primitives are
 // distributed. This can be either FlexColumn (default) or FlexRow.
 func (f *Flex) SetDirection(direction int) *Flex {
@@ -102,6 +110,21 @@ func (f *Flex) AddItem(item Primitive, fixedSize, proportion int, focus bool) *F
 	}
 
 	f.items = append(f.items, &flexItem{Item: item, FixedSize: fixedSize, Proportion: proportion, Focus: focus})
+	return f
+}
+
+// AddItemAtIndex adds an item to the flex at a given index.
+// For more information see AddItem.
+func (f *Flex) AddItemAtIndex(index int, item Primitive, fixedSize, proportion int, focus bool) *Flex {
+	f.Lock()
+	defer f.Unlock()
+	newItem := &flexItem{Item: item, FixedSize: fixedSize, Proportion: proportion, Focus: focus}
+
+	if index == 0 {
+		f.items = append([]*flexItem{newItem}, f.items...)
+	} else {
+		f.items = append(f.items[:index], append([]*flexItem{newItem}, f.items[index:]...)...)
+	}
 	return f
 }
 
