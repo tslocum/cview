@@ -169,6 +169,13 @@ When primitives are instantiated, they are initialized with colors taken from
 the global Styles variable. You may change this variable to adapt the look and
 feel of the primitives to your preferred style.
 
+Scroll Bars
+
+Scroll bars are supported by the following widgets: List, Table, TextView and
+TreeView. Each widget will display scroll bars automatically when there are
+additional items off-screen by default, except TextView. See
+Widget.SetScrollBarColor and Widget.SetScrollBarVisibility.
+
 Hello World
 
 The following is an example application which shows a box titled "Greetings"

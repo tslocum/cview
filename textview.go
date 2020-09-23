@@ -155,6 +155,12 @@ type TextView struct {
 	// navigated when the text is longer than what fits into the box.
 	scrollable bool
 
+	// Visibility of the scroll bar.
+	scrollBarVisibility ScrollBarVisibility
+
+	// The scroll bar color.
+	scrollBarColor tcell.Color
+
 	// If set to true, lines that are longer than the available width are wrapped
 	// onto the next line. If set to false, any characters beyond the available
 	// width are discarded.
@@ -200,14 +206,15 @@ type TextView struct {
 // NewTextView returns a new text view.
 func NewTextView() *TextView {
 	return &TextView{
-		Box:        NewBox(),
-		highlights: make(map[string]struct{}),
-		lineOffset: -1,
-		reindex:    true,
-		scrollable: true,
-		align:      AlignLeft,
-		wrap:       true,
-		textColor:  Styles.PrimaryTextColor,
+		Box:            NewBox(),
+		highlights:     make(map[string]struct{}),
+		lineOffset:     -1,
+		reindex:        true,
+		scrollable:     true,
+		align:          AlignLeft,
+		wrap:           true,
+		textColor:      Styles.PrimaryTextColor,
+		scrollBarColor: Styles.ScrollBarColor,
 	}
 }
 
@@ -222,6 +229,24 @@ func (t *TextView) SetScrollable(scrollable bool) *TextView {
 	if !scrollable {
 		t.trackEnd = true
 	}
+	return t
+}
+
+// SetScrollBarVisibility specifies the display of the scroll bar.
+func (t *TextView) SetScrollBarVisibility(visibility ScrollBarVisibility) *TextView {
+	t.Lock()
+	defer t.Unlock()
+
+	t.scrollBarVisibility = visibility
+	return t
+}
+
+// SetScrollBarColor sets the color of the scroll bar.
+func (t *TextView) SetScrollBarColor(color tcell.Color) *TextView {
+	t.Lock()
+	defer t.Unlock()
+
+	t.scrollBarColor = color
 	return t
 }
 
@@ -968,10 +993,20 @@ func (t *TextView) Draw(screen tcell.Screen) {
 	x, y, width, height := t.GetInnerRect()
 	t.pageSize = height
 
+	t.reindexBuffer(width)
+	showVerticalScrollBar := t.scrollBarVisibility == ScrollBarAlways || (t.scrollBarVisibility == ScrollBarAuto && len(t.index) >= height)
+	if showVerticalScrollBar {
+		width-- // Subtract space for scroll bar.
+		if t.wrap {
+			t.index = nil
+		}
+	}
+
 	// If the width has changed, we need to reindex.
 	if width != t.lastWidth && t.wrap {
 		t.index = nil
 	}
+
 	t.lastWidth = width
 
 	// Re-index.
@@ -1183,6 +1218,14 @@ func (t *TextView) Draw(screen tcell.Screen) {
 				posX += screenWidth
 				return false
 			})
+		}
+	}
+
+	// Draw scroll bar.
+	if showVerticalScrollBar {
+		cursor := int(float64(len(t.index)) * (float64(t.lineOffset) / float64(len(t.index)-height)))
+		for printed := 0; printed < height; printed++ {
+			RenderScrollBar(screen, t.scrollBarVisibility, x+width, y+printed, height, len(t.index), cursor, printed, t.hasFocus, t.scrollBarColor)
 		}
 	}
 
