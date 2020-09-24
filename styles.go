@@ -22,21 +22,25 @@ type Theme struct {
 	ContrastBackgroundColor     tcell.Color // Background color for contrasting elements.
 	MoreContrastBackgroundColor tcell.Color // Background color for even more contrasting elements.
 
-	// Scroll bar
-	ScrollBarColor tcell.Color // Scroll bar color.
-
-	// Context menu
-	ContextMenuPaddingTop    int // Top padding.
-	ContextMenuPaddingBottom int // Bottom padding.
-	ContextMenuPaddingLeft   int // Left padding.
-	ContextMenuPaddingRight  int // Right padding.
-
 	// Check box
 	CheckBoxCheckedRune rune
+
+	// Context menu
+	ContextMenuPaddingTop    int
+	ContextMenuPaddingBottom int
+	ContextMenuPaddingLeft   int
+	ContextMenuPaddingRight  int
 
 	// Drop down
 	DropDownAbbreviationChars string // The chars to show when the option's text gets shortened.
 	DropDownSymbol            rune   // The symbol to draw at the end of the field.
+
+	// Scroll bar
+	ScrollBarColor tcell.Color
+
+	// Window
+	WindowMinWidth  int
+	WindowMinHeight int
 }
 
 // Styles defines the appearance of an application. The default is for a black
@@ -58,15 +62,18 @@ var Styles = Theme{
 	ContrastBackgroundColor:     tcell.ColorBlue.TrueColor(),
 	MoreContrastBackgroundColor: tcell.ColorGreen.TrueColor(),
 
-	ScrollBarColor: tcell.ColorWhite.TrueColor(),
+	CheckBoxCheckedRune: 'X',
 
 	ContextMenuPaddingTop:    0,
 	ContextMenuPaddingBottom: 0,
 	ContextMenuPaddingLeft:   1,
 	ContextMenuPaddingRight:  1,
 
-	CheckBoxCheckedRune: 'X',
-
 	DropDownAbbreviationChars: "...",
 	DropDownSymbol:            '▼',
+
+	ScrollBarColor: tcell.ColorWhite.TrueColor(),
+
+	WindowMinWidth:  4,
+	WindowMinHeight: 3,
 }

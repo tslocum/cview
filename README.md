@@ -18,12 +18,13 @@ Available widgets:
 
 - __Input forms__ (including __input/password fields__, __drop-down selections__, __checkboxes__, and __buttons__)
 - Navigable multi-color __text views__
+- Selectable __lists__ with __context menus__
+- Modal __dialogs__
+- Horizontal and vertical __progress bars__
+- __Grid__, __Flexbox__ and __page layouts__
 - Sophisticated navigable __table views__
 - Flexible __tree views__
-- Selectable __lists__ with __context menus__
-- __Grid__, __Flexbox__ and __page layouts__
-- Modal __message windows__
-- Horizontal and vertical __progress bars__
+- Draggable and resizable __windows__
 - An __application__ wrapper
 
 Widgets may be customized and extended to suit any application.

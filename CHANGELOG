@@ -1,5 +1,6 @@
 v1.5.0 (WIP)
 - Add scroll bar to TextView
+- Add Window and WindowManager
 - Add focus-driven style options
 - Add InputField autocomplete style options
 - Add arrow symbol to DropDown

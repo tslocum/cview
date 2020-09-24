@@ -4,6 +4,21 @@ Package cview implements rich widgets for terminal based user interfaces.
 See the demos folder and the example application provided with the
 NewApplication documentation for usage examples.
 
+Types
+
+This package is built on top of tcell, which provides the types necessary to
+create a terminal-based application (e.g. EventKey). For information on
+inherited types see the tcell documentation.
+
+tcell: https://github.com/gdamore/tcell
+
+Base Primitive
+
+Widgets must implement the Primitive interface. All widgets embed the base
+primitive, Box, and thus inherit its functions. This isn't necessarily
+required, but it makes more sense than reimplementing Box's functionality in
+each widget.
+
 Widgets
 
 The following widgets are available:
@@ -29,21 +44,6 @@ The following widgets are available:
 
 Widgets may be used without an application created via NewApplication, allowing
 them to be integrated into any tcell-based application.
-
-Base Primitive
-
-Widgets must implement the Primitive interface. All widgets embed the base
-primitive, Box, and thus inherit its functions. This isn't necessarily
-required, but it makes more sense than reimplementing Box's functionality in
-each widget.
-
-Types
-
-This package is built on top of tcell, which provides the types necessary to
-create a terminal-based application (e.g. EventKey). For information on
-inherited types see the tcell documentation.
-
-tcell: https://github.com/gdamore/tcell
 
 Concurrency
 

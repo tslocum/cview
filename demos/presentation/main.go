@@ -57,6 +57,7 @@ func main() {
 		TreeView,
 		Flex,
 		Grid,
+		Window,
 		End,
 	}
 
