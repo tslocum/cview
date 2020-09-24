@@ -6,7 +6,8 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-// Window is a draggable, resizable frame around a primitive.
+// Window is a draggable, resizable frame around a primitive. Windows must be
+// added to a WindowManager.
 type Window struct {
 	*Box
 

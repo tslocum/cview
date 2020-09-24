@@ -41,6 +41,7 @@ The following widgets are available:
     also be highlighted.
   TreeView - A scrollable display for hierarchical data. Tree nodes can be
     highlighted, collapsed, expanded, and more.
+  Window - A draggable and resizable container.
 
 Widgets may be used without an application created via NewApplication, allowing
 them to be integrated into any tcell-based application.
@@ -173,8 +174,8 @@ Scroll Bars
 
 Scroll bars are supported by the following widgets: List, Table, TextView and
 TreeView. Each widget will display scroll bars automatically when there are
-additional items off-screen by default, except TextView. See
-Widget.SetScrollBarColor and Widget.SetScrollBarVisibility.
+additional items offscreen, except TextView. See Widget.SetScrollBarColor and
+Widget.SetScrollBarVisibility.
 
 Hello World
 

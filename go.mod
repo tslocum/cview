@@ -3,7 +3,7 @@ module gitlab.com/tslocum/cview
 go 1.12
 
 require (
-	github.com/gdamore/tcell/v2 v2.0.0-dev.0.20200921183946-6c71be68010f
+	github.com/gdamore/tcell/v2 v2.0.0-dev.0.20200908121250-0c5e1e1720f1
 	github.com/lucasb-eyer/go-colorful v1.0.3
 	github.com/mattn/go-runewidth v0.0.9
 	github.com/rivo/uniseg v0.1.0
