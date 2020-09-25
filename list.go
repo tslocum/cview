@@ -858,6 +858,8 @@ func (l *List) Draw(screen tcell.Screen) {
 		l.updateOffset()
 	}
 
+	scrollBarCursor := int(float64(len(l.items)) * (float64(l.offset) / float64(len(l.items)-height)))
+
 	// Draw the list items.
 	for index, item := range l.items {
 		if index < l.offset {
@@ -873,7 +875,7 @@ func (l *List) Draw(screen tcell.Screen) {
 			Print(screen, strings.Repeat(string(tcell.RuneHLine), width+4+l.paddingLeft+l.paddingRight), (x-4)-l.paddingLeft, y, width+4+l.paddingLeft+l.paddingRight, AlignLeft, l.mainTextColor)
 			Print(screen, string(tcell.RuneRTee), (x-5)+width+5+l.paddingRight, y, 1, AlignLeft, l.mainTextColor)
 
-			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, index-l.offset, l.hasFocus, l.scrollBarColor)
+			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
 			y++
 			continue
 		} else if !item.enabled { // Disabled item
@@ -885,7 +887,7 @@ func (l *List) Draw(screen tcell.Screen) {
 			// Main text.
 			Print(screen, item.mainText, x, y, width, AlignLeft, tcell.ColorGray.TrueColor())
 
-			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, index-l.offset, l.hasFocus, l.scrollBarColor)
+			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
 			y++
 			continue
 		}
@@ -918,7 +920,7 @@ func (l *List) Draw(screen tcell.Screen) {
 			}
 		}
 
-		RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, index-l.offset, l.hasFocus, l.scrollBarColor)
+		RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
 
 		y++
 
@@ -930,7 +932,7 @@ func (l *List) Draw(screen tcell.Screen) {
 		if l.showSecondaryText {
 			Print(screen, item.secondaryText, x, y, width, AlignLeft, l.secondaryTextColor)
 
-			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, index-l.offset, l.hasFocus, l.scrollBarColor)
+			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
 
 			y++
 		}
@@ -938,7 +940,7 @@ func (l *List) Draw(screen tcell.Screen) {
 
 	// Overdraw scroll bar when necessary.
 	for y < bottomLimit {
-		RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), l.currentItem, bottomLimit-y, l.hasFocus, l.scrollBarColor)
+		RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, bottomLimit-y, l.hasFocus, l.scrollBarColor)
 
 		y++
 	}
