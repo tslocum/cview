@@ -12,6 +12,8 @@ See [FORK.md](https://gitlab.com/tslocum/cview/blob/master/FORK.md) for more inf
 
 [![Recording of presentation demo](https://gitlab.com/tslocum/cview/-/raw/master/cview.gif)](https://gitlab.com/tslocum/cview/tree/master/demos/presentation)
 
+Additional examples are listed on [pkg.go.dev](https://pkg.go.dev/gitlab.com/tslocum/cview?tab=importedby).
+
 ## Features
 
 Available widgets:
