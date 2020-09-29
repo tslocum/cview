@@ -20,10 +20,10 @@ type FormItemAttributes struct {
 	BackgroundColor             tcell.Color
 	LabelColor                  tcell.Color
 	LabelColorFocused           tcell.Color
-	FieldTextColor              tcell.Color
-	FieldTextColorFocused       tcell.Color
 	FieldBackgroundColor        tcell.Color
 	FieldBackgroundColorFocused tcell.Color
+	FieldTextColor              tcell.Color
+	FieldTextColorFocused       tcell.Color
 
 	FinishedFunc func(key tcell.Key)
 }
@@ -124,15 +124,15 @@ func NewForm() *Form {
 		Box:                          box,
 		itemPadding:                  1,
 		labelColor:                   Styles.SecondaryTextColor,
-		labelColorFocused:            Styles.SecondaryTextColor,
 		fieldBackgroundColor:         Styles.ContrastBackgroundColor,
-		fieldBackgroundColorFocused:  Styles.ContrastBackgroundColor,
 		fieldTextColor:               Styles.PrimaryTextColor,
-		fieldTextColorFocused:        Styles.PrimaryTextColor,
 		buttonBackgroundColor:        Styles.ContrastBackgroundColor,
-		buttonBackgroundColorFocused: Styles.PrimaryTextColor,
 		buttonTextColor:              Styles.PrimaryTextColor,
-		buttonTextColorFocused:       Styles.ContrastBackgroundColor,
+		buttonBackgroundColorFocused: Styles.PrimaryTextColor,
+		buttonTextColorFocused:       Styles.InverseTextColor,
+		labelColorFocused:            ColorUnset,
+		fieldBackgroundColorFocused:  ColorUnset,
+		fieldTextColorFocused:        ColorUnset,
 	}
 
 	f.focus = f
@@ -580,15 +580,28 @@ func (f *Form) GetAttributes() *FormItemAttributes {
 }
 
 func (f *Form) getAttributes() *FormItemAttributes {
-	return &FormItemAttributes{
-		BackgroundColor:             f.backgroundColor,
-		LabelColor:                  f.labelColor,
-		LabelColorFocused:           f.labelColorFocused,
-		FieldTextColor:              f.fieldTextColor,
-		FieldTextColorFocused:       f.fieldTextColorFocused,
-		FieldBackgroundColor:        f.fieldBackgroundColor,
-		FieldBackgroundColorFocused: f.fieldBackgroundColorFocused,
+	attrs := &FormItemAttributes{
+		BackgroundColor:      f.backgroundColor,
+		LabelColor:           f.labelColor,
+		FieldBackgroundColor: f.fieldBackgroundColor,
+		FieldTextColor:       f.fieldTextColor,
 	}
+	if f.labelColorFocused == ColorUnset {
+		attrs.LabelColorFocused = f.labelColor
+	} else {
+		attrs.LabelColorFocused = f.labelColorFocused
+	}
+	if f.fieldBackgroundColorFocused == ColorUnset {
+		attrs.FieldBackgroundColorFocused = f.fieldBackgroundColor
+	} else {
+		attrs.FieldBackgroundColorFocused = f.fieldBackgroundColorFocused
+	}
+	if f.fieldTextColorFocused == ColorUnset {
+		attrs.FieldTextColorFocused = f.fieldTextColor
+	} else {
+		attrs.FieldTextColorFocused = f.fieldTextColorFocused
+	}
+	return attrs
 }
 
 // Draw draws this primitive onto the screen.

@@ -66,12 +66,12 @@ func NewCheckBox() *CheckBox {
 	return &CheckBox{
 		Box:                         NewBox(),
 		labelColor:                  Styles.SecondaryTextColor,
-		labelColorFocused:           Styles.SecondaryTextColor,
 		fieldBackgroundColor:        Styles.ContrastBackgroundColor,
-		fieldBackgroundColorFocused: Styles.ContrastBackgroundColor,
 		fieldTextColor:              Styles.PrimaryTextColor,
-		fieldTextColorFocused:       Styles.PrimaryTextColor,
 		checkedRune:                 Styles.CheckBoxCheckedRune,
+		labelColorFocused:           ColorUnset,
+		fieldBackgroundColorFocused: ColorUnset,
+		fieldTextColorFocused:       ColorUnset,
 	}
 }
 
@@ -285,9 +285,15 @@ func (c *CheckBox) Draw(screen tcell.Screen) {
 	fieldBackgroundColor := c.fieldBackgroundColor
 	fieldTextColor := c.fieldTextColor
 	if c.GetFocusable().HasFocus() {
-		labelColor = c.labelColorFocused
-		fieldBackgroundColor = c.fieldBackgroundColorFocused
-		fieldTextColor = c.fieldTextColorFocused
+		if c.labelColorFocused != ColorUnset {
+			labelColor = c.labelColorFocused
+		}
+		if c.fieldBackgroundColorFocused != ColorUnset {
+			fieldBackgroundColor = c.fieldBackgroundColorFocused
+		}
+		if c.fieldTextColorFocused != ColorUnset {
+			fieldTextColor = c.fieldTextColorFocused
+		}
 	}
 
 	// Prepare

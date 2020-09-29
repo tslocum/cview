@@ -157,14 +157,14 @@ func NewDropDown() *DropDown {
 		currentOption:               -1,
 		list:                        list,
 		labelColor:                  Styles.SecondaryTextColor,
-		labelColorFocused:           Styles.SecondaryTextColor,
 		fieldBackgroundColor:        Styles.ContrastBackgroundColor,
-		fieldBackgroundColorFocused: Styles.ContrastBackgroundColor,
 		fieldTextColor:              Styles.PrimaryTextColor,
-		fieldTextColorFocused:       Styles.PrimaryTextColor,
 		prefixTextColor:             Styles.ContrastSecondaryTextColor,
 		dropDownSymbol:              Styles.DropDownSymbol,
 		abbreviationChars:           Styles.DropDownAbbreviationChars,
+		labelColorFocused:           ColorUnset,
+		fieldBackgroundColorFocused: ColorUnset,
+		fieldTextColorFocused:       ColorUnset,
 	}
 
 	d.focus = d
@@ -551,9 +551,15 @@ func (d *DropDown) Draw(screen tcell.Screen) {
 	fieldBackgroundColor := d.fieldBackgroundColor
 	fieldTextColor := d.fieldTextColor
 	if hasFocus {
-		labelColor = d.labelColorFocused
-		fieldBackgroundColor = d.fieldBackgroundColorFocused
-		fieldTextColor = d.fieldTextColorFocused
+		if d.labelColorFocused != ColorUnset {
+			labelColor = d.labelColorFocused
+		}
+		if d.fieldBackgroundColorFocused != ColorUnset {
+			fieldBackgroundColor = d.fieldBackgroundColorFocused
+		}
+		if d.fieldTextColorFocused != ColorUnset {
+			fieldTextColor = d.fieldTextColorFocused
+		}
 	}
 
 	// Prepare.

@@ -81,8 +81,8 @@ func NewBox() *Box {
 		innerX:             -1, // Mark as uninitialized.
 		backgroundColor:    Styles.PrimitiveBackgroundColor,
 		borderColor:        Styles.BorderColor,
-		borderColorFocused: Styles.BorderColor,
 		titleColor:         Styles.TitleColor,
+		borderColorFocused: ColorUnset,
 		titleAlign:         AlignCenter,
 		showFocus:          true,
 	}
@@ -441,7 +441,7 @@ func (b *Box) Draw(screen tcell.Screen) {
 			hasFocus = b.focus.HasFocus()
 		}
 
-		if hasFocus {
+		if hasFocus && b.borderColorFocused != ColorUnset {
 			border = SetAttributes(background.Foreground(b.borderColorFocused), b.borderAttributes)
 		}
 

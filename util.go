@@ -11,6 +11,10 @@ import (
 	"github.com/rivo/uniseg"
 )
 
+// ColorUnset represents an unset color. This is necessary because the zero
+// value of color, ColorDefault, results in default terminal colors.
+var ColorUnset = tcell.ColorSpecial | 108
+
 // Text alignment within a box.
 const (
 	AlignLeft = iota

@@ -141,19 +141,19 @@ func NewInputField() *InputField {
 	return &InputField{
 		Box:                                     NewBox(),
 		labelColor:                              Styles.SecondaryTextColor,
-		labelColorFocused:                       Styles.SecondaryTextColor,
 		fieldBackgroundColor:                    Styles.ContrastBackgroundColor,
-		fieldBackgroundColorFocused:             Styles.ContrastBackgroundColor,
 		fieldTextColor:                          Styles.PrimaryTextColor,
-		fieldTextColorFocused:                   Styles.PrimaryTextColor,
 		placeholderTextColor:                    Styles.ContrastSecondaryTextColor,
-		placeholderTextColorFocused:             Styles.ContrastSecondaryTextColor,
 		autocompleteListTextColor:               Styles.PrimitiveBackgroundColor,
 		autocompleteListBackgroundColor:         Styles.MoreContrastBackgroundColor,
 		autocompleteListSelectedTextColor:       Styles.PrimitiveBackgroundColor,
 		autocompleteListSelectedBackgroundColor: Styles.PrimaryTextColor,
 		autocompleteSuggestionTextColor:         Styles.ContrastPrimaryTextColor,
 		fieldNoteTextColor:                      Styles.SecondaryTextColor,
+		labelColorFocused:                       ColorUnset,
+		fieldBackgroundColorFocused:             ColorUnset,
+		fieldTextColorFocused:                   ColorUnset,
+		placeholderTextColorFocused:             ColorUnset,
 	}
 }
 
@@ -583,9 +583,15 @@ func (i *InputField) Draw(screen tcell.Screen) {
 	fieldBackgroundColor := i.fieldBackgroundColor
 	fieldTextColor := i.fieldTextColor
 	if i.GetFocusable().HasFocus() {
-		labelColor = i.labelColorFocused
-		fieldBackgroundColor = i.fieldBackgroundColorFocused
-		fieldTextColor = i.fieldTextColorFocused
+		if i.labelColorFocused != ColorUnset {
+			labelColor = i.labelColorFocused
+		}
+		if i.fieldBackgroundColorFocused != ColorUnset {
+			fieldBackgroundColor = i.fieldBackgroundColorFocused
+		}
+		if i.fieldTextColorFocused != ColorUnset {
+			fieldTextColor = i.fieldTextColorFocused
+		}
 	}
 
 	// Prepare
@@ -627,7 +633,11 @@ func (i *InputField) Draw(screen tcell.Screen) {
 	text := i.text
 	if text == "" && i.placeholder != "" {
 		// Draw placeholder text.
-		Print(screen, Escape(i.placeholder), x, y, fieldWidth, AlignLeft, i.placeholderTextColor)
+		placeholderTextColor := i.placeholderTextColor
+		if i.GetFocusable().HasFocus() && i.placeholderTextColorFocused != ColorUnset {
+			placeholderTextColor = i.placeholderTextColorFocused
+		}
+		Print(screen, Escape(i.placeholder), x, y, fieldWidth, AlignLeft, placeholderTextColor)
 		i.offset = 0
 	} else {
 		// Draw entered text.
