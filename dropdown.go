@@ -263,24 +263,6 @@ func (d *DropDown) GetLabel() string {
 	return d.label
 }
 
-// SetAttributes sets the given attributes on the drop-down.
-func (d *DropDown) SetAttributes(attributes ...FormItemAttribute) {
-	allAttributes := newFormItemAttributes()
-	for _, attribute := range attributes {
-		attribute.apply(allAttributes)
-	}
-
-	allAttributes.setLabelWidth(&d.labelWidth)
-	allAttributes.setBackgroundColor(&d.backgroundColor)
-	allAttributes.setLabelColor(&d.labelColor)
-	allAttributes.setLabelColorFocused(&d.labelColorFocused)
-	allAttributes.setFieldTextColor(&d.fieldTextColor)
-	allAttributes.setFieldTextColorFocused(&d.fieldTextColorFocused)
-	allAttributes.setFieldBackgroundColor(&d.fieldBackgroundColor)
-	allAttributes.setFieldBackgroundColorFocused(&d.fieldBackgroundColorFocused)
-	allAttributes.setFinishedFunc(&d.finished)
-}
-
 // SetLabelWidth sets the screen width of the label. A value of 0 will cause the
 // primitive to use the width of the label string.
 func (d *DropDown) SetLabelWidth(width int) *DropDown {
@@ -538,6 +520,22 @@ func (d *DropDown) SetFinishedFunc(handler func(key tcell.Key)) *DropDown {
 
 	d.finished = handler
 	return d
+}
+
+// SetAttributes applies attribute settings to a form item.
+func (d *DropDown) SetAttributes(attrs *FormItemAttributes) {
+	d.SetLabelWidth(attrs.LabelWidth)
+	d.SetBackgroundColor(attrs.BackgroundColor)
+	d.SetLabelColor(attrs.LabelColor)
+	d.SetLabelColorFocused(attrs.LabelColorFocused)
+	d.SetFieldTextColor(attrs.FieldTextColor)
+	d.SetFieldTextColorFocused(attrs.FieldTextColorFocused)
+	d.SetFieldBackgroundColor(attrs.FieldBackgroundColor)
+	d.SetFieldBackgroundColorFocused(attrs.FieldBackgroundColorFocused)
+
+	if attrs.FinishedFunc != nil {
+		d.SetFinishedFunc(attrs.FinishedFunc)
+	}
 }
 
 // Draw draws this primitive onto the screen.

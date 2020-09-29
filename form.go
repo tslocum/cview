@@ -11,147 +11,21 @@ import (
 // horizontal layouts.
 var DefaultFormFieldWidth = 10
 
-// FormItemAttribute represents a form attribute.
-type FormItemAttribute interface {
-	apply(attributes *formItemAttributes)
-}
+// FormItemAttributes is a set of attributes to be applied.
+type FormItemAttributes struct {
+	// The screen width of the label. A value of 0 will cause the primitive to
+	// use the width of the label string.
+	LabelWidth int
 
-// formItemAttributes is a set of attribute setters to be applied.
-type formItemAttributes struct {
-	setLabelWidth                  func(width *int)
-	setBackgroundColor             func(color *tcell.Color)
-	setLabelColor                  func(color *tcell.Color)
-	setLabelColorFocused           func(color *tcell.Color)
-	setFieldTextColor              func(color *tcell.Color)
-	setFieldTextColorFocused       func(color *tcell.Color)
-	setFieldBackgroundColor        func(color *tcell.Color)
-	setFieldBackgroundColorFocused func(color *tcell.Color)
-	setFinishedFunc                func(handler *func(key tcell.Key))
-}
+	BackgroundColor             tcell.Color
+	LabelColor                  tcell.Color
+	LabelColorFocused           tcell.Color
+	FieldTextColor              tcell.Color
+	FieldTextColorFocused       tcell.Color
+	FieldBackgroundColor        tcell.Color
+	FieldBackgroundColorFocused tcell.Color
 
-func newFormItemAttributes() *formItemAttributes {
-	return &formItemAttributes{
-		setLabelWidth:                  func(_ *int) {},
-		setBackgroundColor:             func(_ *tcell.Color) {},
-		setLabelColor:                  func(_ *tcell.Color) {},
-		setLabelColorFocused:           func(_ *tcell.Color) {},
-		setFieldTextColor:              func(_ *tcell.Color) {},
-		setFieldTextColorFocused:       func(_ *tcell.Color) {},
-		setFieldBackgroundColor:        func(_ *tcell.Color) {},
-		setFieldBackgroundColorFocused: func(_ *tcell.Color) {},
-		setFinishedFunc:                func(_ *func(key tcell.Key)) {},
-	}
-}
-
-// funcFormItemAttribute holds the attribute setter.
-type funcFormItemAttribute struct {
-	f func(*formItemAttributes)
-}
-
-// apply invokes the attribute setter.
-func (fdo *funcFormItemAttribute) apply(do *formItemAttributes) {
-	fdo.f(do)
-}
-
-// newFuncAttribute creates a new funcFormItemAttribute.
-func newFuncAttribute(f func(*formItemAttributes)) *funcFormItemAttribute {
-	return &funcFormItemAttribute{
-		f: f,
-	}
-}
-
-// WithLabelWidth creates a form item attribute promise with the given value to be set.
-// When applied, sets the screen width of the label. A value of 0 will cause the
-// primitive to use the width of the label string.
-func WithLabelWidth(labelWidth int) FormItemAttribute {
-	return newFuncAttribute(func(o *formItemAttributes) {
-		o.setLabelWidth = func(width *int) {
-			*width = labelWidth
-		}
-	})
-}
-
-// WithBackgroundColor creates a form item attribute promise with the given value to be set.
-// When applied, sets the background color.
-func WithBackgroundColor(color tcell.Color) FormItemAttribute {
-	return newFuncAttribute(func(o *formItemAttributes) {
-		o.setBackgroundColor = func(backgroundColor *tcell.Color) {
-			*backgroundColor = color
-		}
-	})
-}
-
-// WithLabelColor creates a form item attribute promise with the given value to be set.
-// When applied, sets the color of the label.
-func WithLabelColor(color tcell.Color) FormItemAttribute {
-	return newFuncAttribute(func(o *formItemAttributes) {
-		o.setLabelColor = func(labelColor *tcell.Color) {
-			*labelColor = color
-		}
-	})
-}
-
-// WithLabelColorFocused creates a form item attribute promise with the given value to be set.
-// When applied, sets the color of the label when focused.
-func WithLabelColorFocused(color tcell.Color) FormItemAttribute {
-	return newFuncAttribute(func(o *formItemAttributes) {
-		o.setLabelColorFocused = func(labelColorFocused *tcell.Color) {
-			*labelColorFocused = color
-		}
-	})
-}
-
-// WithFieldTextColor creates a form item attribute promise with the given value to be set.
-// When applied, sets the text color of the input area.
-func WithFieldTextColor(color tcell.Color) FormItemAttribute {
-	return newFuncAttribute(func(o *formItemAttributes) {
-		o.setFieldTextColor = func(fieldTextColor *tcell.Color) {
-			*fieldTextColor = color
-		}
-	})
-}
-
-// WithFieldTextColorFocused creates a form item attribute promise with the given value to be set.
-// When applied, sets the text color of the input area when focused.
-func WithFieldTextColorFocused(color tcell.Color) FormItemAttribute {
-	return newFuncAttribute(func(o *formItemAttributes) {
-		o.setFieldTextColorFocused = func(fieldTextColorFocused *tcell.Color) {
-			*fieldTextColorFocused = color
-		}
-	})
-}
-
-// WithFieldBackgroundColor creates a form item attribute promise with the given value to be set.
-// When applied, sets the background color of the input area.
-func WithFieldBackgroundColor(color tcell.Color) FormItemAttribute {
-	return newFuncAttribute(func(o *formItemAttributes) {
-		o.setFieldBackgroundColor = func(fieldBackgroundColor *tcell.Color) {
-			*fieldBackgroundColor = color
-		}
-	})
-}
-
-// WithFieldBackgroundColorFocused creates a form item attribute promise with the given value to be set.
-// When applied, sets the background color of the input area when focused.
-func WithFieldBackgroundColorFocused(color tcell.Color) FormItemAttribute {
-	return newFuncAttribute(func(o *formItemAttributes) {
-		o.setFieldBackgroundColorFocused = func(fieldBackgroundColorFocused *tcell.Color) {
-			*fieldBackgroundColorFocused = color
-		}
-	})
-}
-
-// WithFinishedFunc creates a form item attribute promise with the given value to be set.
-// When applied, sets the handler function for when the user finished
-// entering data into the item. The handler may receive events for the
-// Enter key (we're done), the Escape key (cancel input), the Tab key (move to
-// next field), and the Backtab key (move to previous field).
-func WithFinishedFunc(handler func(key tcell.Key)) FormItemAttribute {
-	return newFuncAttribute(func(o *formItemAttributes) {
-		o.setFinishedFunc = func(finishedFunc *func(key tcell.Key)) {
-			*finishedFunc = handler
-		}
-	})
+	FinishedFunc func(key tcell.Key)
 }
 
 // FormItem is the interface all form items must implement to be able to be
@@ -162,9 +36,6 @@ type FormItem interface {
 	// GetLabel returns the item's label text.
 	GetLabel() string
 
-	// SetAttributes sets the given attributes on the form item.
-	SetAttributes(attributes ...FormItemAttribute)
-
 	// GetFieldWidth returns the width of the form item's field (the area which
 	// is manipulated by the user) in number of screen cells. A value of 0
 	// indicates the the field width is flexible and may use as much space as
@@ -173,6 +44,9 @@ type FormItem interface {
 
 	// GetFieldHeight returns the height of the form item.
 	GetFieldHeight() int
+
+	// SetAttributes applies attributes to the form item.
+	SetAttributes(attrs *FormItemAttributes)
 }
 
 // Form allows you to combine multiple one-line form elements into a vertical
@@ -697,6 +571,26 @@ func (f *Form) SetCancelFunc(callback func()) *Form {
 	return f
 }
 
+// GetAttributes returns the current attribute settings of a form.
+func (f *Form) GetAttributes() *FormItemAttributes {
+	f.Lock()
+	defer f.Unlock()
+
+	return f.getAttributes()
+}
+
+func (f *Form) getAttributes() *FormItemAttributes {
+	return &FormItemAttributes{
+		BackgroundColor:             f.backgroundColor,
+		LabelColor:                  f.labelColor,
+		LabelColorFocused:           f.labelColorFocused,
+		FieldTextColor:              f.fieldTextColor,
+		FieldTextColorFocused:       f.fieldTextColorFocused,
+		FieldBackgroundColor:        f.fieldBackgroundColor,
+		FieldBackgroundColorFocused: f.fieldBackgroundColorFocused,
+	}
+}
+
 // Draw draws this primitive onto the screen.
 func (f *Form) Draw(screen tcell.Screen) {
 	f.Box.Draw(screen)
@@ -757,15 +651,9 @@ func (f *Form) Draw(screen tcell.Screen) {
 			itemWidth = rightLimit - x
 		}
 
-		item.SetAttributes(
-			WithLabelWidth(labelWidth),
-			WithBackgroundColor(f.backgroundColor),
-			WithLabelColor(f.labelColor),
-			WithLabelColorFocused(f.labelColorFocused),
-			WithFieldTextColor(f.fieldTextColor),
-			WithFieldTextColorFocused(f.fieldTextColorFocused),
-			WithFieldBackgroundColor(f.fieldBackgroundColor),
-			WithFieldBackgroundColorFocused(f.fieldBackgroundColorFocused))
+		attributes := f.getAttributes()
+		attributes.LabelWidth = labelWidth
+		item.SetAttributes(attributes)
 
 		// Save position.
 		positions[index].x = x
@@ -892,21 +780,8 @@ func (f *Form) Draw(screen tcell.Screen) {
 	}
 }
 
-// Focus is called by the application when the primitive receives focus.
-func (f *Form) Focus(delegate func(p Primitive)) {
-	f.Lock()
-	if len(f.items)+len(f.buttons) == 0 {
-		f.hasFocus = true
-		f.Unlock()
-		return
-	}
-	f.hasFocus = false
-
-	// Hand on the focus to one of our child elements.
-	if f.focusedElement < 0 || f.focusedElement >= len(f.items)+len(f.buttons) {
-		f.focusedElement = 0
-	}
-	handler := func(key tcell.Key) {
+func (f *Form) formItemInputHandler(delegate func(p Primitive)) func(key tcell.Key) {
+	return func(key tcell.Key) {
 		f.Lock()
 
 		switch key {
@@ -945,18 +820,41 @@ func (f *Form) Focus(delegate func(p Primitive)) {
 
 		f.Unlock()
 	}
+}
+
+// Focus is called by the application when the primitive receives focus.
+func (f *Form) Focus(delegate func(p Primitive)) {
+	f.Lock()
+	if len(f.items)+len(f.buttons) == 0 {
+		f.hasFocus = true
+		f.Unlock()
+		return
+	}
+	f.hasFocus = false
+
+	// Hand on the focus to one of our child elements.
+	if f.focusedElement < 0 || f.focusedElement >= len(f.items)+len(f.buttons) {
+		f.focusedElement = 0
+	}
 
 	if f.focusedElement < len(f.items) {
 		// We're selecting an item.
 		item := f.items[f.focusedElement]
-		item.SetAttributes(WithFinishedFunc(handler))
+
+		attributes := f.getAttributes()
+		attributes.FinishedFunc = f.formItemInputHandler(delegate)
+
 		f.Unlock()
+
+		item.SetAttributes(attributes)
 		delegate(item)
 	} else {
 		// We're selecting a button.
 		button := f.buttons[f.focusedElement-len(f.items)]
-		button.SetBlurFunc(handler)
+		button.SetBlurFunc(f.formItemInputHandler(delegate))
+
 		f.Unlock()
+
 		delegate(button)
 	}
 }

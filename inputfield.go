@@ -198,24 +198,6 @@ func (i *InputField) GetLabel() string {
 	return i.label
 }
 
-// SetAttributes sets the given attributes on the input field.
-func (i *InputField) SetAttributes(attributes ...FormItemAttribute) {
-	allAttributes := newFormItemAttributes()
-	for _, attribute := range attributes {
-		attribute.apply(allAttributes)
-	}
-
-	allAttributes.setLabelWidth(&i.labelWidth)
-	allAttributes.setBackgroundColor(&i.backgroundColor)
-	allAttributes.setLabelColor(&i.labelColor)
-	allAttributes.setLabelColorFocused(&i.labelColorFocused)
-	allAttributes.setFieldTextColor(&i.fieldTextColor)
-	allAttributes.setFieldTextColorFocused(&i.fieldTextColorFocused)
-	allAttributes.setFieldBackgroundColor(&i.fieldBackgroundColor)
-	allAttributes.setFieldBackgroundColorFocused(&i.fieldBackgroundColorFocused)
-	allAttributes.setFinishedFunc(&i.finished)
-}
-
 // SetLabelWidth sets the screen width of the label. A value of 0 will cause the
 // primitive to use the width of the label string.
 func (i *InputField) SetLabelWidth(width int) *InputField {
@@ -571,6 +553,22 @@ func (i *InputField) SetFinishedFunc(handler func(key tcell.Key)) *InputField {
 
 	i.finished = handler
 	return i
+}
+
+// SetAttributes applies attribute settings to a form item.
+func (i *InputField) SetAttributes(attrs *FormItemAttributes) {
+	i.SetLabelWidth(attrs.LabelWidth)
+	i.SetBackgroundColor(attrs.BackgroundColor)
+	i.SetLabelColor(attrs.LabelColor)
+	i.SetLabelColorFocused(attrs.LabelColorFocused)
+	i.SetFieldTextColor(attrs.FieldTextColor)
+	i.SetFieldTextColorFocused(attrs.FieldTextColorFocused)
+	i.SetFieldBackgroundColor(attrs.FieldBackgroundColor)
+	i.SetFieldBackgroundColorFocused(attrs.FieldBackgroundColorFocused)
+
+	if attrs.FinishedFunc != nil {
+		i.SetFinishedFunc(attrs.FinishedFunc)
+	}
 }
 
 // Draw draws this primitive onto the screen.

@@ -135,24 +135,6 @@ func (c *CheckBox) GetMessage() string {
 	return c.message
 }
 
-// SetAttributes sets the given attributes on the check box.
-func (c *CheckBox) SetAttributes(attributes ...FormItemAttribute) {
-	allAttributes := newFormItemAttributes()
-	for _, attribute := range attributes {
-		attribute.apply(allAttributes)
-	}
-
-	allAttributes.setLabelWidth(&c.labelWidth)
-	allAttributes.setBackgroundColor(&c.backgroundColor)
-	allAttributes.setLabelColor(&c.labelColor)
-	allAttributes.setLabelColorFocused(&c.labelColorFocused)
-	allAttributes.setFieldTextColor(&c.fieldTextColor)
-	allAttributes.setFieldTextColorFocused(&c.fieldTextColorFocused)
-	allAttributes.setFieldBackgroundColor(&c.fieldBackgroundColor)
-	allAttributes.setFieldBackgroundColorFocused(&c.fieldBackgroundColorFocused)
-	allAttributes.setFinishedFunc(&c.finished)
-}
-
 // SetLabelWidth sets the screen width of the label. A value of 0 will cause the
 // primitive to use the width of the label string.
 func (c *CheckBox) SetLabelWidth(width int) *CheckBox {
@@ -273,6 +255,22 @@ func (c *CheckBox) SetFinishedFunc(handler func(key tcell.Key)) *CheckBox {
 
 	c.finished = handler
 	return c
+}
+
+// SetAttributes applies attribute settings to a form item.
+func (c *CheckBox) SetAttributes(attrs *FormItemAttributes) {
+	c.SetLabelWidth(attrs.LabelWidth)
+	c.SetBackgroundColor(attrs.BackgroundColor)
+	c.SetLabelColor(attrs.LabelColor)
+	c.SetLabelColorFocused(attrs.LabelColorFocused)
+	c.SetFieldTextColor(attrs.FieldTextColor)
+	c.SetFieldTextColorFocused(attrs.FieldTextColorFocused)
+	c.SetFieldBackgroundColor(attrs.FieldBackgroundColor)
+	c.SetFieldBackgroundColorFocused(attrs.FieldBackgroundColorFocused)
+
+	if attrs.FinishedFunc != nil {
+		c.SetFinishedFunc(attrs.FinishedFunc)
+	}
 }
 
 // Draw draws this primitive onto the screen.
