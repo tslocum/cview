@@ -5,6 +5,7 @@ v1.5.0 (WIP)
 - Add InputField autocomplete style options
 - Add arrow symbol to DropDown
 - Add Makefile
+- Allow autocomplete selection value customization
 - Revamp FormItem styling as FormItem.SetAttributes
 - Provide DropDownOption in DropDown handlers
 - Provide ListItem in List handlers

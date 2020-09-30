@@ -102,7 +102,9 @@ type InputField struct {
 
 	// An optional autocomplete function which receives the current text of the
 	// input field and returns a slice of ListItems to be displayed in a drop-down
-	// selection.
+	// selection. Items' main text is displayed in the autocomplete list. When
+	// set, items' secondary text is used as the selection value. Otherwise,
+	// the main text is used.
 	autocomplete func(text string) []*ListItem
 
 	// The List object which shows the selectable autocomplete entries. If not
@@ -872,8 +874,12 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 		case tcell.KeyEnter: // We might be done.
 			if i.autocompleteList != nil {
 				currentItem := i.autocompleteList.GetCurrentItem()
+				selectionText := currentItem.mainText
+				if currentItem.secondaryText != "" {
+					selectionText = currentItem.secondaryText
+				}
 				i.Unlock()
-				i.SetText(currentItem.mainText)
+				i.SetText(selectionText)
 				i.Lock()
 				i.autocompleteList = nil
 				i.autocompleteListSuggestion = ""
