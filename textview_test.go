@@ -121,6 +121,40 @@ func BenchmarkTextViewWrite(b *testing.B) {
 	}
 }
 
+func BenchmarkTextViewIndex(b *testing.B) {
+	for _, c := range textViewTestCases {
+		c := c // Capture
+
+		b.Run(c.String(), func(b *testing.B) {
+			var (
+				tv  = tvc(NewTextView(), c)
+				n   int
+				err error
+			)
+
+			_, err = prepareAppendTextView(tv)
+			if err != nil {
+				b.Errorf("failed to prepare append TextView: %s", err)
+			}
+
+			n, err = tv.Write(randomData)
+			if err != nil {
+				b.Errorf("failed to write (successfully wrote %d) bytes: %s", n, err)
+			} else if n != randomDataSize {
+				b.Errorf("failed to write: expected to write %d bytes, wrote %d", randomDataSize, n)
+			}
+
+			b.ReportAllocs()
+			b.ResetTimer()
+
+			for i := 0; i < b.N; i++ {
+				tv.index = nil
+				tv.reindexBuffer(80)
+			}
+		})
+	}
+}
+
 func TestTextViewDraw(t *testing.T) {
 	t.Parallel()
 
