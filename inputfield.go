@@ -501,12 +501,13 @@ func (i *InputField) Autocomplete() *InputField {
 // autocompleteChanged gets called when another item in the
 // autocomplete list has been selected.
 func (i *InputField) autocompleteChanged(_ int, item *ListItem) {
-	if len(i.text) >= len(item.mainText) {
+	if len(item.secondaryText) > 0 && len(i.text) < len(item.secondaryText) {
+		i.autocompleteListSuggestion = item.secondaryText[len(i.text):]
+	} else if len(item.mainText) > len(i.text)+1 {
+		i.autocompleteListSuggestion = item.mainText[len(i.text)+1:]
+	} else {
 		i.autocompleteListSuggestion = ""
-		return
 	}
-
-	i.autocompleteListSuggestion = item.mainText[len(i.text):]
 }
 
 // SetAcceptanceFunc sets a handler which may reject the last character that was
