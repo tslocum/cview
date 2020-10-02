@@ -292,6 +292,9 @@ func (i *InputField) SetPlaceholderTextColor(color tcell.Color) *InputField {
 // SetPlaceholderTextColorFocused sets the text color of placeholder text when
 // focused.
 func (i *InputField) SetPlaceholderTextColorFocused(color tcell.Color) *InputField {
+	i.Lock()
+	defer i.Unlock()
+
 	i.placeholderTextColorFocused = color
 	return i
 }
@@ -338,6 +341,9 @@ func (i *InputField) SetAutocompleteListSelectedBackgroundColor(color tcell.Colo
 // SetAutocompleteSuggestionTextColor sets the text color of the autocomplete
 // suggestion in the input field.
 func (i *InputField) SetAutocompleteSuggestionTextColor(color tcell.Color) *InputField {
+	i.Lock()
+	defer i.Unlock()
+
 	i.autocompleteSuggestionTextColor = color
 	return i
 }
@@ -346,6 +352,7 @@ func (i *InputField) SetAutocompleteSuggestionTextColor(color tcell.Color) *Inpu
 func (i *InputField) SetFieldNoteTextColor(color tcell.Color) *InputField {
 	i.Lock()
 	defer i.Unlock()
+
 	i.fieldNoteTextColor = color
 	return i
 }
@@ -355,6 +362,7 @@ func (i *InputField) SetFieldNoteTextColor(color tcell.Color) *InputField {
 func (i *InputField) SetFieldNote(note string) *InputField {
 	i.Lock()
 	defer i.Unlock()
+
 	i.fieldNote = note
 	return i
 }
@@ -363,6 +371,7 @@ func (i *InputField) SetFieldNote(note string) *InputField {
 func (i *InputField) ResetFieldNote() *InputField {
 	i.Lock()
 	defer i.Unlock()
+
 	i.fieldNote = ""
 	return i
 }
