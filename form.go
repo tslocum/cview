@@ -1,6 +1,7 @@
 package cview
 
 import (
+	"reflect"
 	"sync"
 
 	"github.com/gdamore/tcell/v2"
@@ -453,6 +454,10 @@ func (f *Form) ClearButtons() *Form {
 func (f *Form) AddFormItem(item FormItem) *Form {
 	f.Lock()
 	defer f.Unlock()
+
+	if reflect.ValueOf(item).IsNil() {
+		panic("Invalid FormItem")
+	}
 
 	f.items = append(f.items, item)
 	return f
