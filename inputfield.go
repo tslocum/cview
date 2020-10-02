@@ -210,12 +210,6 @@ func (i *InputField) SetLabelWidth(width int) *InputField {
 	return i
 }
 
-// SetBackgroundColor sets the background color.
-func (i *InputField) SetBackgroundColor(color tcell.Color) *InputField {
-	i.Box.SetBackgroundColor(color)
-	return i
-}
-
 // SetPlaceholder sets the text to be displayed when the input text is empty.
 func (i *InputField) SetPlaceholder(text string) *InputField {
 	i.Lock()

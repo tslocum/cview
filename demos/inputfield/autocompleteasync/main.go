@@ -25,7 +25,7 @@ func main() {
 		})
 
 	// Set up autocomplete function.
-	var mutex sync.Mutex
+	var mutex sync.RWMutex
 	prefixMap := make(map[string][]*cview.ListItem)
 	inputField.SetAutocompleteFunc(func(currentText string) []*cview.ListItem {
 		// Ignore empty text.

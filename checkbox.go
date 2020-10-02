@@ -145,12 +145,6 @@ func (c *CheckBox) SetLabelWidth(width int) *CheckBox {
 	return c
 }
 
-// SetBackgroundColor sets the background color.
-func (c *CheckBox) SetBackgroundColor(color tcell.Color) *CheckBox {
-	c.Box.SetBackgroundColor(color)
-	return c
-}
-
 // SetLabelColor sets the color of the label.
 func (c *CheckBox) SetLabelColor(color tcell.Color) *CheckBox {
 	c.Lock()

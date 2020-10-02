@@ -273,12 +273,6 @@ func (d *DropDown) SetLabelWidth(width int) *DropDown {
 	return d
 }
 
-// SetBackgroundColor sets the background color.
-func (d *DropDown) SetBackgroundColor(color tcell.Color) *DropDown {
-	d.Box.SetBackgroundColor(color)
-	return d
-}
-
 // SetLabelColor sets the color of the label.
 func (d *DropDown) SetLabelColor(color tcell.Color) *DropDown {
 	d.Lock()

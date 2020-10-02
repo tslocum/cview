@@ -13,7 +13,7 @@ type ContextMenu struct {
 	x, y     int
 	selected func(int, string, rune)
 
-	l sync.Mutex
+	l sync.RWMutex
 }
 
 // NewContextMenu returns a new context menu.
@@ -159,6 +159,9 @@ func (c *ContextMenu) show(item int, x int, y int, setFocus func(Primitive)) {
 			c.l.Unlock()
 		}
 	}).SetDoneFunc(func() {
+		c.l.Lock()
+		defer c.l.Unlock()
+
 		c.hide(setFocus)
 	})
 
