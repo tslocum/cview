@@ -887,19 +887,21 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 				i.Lock()
 				i.autocompleteList = nil
 				i.autocompleteListSuggestion = ""
+				i.Unlock()
 			} else {
+				i.Unlock()
 				finish(key)
 			}
-			i.Unlock()
 			return
 		case tcell.KeyEscape:
 			if i.autocompleteList != nil {
 				i.autocompleteList = nil
 				i.autocompleteListSuggestion = ""
+				i.Unlock()
 			} else {
+				i.Unlock()
 				finish(key)
 			}
-			i.Unlock()
 			return
 		case tcell.KeyDown, tcell.KeyTab: // Autocomplete selection.
 			if i.autocompleteList != nil {
