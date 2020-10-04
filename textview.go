@@ -303,15 +303,21 @@ func (t *TextView) SetTextColor(color tcell.Color) *TextView {
 	return t
 }
 
-// SetText sets the text of this text view to the provided string. Previously
-// contained text will be removed.
-func (t *TextView) SetText(text string) *TextView {
+// SetBytes sets the text of this text view to the provided byte slice.
+// Previously contained text will be removed.
+func (t *TextView) SetBytes(text []byte) *TextView {
 	t.Lock()
 	defer t.Unlock()
 
 	t.clear()
-	t.write([]byte(text))
+	t.write(text)
 	return t
+}
+
+// SetText sets the text of this text view to the provided string. Previously
+// contained text will be removed.
+func (t *TextView) SetText(text string) *TextView {
+	return t.SetBytes([]byte(text))
 }
 
 // GetBytes returns the current text of this text view. If "stripTags" is set
