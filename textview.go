@@ -314,9 +314,9 @@ func (t *TextView) SetText(text string) *TextView {
 	return t
 }
 
-// GetText returns the current text of this text view. If "stripTags" is set
+// GetBytes returns the current text of this text view. If "stripTags" is set
 // to true, any region/color tags are stripped from the text.
-func (t *TextView) GetText(stripTags bool) []byte {
+func (t *TextView) GetBytes(stripTags bool) []byte {
 	t.RLock()
 	defer t.RUnlock()
 
@@ -343,6 +343,12 @@ func (t *TextView) GetText(stripTags bool) []byte {
 		buffer = escapePattern.ReplaceAll(buffer, []byte(`[$1$2]`))
 	}
 	return buffer
+}
+
+// GetText returns the current text of this text view. If "stripTags" is set
+// to true, any region/color tags are stripped from the text.
+func (t *TextView) GetText(stripTags bool) string {
+	return string(t.GetBytes(stripTags))
 }
 
 // SetDynamicColors sets the flag that allows the text color to be changed

@@ -1,3 +1,7 @@
+v1.5.1 (WIP)
+- Store TextView buffer as [][]byte instead of []string
+- Add TextView.GetBytes
+
 v1.5.0 (2020-10-03)
 - Add scroll bar to TextView
 - Add Window and WindowManager

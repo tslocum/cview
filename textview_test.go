@@ -173,11 +173,11 @@ func TestTextViewGetText(t *testing.T) {
 		t.Errorf("failed to write (successfully wrote %d) bytes: %s", n, err)
 	}
 
-	if !bytes.Equal(tv.GetText(false), append(randomData, suffix...)) {
+	if !bytes.Equal(tv.GetBytes(false), append(randomData, suffix...)) {
 		t.Error("failed to get un-stripped text: unexpected suffix")
 	}
 
-	if !bytes.Equal(tv.GetText(true), append(randomData, suffixStripped...)) {
+	if !bytes.Equal(tv.GetBytes(true), append(randomData, suffixStripped...)) {
 		t.Error("failed to get text stripped text: unexpected suffix")
 	}
 }
@@ -214,7 +214,7 @@ func BenchmarkTextViewGetText(b *testing.B) {
 			b.ResetTimer()
 
 			for i := 0; i < b.N; i++ {
-				v = tv.GetText(true)
+				v = tv.GetBytes(true)
 				_ = v
 			}
 		})
@@ -308,7 +308,7 @@ func TestTextViewMaxLines(t *testing.T) {
 	}
 
 	// retrieve the total text and see we have the 100 lines:
-	count := bytes.Count(tv.GetText(true), []byte("\n"))
+	count := bytes.Count(tv.GetBytes(true), []byte("\n"))
 	if count != 100 {
 		t.Errorf("expected 100 lines, got %d", count)
 	}
@@ -316,7 +316,7 @@ func TestTextViewMaxLines(t *testing.T) {
 	// now set the maximum lines to 20, this should clip the buffer:
 	tv.SetMaxLines(20)
 	// verify buffer was clipped:
-	count = len(bytes.Split(tv.GetText(true), []byte("\n")))
+	count = len(bytes.Split(tv.GetBytes(true), []byte("\n")))
 	if count != 20 {
 		t.Errorf("expected 20 lines, got %d", count)
 	}
@@ -330,7 +330,7 @@ func TestTextViewMaxLines(t *testing.T) {
 	}
 
 	// Sice max lines is set to 20, we should still get 20 lines:
-	txt := tv.GetText(true)
+	txt := tv.GetBytes(true)
 	lines := bytes.Split(txt, []byte("\n"))
 	count = len(lines)
 	if count != 20 {
