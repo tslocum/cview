@@ -3,7 +3,6 @@ package cview
 import (
 	"bytes"
 	"regexp"
-	"strings"
 	"sync"
 	"unicode/utf8"
 
@@ -26,7 +25,7 @@ var (
 // view.
 type textViewIndex struct {
 	Line            int    // The index into the "buffer" variable.
-	Pos             int    // The index into the "buffer" string (byte position).
+	Pos             int    // The index into the "buffer" line ([]byte position).
 	NextPos         int    // The (byte) index of the next character in this buffer line.
 	Width           int    // The screen width of this line.
 	ForegroundColor string // The starting foreground color ("" = don't change, "-" = reset).
@@ -100,7 +99,7 @@ type TextView struct {
 	*Box
 
 	// The text buffer.
-	buffer []string
+	buffer [][]byte
 
 	// The last bytes that have been received but are not part of the buffer yet.
 	recentBytes []byte
@@ -317,38 +316,33 @@ func (t *TextView) SetText(text string) *TextView {
 
 // GetText returns the current text of this text view. If "stripTags" is set
 // to true, any region/color tags are stripped from the text.
-func (t *TextView) GetText(stripTags bool) string {
+func (t *TextView) GetText(stripTags bool) []byte {
 	t.RLock()
 	defer t.RUnlock()
 
-	// Get the buffer.
-	buffer := t.buffer
 	if !stripTags {
-		buffer = append(buffer, string(t.recentBytes))
+		if len(t.recentBytes) > 0 {
+			return bytes.Join(append(t.buffer, t.recentBytes), []byte("\n"))
+		}
+		return bytes.Join(t.buffer, []byte("\n"))
 	}
 
-	// Add newlines again.
-	text := strings.Join(buffer, "\n")
-
-	// Strip from tags if required.
-	if stripTags {
-		if t.regions {
-			text = regionPattern.ReplaceAllString(text, "")
-		}
-		if t.dynamicColors {
-			text = colorPattern.ReplaceAllStringFunc(text, func(match string) string {
-				if len(match) > 2 {
-					return ""
-				}
-				return match
-			})
-		}
-		if t.regions || t.dynamicColors {
-			text = escapePattern.ReplaceAllString(text, `[$1$2]`)
-		}
+	buffer := bytes.Join(t.buffer, []byte("\n"))
+	if t.regions {
+		buffer = regionPattern.ReplaceAll(buffer, nil)
 	}
-
-	return text
+	if t.dynamicColors {
+		buffer = colorPattern.ReplaceAllFunc(buffer, func(match []byte) []byte {
+			if len(match) > 2 {
+				return nil
+			}
+			return match
+		})
+	}
+	if t.regions || t.dynamicColors {
+		buffer = escapePattern.ReplaceAll(buffer, []byte(`[$1$2]`))
+	}
+	return buffer
 }
 
 // SetDynamicColors sets the flag that allows the text color to be changed
@@ -636,7 +630,7 @@ func (t *TextView) GetRegionText(regionID string) string {
 	t.RLock()
 	defer t.RUnlock()
 
-	if !t.regions || regionID == "" {
+	if !t.regions || len(regionID) == 0 {
 		return ""
 	}
 
@@ -649,17 +643,17 @@ func (t *TextView) GetRegionText(regionID string) string {
 		// Find all color tags in this line.
 		var colorTagIndices [][]int
 		if t.dynamicColors {
-			colorTagIndices = colorPattern.FindAllStringIndex(str, -1)
+			colorTagIndices = colorPattern.FindAllIndex(str, -1)
 		}
 
 		// Find all regions in this line.
 		var (
 			regionIndices [][]int
-			regions       [][]string
+			regions       [][][]byte
 		)
 		if t.regions {
-			regionIndices = regionPattern.FindAllStringIndex(str, -1)
-			regions = regionPattern.FindAllStringSubmatch(str, -1)
+			regionIndices = regionPattern.FindAllIndex(str, -1)
+			regions = regionPattern.FindAllSubmatch(str, -1)
 		}
 
 		// Analyze this line.
@@ -682,7 +676,7 @@ func (t *TextView) GetRegionText(regionID string) string {
 						// This is the end of the requested region. We're done.
 						return buffer.String()
 					}
-					currentRegionID = regions[currentRegion][1]
+					currentRegionID = string(regions[currentRegion][1])
 					currentRegion++
 				}
 				continue
@@ -690,7 +684,7 @@ func (t *TextView) GetRegionText(regionID string) string {
 
 			// Add this rune.
 			if currentRegionID == regionID {
-				buffer.WriteRune(ch)
+				buffer.WriteByte(ch)
 			}
 		}
 
@@ -768,12 +762,12 @@ func (t *TextView) write(p []byte) (n int, err error) {
 
 	// Transform the new bytes into strings.
 	newBytes = bytes.Replace(newBytes, []byte{'\t'}, bytes.Repeat([]byte{' '}, TabSize), -1)
-	for index, line := range newLineRegex.Split(string(newBytes), -1) {
+	for index, line := range bytes.Split(newBytes, []byte("\n")) {
 		if index == 0 {
 			if len(t.buffer) == 0 {
-				t.buffer = []string{line}
+				t.buffer = [][]byte{line}
 			} else {
-				t.buffer[len(t.buffer)-1] += line
+				t.buffer[len(t.buffer)-1] = append(t.buffer[len(t.buffer)-1], line...)
 			}
 		} else {
 			t.buffer = append(t.buffer, line)
@@ -831,7 +825,8 @@ func (t *TextView) reindexBuffer(width int) {
 	)
 
 	// Go through each line in the buffer.
-	for bufferIndex, str := range t.buffer {
+	for bufferIndex, buf := range t.buffer {
+		str := string(buf)
 		colorTagIndices, colorTags, regionIndices, regions, escapeIndices, strippedStr, _ := decomposeString(str, t.dynamicColors, t.regions)
 
 		// Split the line if required.
@@ -963,11 +958,11 @@ func (t *TextView) reindexBuffer(width int) {
 		if t.wrap && t.wordWrap {
 			for _, line := range t.index {
 				str := t.buffer[line.Line][line.Pos:line.NextPos]
-				spaces := spacePattern.FindAllStringIndex(str, -1)
+				spaces := spacePattern.FindAllIndex(str, -1)
 				if spaces != nil && spaces[len(spaces)-1][1] == len(str) {
 					oldNextPos := line.NextPos
 					line.NextPos -= spaces[len(spaces)-1][1] - spaces[len(spaces)-1][0]
-					line.Width -= stringWidth(t.buffer[line.Line][line.NextPos:oldNextPos])
+					line.Width -= stringWidth(string(t.buffer[line.Line][line.NextPos:oldNextPos]))
 				}
 			}
 		}
@@ -1109,7 +1104,7 @@ func (t *TextView) Draw(screen tcell.Screen) {
 		}
 
 		// Process tags.
-		colorTagIndices, colorTags, regionIndices, regions, escapeIndices, strippedText, _ := decomposeString(text, t.dynamicColors, t.regions)
+		colorTagIndices, colorTags, regionIndices, regions, escapeIndices, strippedText, _ := decomposeString(string(text), t.dynamicColors, t.regions)
 
 		// Calculate the position of the line.
 		var skip, posX int

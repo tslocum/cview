@@ -3,7 +3,6 @@ package cview
 import (
 	"bytes"
 	"fmt"
-	"strings"
 	"testing"
 )
 
@@ -68,9 +67,6 @@ func TestTextViewWrite(t *testing.T) {
 			}
 
 			contents := tv.GetText(false)
-			if len(contents) > 0 {
-				contents = contents[0 : len(contents)-1] // Remove extra newline
-			}
 			if len(contents) != len(expectedData) {
 				t.Errorf("failed to write: incorrect contents: expected %d bytes, got %d", len(contents), len(expectedData))
 			} else if !bytes.Equal([]byte(contents), expectedData) {
@@ -150,6 +146,76 @@ func BenchmarkTextViewIndex(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				tv.index = nil
 				tv.reindexBuffer(80)
+			}
+		})
+	}
+}
+
+func TestTextViewGetText(t *testing.T) {
+	t.Parallel()
+
+	tv := NewTextView()
+	tv.SetDynamicColors(true)
+	tv.SetRegions(true)
+
+	n, err := tv.Write(randomData)
+	if err != nil {
+		t.Errorf("failed to write (successfully wrote %d) bytes: %s", n, err)
+	} else if n != randomDataSize {
+		t.Errorf("failed to write: expected to write %d bytes, wrote %d", randomDataSize, n)
+	}
+
+	suffix := []byte(`["start"]outer[b]inner[-]outer[""]`)
+	suffixStripped := []byte("outerinnerouter")
+
+	n, err = tv.Write(suffix)
+	if err != nil {
+		t.Errorf("failed to write (successfully wrote %d) bytes: %s", n, err)
+	}
+
+	if !bytes.Equal(tv.GetText(false), append(randomData, suffix...)) {
+		t.Error("failed to get un-stripped text: unexpected suffix")
+	}
+
+	if !bytes.Equal(tv.GetText(true), append(randomData, suffixStripped...)) {
+		t.Error("failed to get text stripped text: unexpected suffix")
+	}
+}
+
+func BenchmarkTextViewGetText(b *testing.B) {
+	for _, c := range textViewTestCases {
+		c := c // Capture
+
+		if c.app {
+			continue // Skip for this benchmark
+		}
+
+		b.Run(c.String(), func(b *testing.B) {
+			var (
+				tv  = tvc(NewTextView(), c)
+				n   int
+				err error
+				v   []byte
+			)
+
+			_, err = prepareAppendTextView(tv)
+			if err != nil {
+				b.Errorf("failed to prepare append TextView: %s", err)
+			}
+
+			n, err = tv.Write(randomData)
+			if err != nil {
+				b.Errorf("failed to write (successfully wrote %d) bytes: %s", n, err)
+			} else if n != randomDataSize {
+				b.Errorf("failed to write: expected to write %d bytes, wrote %d", randomDataSize, n)
+			}
+
+			b.ReportAllocs()
+			b.ResetTimer()
+
+			for i := 0; i < b.N; i++ {
+				v = tv.GetText(true)
+				_ = v
 			}
 		})
 	}
@@ -242,7 +308,7 @@ func TestTextViewMaxLines(t *testing.T) {
 	}
 
 	// retrieve the total text and see we have the 100 lines:
-	count := strings.Count(tv.GetText(true), "\n")
+	count := bytes.Count(tv.GetText(true), []byte("\n"))
 	if count != 100 {
 		t.Errorf("expected 100 lines, got %d", count)
 	}
@@ -250,7 +316,7 @@ func TestTextViewMaxLines(t *testing.T) {
 	// now set the maximum lines to 20, this should clip the buffer:
 	tv.SetMaxLines(20)
 	// verify buffer was clipped:
-	count = len(strings.Split(tv.GetText(true), "\n"))
+	count = len(bytes.Split(tv.GetText(true), []byte("\n")))
 	if count != 20 {
 		t.Errorf("expected 20 lines, got %d", count)
 	}
@@ -265,14 +331,14 @@ func TestTextViewMaxLines(t *testing.T) {
 
 	// Sice max lines is set to 20, we should still get 20 lines:
 	txt := tv.GetText(true)
-	lines := strings.Split(txt, "\n")
+	lines := bytes.Split(txt, []byte("\n"))
 	count = len(lines)
 	if count != 20 {
 		t.Errorf("expected 20 lines, got %d", count)
 	}
 
 	// and those 20 lines should be the last ones:
-	if lines[0] != "L181" {
+	if !bytes.Equal(lines[0], []byte("L181")) {
 		t.Errorf("expected to get L181, got %s", lines[0])
 	}
 
@@ -335,9 +401,9 @@ func tvc(tv *TextView, c *textViewTestCase) *TextView {
 
 func cl(v bool) rune {
 	if v {
-		return 'T'
+		return 'Y'
 	}
-	return 'F'
+	return 'N'
 }
 
 func prepareAppendTextView(t *TextView) ([]byte, error) {
