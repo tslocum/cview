@@ -297,6 +297,8 @@ func BenchmarkTextViewDraw(b *testing.B) {
 }
 
 func TestTextViewMaxLines(t *testing.T) {
+	t.Parallel()
+
 	tv := NewTextView()
 
 	// append 100 lines with no limit set:
@@ -341,7 +343,6 @@ func TestTextViewMaxLines(t *testing.T) {
 	if !bytes.Equal(lines[0], []byte("L181")) {
 		t.Errorf("expected to get L181, got %s", lines[0])
 	}
-
 }
 
 func generateTestCases() []*textViewTestCase {
