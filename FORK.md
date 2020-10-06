@@ -45,11 +45,19 @@ to enable background transparency.
 
 ## Tables are sorted when a fixed row is clicked by default
 
-Call [Table.SetSortClicked] to disable this behavior.
+Call [Table.SetSortClicked](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Table.SetSortClicked)
+to disable this behavior.
 
 ## Lists and Forms do not wrap around by default
 
-Call [List.SetWrapAround](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#List.SetWrapAround) to wrap around when navigating.
+Call [List.SetWrapAround](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#List.SetWrapAround)
+to wrap around when navigating.
+
+## TextViews store their text as []byte instead of string
+
+This greatly improves buffer efficiency. [TextView.Write](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#TextView.Write)
+is 90% faster and [TextView.Draw](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#TextView.Draw)
+is 50% faster.    
 
 # Merged pull requests
 

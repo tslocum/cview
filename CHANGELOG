@@ -2,6 +2,7 @@ v1.5.1 (WIP)
 - Store TextView buffer as [][]byte instead of []string
 - Add TextView.SetBytes and TextView.GetBytes
 - Allow modification of scroll bar render text
+- Optimize TextView (writing is 90% faster, drawing is 50% faster)
 
 v1.5.0 (2020-10-03)
 - Add scroll bar to TextView
