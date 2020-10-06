@@ -331,7 +331,7 @@ type TreeView struct {
 	topLevel int
 
 	// Strings drawn before the nodes, based on their level.
-	prefixes []string
+	prefixes [][]byte
 
 	// Vertical scroll offset.
 	offsetY int
@@ -452,7 +452,10 @@ func (t *TreeView) SetPrefixes(prefixes []string) *TreeView {
 	t.Lock()
 	defer t.Unlock()
 
-	t.prefixes = prefixes
+	t.prefixes = make([][]byte, len(prefixes))
+	for i := range prefixes {
+		t.prefixes[i] = []byte(prefixes[i])
+	}
 	return t
 }
 
@@ -880,7 +883,7 @@ func (t *TreeView) Draw(screen tcell.Screen) {
 					}
 					style = tcell.StyleDefault.Background(backgroundColor).Foreground(foregroundColor)
 				}
-				printWithStyle(screen, node.text, x+node.textX+prefixWidth, posY, width-node.textX-prefixWidth, AlignLeft, style)
+				printWithStyle(screen, []byte(node.text), x+node.textX+prefixWidth, posY, width-node.textX-prefixWidth, AlignLeft, style)
 			}
 		}
 

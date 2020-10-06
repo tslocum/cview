@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/mattn/go-runewidth"
 )
 
 // DropDownOption is one option that can be selected in a drop-down primitive.
@@ -569,10 +570,10 @@ func (d *DropDown) Draw(screen tcell.Screen) {
 		if labelWidth > rightLimit-x {
 			labelWidth = rightLimit - x
 		}
-		Print(screen, d.label, x, y, labelWidth, AlignLeft, labelColor)
+		Print(screen, []byte(d.label), x, y, labelWidth, AlignLeft, labelColor)
 		x += labelWidth
 	} else {
-		_, drawnWidth := Print(screen, d.label, x, y, rightLimit-x, AlignLeft, labelColor)
+		_, drawnWidth := Print(screen, []byte(d.label), x, y, rightLimit-x, AlignLeft, labelColor)
 		x += drawnWidth
 	}
 
@@ -614,12 +615,12 @@ func (d *DropDown) Draw(screen tcell.Screen) {
 	if d.open && len(d.prefix) > 0 {
 		// Show the prefix.
 		currentOptionPrefixWidth := TaggedStringWidth(d.currentOptionPrefix)
-		prefixWidth := stringWidth(d.prefix)
+		prefixWidth := runewidth.StringWidth(d.prefix)
 		listItemText := d.options[d.list.GetCurrentItemIndex()].text
-		Print(screen, d.currentOptionPrefix, x, y, fieldWidth, AlignLeft, fieldTextColor)
-		Print(screen, d.prefix, x+currentOptionPrefixWidth, y, fieldWidth-currentOptionPrefixWidth, AlignLeft, d.prefixTextColor)
+		Print(screen, []byte(d.currentOptionPrefix), x, y, fieldWidth, AlignLeft, fieldTextColor)
+		Print(screen, []byte(d.prefix), x+currentOptionPrefixWidth, y, fieldWidth-currentOptionPrefixWidth, AlignLeft, d.prefixTextColor)
 		if len(d.prefix) < len(listItemText) {
-			Print(screen, listItemText[len(d.prefix):]+d.currentOptionSuffix, x+prefixWidth+currentOptionPrefixWidth, y, fieldWidth-prefixWidth-currentOptionPrefixWidth, AlignLeft, fieldTextColor)
+			Print(screen, []byte(listItemText[len(d.prefix):]+d.currentOptionSuffix), x+prefixWidth+currentOptionPrefixWidth, y, fieldWidth-prefixWidth-currentOptionPrefixWidth, AlignLeft, fieldTextColor)
 		}
 	} else {
 		color := fieldTextColor
@@ -633,7 +634,7 @@ func (d *DropDown) Draw(screen tcell.Screen) {
 		}
 
 		// Just show the current selection.
-		Print(screen, text, x, y, fieldWidth, AlignLeft, color)
+		Print(screen, []byte(text), x, y, fieldWidth, AlignLeft, color)
 	}
 
 	// Draw drop-down symbol

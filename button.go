@@ -11,7 +11,7 @@ type Button struct {
 	*Box
 
 	// The text to be displayed before the input area.
-	label string
+	label []byte
 
 	// The label color.
 	labelColor tcell.Color
@@ -38,7 +38,7 @@ func NewButton(label string) *Button {
 	box.SetRect(0, 0, TaggedStringWidth(label)+4, 1)
 	return &Button{
 		Box:                    box,
-		label:                  label,
+		label:                  []byte(label),
 		labelColor:             Styles.PrimaryTextColor,
 		labelColorFocused:      Styles.InverseTextColor,
 		backgroundColorFocused: Styles.PrimaryTextColor,
@@ -50,7 +50,7 @@ func (b *Button) SetLabel(label string) *Button {
 	b.Lock()
 	defer b.Unlock()
 
-	b.label = label
+	b.label = []byte(label)
 	return b
 }
 
@@ -59,7 +59,7 @@ func (b *Button) GetLabel() string {
 	b.RLock()
 	defer b.RUnlock()
 
-	return b.label
+	return string(b.label)
 }
 
 // SetLabelColor sets the color of the button text.

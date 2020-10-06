@@ -9,38 +9,11 @@ import (
 )
 
 const (
-	// StandardDoubleClick is the standard double click interval.
-	StandardDoubleClick = 500 * time.Millisecond
-
 	// The size of the event/update/redraw channels.
 	queueSize = 100
 
 	// The minimum duration between resize event callbacks.
 	resizeEventThrottle = 200 * time.Millisecond
-)
-
-// MouseAction indicates one of the actions the mouse is logically doing.
-type MouseAction int16
-
-// Available mouse actions.
-const (
-	MouseMove MouseAction = iota
-	MouseLeftDown
-	MouseLeftUp
-	MouseLeftClick
-	MouseLeftDoubleClick
-	MouseMiddleDown
-	MouseMiddleUp
-	MouseMiddleClick
-	MouseMiddleDoubleClick
-	MouseRightDown
-	MouseRightUp
-	MouseRightClick
-	MouseRightDoubleClick
-	MouseScrollUp
-	MouseScrollDown
-	MouseScrollLeft
-	MouseScrollRight
 )
 
 // Application represents the top node of an application.

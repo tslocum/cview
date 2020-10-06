@@ -140,6 +140,9 @@ func BenchmarkTextViewIndex(b *testing.B) {
 				b.Errorf("failed to write: expected to write %d bytes, wrote %d", randomDataSize, n)
 			}
 
+			tv.index = nil
+			tv.reindexBuffer(80)
+
 			b.ReportAllocs()
 			b.ResetTimer()
 
@@ -210,13 +213,16 @@ func BenchmarkTextViewGetText(b *testing.B) {
 				b.Errorf("failed to write: expected to write %d bytes, wrote %d", randomDataSize, n)
 			}
 
+			v = tv.GetBytes(true)
+
 			b.ReportAllocs()
 			b.ResetTimer()
 
 			for i := 0; i < b.N; i++ {
 				v = tv.GetBytes(true)
-				_ = v
 			}
+
+			_ = v
 		})
 	}
 }
@@ -285,6 +291,8 @@ func BenchmarkTextViewDraw(b *testing.B) {
 			} else if n != randomDataSize {
 				b.Errorf("failed to write: expected to write %d bytes, wrote %d", randomDataSize, n)
 			}
+
+			tv.Draw(app.screen)
 
 			b.ReportAllocs()
 			b.ResetTimer()

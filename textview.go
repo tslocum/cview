@@ -32,13 +32,13 @@ type textViewIndex struct {
 	ForegroundColor string // The starting foreground color ("" = don't change, "-" = reset).
 	BackgroundColor string // The starting background color ("" = don't change, "-" = reset).
 	Attributes      string // The starting attributes ("" = don't change, "-" = reset).
-	Region          string // The starting region ID.
+	Region          []byte // The starting region ID.
 }
 
 // textViewRegion contains information about a region.
 type textViewRegion struct {
 	// The region ID.
-	ID string
+	ID []byte
 
 	// The starting and end screen position of the region as determined the last
 	// time Draw() was called. A negative value indicates out-of-rect positions.
@@ -831,7 +831,7 @@ func (t *TextView) reindexBuffer(width int) {
 	}
 
 	// Initial states.
-	regionID := ""
+	var regionID []byte
 	var (
 		highlighted                                  bool
 		foregroundColor, backgroundColor, attributes string
@@ -839,12 +839,11 @@ func (t *TextView) reindexBuffer(width int) {
 
 	// Go through each line in the buffer.
 	for bufferIndex, buf := range t.buffer {
-		str := string(buf)
-		colorTagIndices, colorTags, regionIndices, regions, escapeIndices, strippedStr, _ := decomposeString(str, t.dynamicColors, t.regions)
+		colorTagIndices, colorTags, regionIndices, regions, escapeIndices, strippedStr, _ := decomposeText(buf, t.dynamicColors, t.regions)
 
 		// Split the line if required.
 		var splitLines []string
-		str = strippedStr
+		str := string(strippedStr) // TODO
 		if t.wrap && len(str) > 0 {
 			for len(str) > 0 {
 				extract := runewidth.Truncate(str, width, "")
@@ -938,14 +937,14 @@ func (t *TextView) reindexBuffer(width int) {
 				case 1:
 					// Process region tags.
 					regionID = regions[regionPos][1]
-					_, highlighted = t.highlights[regionID]
+					_, highlighted = t.highlights[string(regionID)]
 
 					// Update highlight range.
 					if highlighted {
 						line := len(t.index)
 						if t.fromHighlight < 0 {
 							t.fromHighlight, t.toHighlight = line, line
-							t.posHighlight = stringWidth(splitLine[:strippedTagStart])
+							t.posHighlight = runewidth.StringWidth(splitLine[:strippedTagStart])
 						} else if line > t.toHighlight {
 							t.toHighlight = line
 						}
@@ -963,7 +962,7 @@ func (t *TextView) reindexBuffer(width int) {
 
 			// Append this line.
 			line.NextPos = originalPos
-			line.Width = stringWidth(splitLine)
+			line.Width = runewidth.StringWidth(splitLine)
 			t.index = append(t.index, line)
 		}
 
@@ -975,7 +974,7 @@ func (t *TextView) reindexBuffer(width int) {
 				if len(trimmed) != len(str) {
 					oldNextPos := line.NextPos
 					line.NextPos -= len(str) - len(trimmed)
-					line.Width -= stringWidth(string(t.buffer[line.Line][line.NextPos:oldNextPos]))
+					line.Width -= runewidth.StringWidth(string(t.buffer[line.Line][line.NextPos:oldNextPos]))
 				}
 			}
 		}
@@ -1106,7 +1105,7 @@ func (t *TextView) Draw(screen tcell.Screen) {
 		backgroundColor := index.BackgroundColor
 		attributes := index.Attributes
 		regionID := index.Region
-		if t.regions && regionID != "" && (len(t.regionInfos) == 0 || t.regionInfos[len(t.regionInfos)-1].ID != regionID) {
+		if t.regions && len(regionID) > 0 && (len(t.regionInfos) == 0 || !bytes.Equal(t.regionInfos[len(t.regionInfos)-1].ID, regionID)) {
 			t.regionInfos = append(t.regionInfos, &textViewRegion{
 				ID:    regionID,
 				FromX: x,
@@ -1117,7 +1116,7 @@ func (t *TextView) Draw(screen tcell.Screen) {
 		}
 
 		// Process tags.
-		colorTagIndices, colorTags, regionIndices, regions, escapeIndices, strippedText, _ := decomposeString(string(text), t.dynamicColors, t.regions)
+		colorTagIndices, colorTags, regionIndices, regions, escapeIndices, strippedText, _ := decomposeText(text, t.dynamicColors, t.regions)
 
 		// Calculate the position of the line.
 		var skip, posX int
@@ -1136,7 +1135,7 @@ func (t *TextView) Draw(screen tcell.Screen) {
 		// Print the line.
 		if y+line-t.lineOffset >= 0 {
 			var colorPos, regionPos, escapePos, tagOffset, skipped int
-			iterateString(strippedText, func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
+			iterateString(string(strippedText), func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
 				// Process tags.
 				for {
 					if colorPos < len(colorTags) && textPos+tagOffset >= colorTagIndices[colorPos][0] && textPos+tagOffset < colorTagIndices[colorPos][1] {
@@ -1146,13 +1145,13 @@ func (t *TextView) Draw(screen tcell.Screen) {
 						colorPos++
 					} else if regionPos < len(regionIndices) && textPos+tagOffset >= regionIndices[regionPos][0] && textPos+tagOffset < regionIndices[regionPos][1] {
 						// Get the region.
-						if regionID != "" && len(t.regionInfos) > 0 && t.regionInfos[len(t.regionInfos)-1].ID == regionID {
+						if len(regionID) > 0 && len(t.regionInfos) > 0 && !bytes.Equal(t.regionInfos[len(t.regionInfos)-1].ID, regionID) {
 							// End last region.
 							t.regionInfos[len(t.regionInfos)-1].ToX = x + posX
 							t.regionInfos[len(t.regionInfos)-1].ToY = y + line - t.lineOffset
 						}
 						regionID = regions[regionPos][1]
-						if regionID != "" {
+						if len(regionID) > 0 {
 							// Start new region.
 							t.regionInfos = append(t.regionInfos, &textViewRegion{
 								ID:    regionID,
@@ -1182,8 +1181,8 @@ func (t *TextView) Draw(screen tcell.Screen) {
 
 				// Do we highlight this character?
 				var highlighted bool
-				if regionID != "" {
-					if _, ok := t.highlights[regionID]; ok {
+				if len(regionID) > 0 {
+					if _, ok := t.highlights[string(regionID)]; ok {
 						highlighted = true
 					}
 				}
@@ -1313,7 +1312,7 @@ func (t *TextView) MouseHandler() func(action MouseAction, event *tcell.EventMou
 						region.ToY >= 0 && y > region.ToY {
 						continue
 					}
-					t.Highlight(region.ID)
+					t.Highlight(string(region.ID))
 					break
 				}
 			}

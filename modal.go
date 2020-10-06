@@ -201,7 +201,7 @@ func (m *Modal) Draw(screen tcell.Screen) {
 	// Calculate the width of this Modal.
 	buttonsWidth := 0
 	for _, button := range m.form.buttons {
-		buttonsWidth += TaggedStringWidth(button.label) + 4 + 2
+		buttonsWidth += TaggedTextWidth(button.label) + 4 + 2
 	}
 	buttonsWidth -= 2
 	screenWidth, screenHeight := screen.Size()
@@ -213,9 +213,9 @@ func (m *Modal) Draw(screen tcell.Screen) {
 
 	// Reset the text and find out how wide it is.
 	m.frame.Clear()
-	lines := WordWrap(m.text, width)
+	lines := WordWrap([]byte(m.text), width)
 	for _, line := range lines {
-		m.frame.AddText(line, true, AlignCenter, m.textColor)
+		m.frame.AddText(string(line), true, AlignCenter, m.textColor)
 	}
 
 	// Set the Modal's position and size.

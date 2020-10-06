@@ -137,7 +137,7 @@ func (f *Frame) Draw(screen tcell.Screen) {
 		}
 
 		// Draw text.
-		Print(screen, text.Text, x, y, width, text.Align, text.Color)
+		Print(screen, []byte(text.Text), x, y, width, text.Align, text.Color)
 	}
 
 	// Set the size of the contained primitive.

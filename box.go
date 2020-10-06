@@ -39,7 +39,7 @@ type Box struct {
 	borderAttributes tcell.AttrMask
 
 	// The title. Only visible if there is a border, too.
-	title string
+	title []byte
 
 	// The color of the title.
 	titleColor tcell.Color
@@ -376,7 +376,7 @@ func (b *Box) SetTitle(title string) *Box {
 	b.l.Lock()
 	defer b.l.Unlock()
 
-	b.title = title
+	b.title = []byte(title)
 	return b
 }
 
@@ -385,7 +385,7 @@ func (b *Box) GetTitle() string {
 	b.l.RLock()
 	defer b.l.RUnlock()
 
-	return b.title
+	return string(b.title)
 }
 
 // SetTitleColor sets the box's title color.
@@ -474,12 +474,12 @@ func (b *Box) Draw(screen tcell.Screen) {
 		screen.SetContent(b.x+b.width-1, b.y+b.height-1, bottomRight, nil, border)
 
 		// Draw title.
-		if b.title != "" && b.width >= 4 {
+		if len(b.title) > 0 && b.width >= 4 {
 			printed, _ := Print(screen, b.title, b.x+1, b.y, b.width-2, b.titleAlign, b.titleColor)
 			if len(b.title)-printed > 0 && printed > 0 {
 				_, _, style, _ := screen.GetContent(b.x+b.width-2, b.y)
 				fg, _, _ := style.Decompose()
-				Print(screen, string(SemigraphicsHorizontalEllipsis), b.x+b.width-2, b.y, 1, AlignLeft, fg)
+				Print(screen, []byte(string(SemigraphicsHorizontalEllipsis)), b.x+b.width-2, b.y, 1, AlignLeft, fg)
 			}
 		}
 	}
