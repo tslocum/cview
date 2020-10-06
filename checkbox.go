@@ -15,10 +15,10 @@ type CheckBox struct {
 	checked bool
 
 	// The text to be displayed before the checkbox.
-	label string
+	label []byte
 
 	// The text to be displayed after the checkbox.
-	message string
+	message []byte
 
 	// The screen width of the label area. A value of 0 means use the width of
 	// the label text.
@@ -106,7 +106,7 @@ func (c *CheckBox) SetLabel(label string) *CheckBox {
 	c.Lock()
 	defer c.Unlock()
 
-	c.label = label
+	c.label = []byte(label)
 	return c
 }
 
@@ -115,7 +115,7 @@ func (c *CheckBox) GetLabel() string {
 	c.RLock()
 	defer c.RUnlock()
 
-	return c.label
+	return string(c.label)
 }
 
 // SetMessage sets the text to be displayed after the checkbox
@@ -123,7 +123,7 @@ func (c *CheckBox) SetMessage(message string) *CheckBox {
 	c.Lock()
 	defer c.Unlock()
 
-	c.message = message
+	c.message = []byte(message)
 	return c
 }
 
@@ -132,7 +132,7 @@ func (c *CheckBox) GetMessage() string {
 	c.RLock()
 	defer c.RUnlock()
 
-	return c.message
+	return string(c.message)
 }
 
 // SetLabelWidth sets the screen width of the label. A value of 0 will cause the
@@ -209,7 +209,7 @@ func (c *CheckBox) GetFieldWidth() int {
 	c.RLock()
 	defer c.RUnlock()
 
-	if c.message == "" {
+	if len(c.message) == 0 {
 		return 1
 	}
 
@@ -321,7 +321,7 @@ func (c *CheckBox) Draw(screen tcell.Screen) {
 	screen.SetContent(x+1, y, checkedRune, nil, fieldStyle)
 	screen.SetContent(x+2, y, ' ', nil, fieldStyle)
 
-	if c.message != "" {
+	if len(c.message) > 0 {
 		Print(screen, c.message, x+4, y, len(c.message), AlignLeft, labelColor)
 	}
 }

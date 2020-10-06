@@ -37,7 +37,7 @@ func (r *RadioButtons) Draw(screen tcell.Screen) {
 			radioButton = "\u25c9" // Checked.
 		}
 		line := fmt.Sprintf(`%s[white]  %s`, radioButton, option)
-		cview.Print(screen, line, x, y+index, width, cview.AlignLeft, tcell.ColorYellow.TrueColor())
+		cview.Print(screen, []byte(line), x, y+index, width, cview.AlignLeft, tcell.ColorYellow.TrueColor())
 	}
 }
 

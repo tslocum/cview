@@ -8,6 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/mattn/go-runewidth"
 )
 
 // InputField is a one-line box (three lines if there is a title) where the
@@ -613,10 +614,10 @@ func (i *InputField) Draw(screen tcell.Screen) {
 		if labelWidth > rightLimit-x {
 			labelWidth = rightLimit - x
 		}
-		Print(screen, i.label, x, y, labelWidth, AlignLeft, labelColor)
+		Print(screen, []byte(i.label), x, y, labelWidth, AlignLeft, labelColor)
 		x += labelWidth
 	} else {
-		_, drawnWidth := Print(screen, i.label, x, y, rightLimit-x, AlignLeft, labelColor)
+		_, drawnWidth := Print(screen, []byte(i.label), x, y, rightLimit-x, AlignLeft, labelColor)
 		x += drawnWidth
 	}
 
@@ -643,7 +644,7 @@ func (i *InputField) Draw(screen tcell.Screen) {
 		if i.GetFocusable().HasFocus() && i.placeholderTextColorFocused != ColorUnset {
 			placeholderTextColor = i.placeholderTextColorFocused
 		}
-		Print(screen, Escape(i.placeholder), x, y, fieldWidth, AlignLeft, placeholderTextColor)
+		Print(screen, []byte(Escape(i.placeholder)), x, y, fieldWidth, AlignLeft, placeholderTextColor)
 		i.offset = 0
 	} else {
 		// Draw entered text.
@@ -651,10 +652,10 @@ func (i *InputField) Draw(screen tcell.Screen) {
 			text = strings.Repeat(string(i.maskCharacter), utf8.RuneCountInString(i.text))
 		}
 		drawnText := ""
-		if fieldWidth >= stringWidth(text) {
+		if fieldWidth >= runewidth.StringWidth(text) {
 			// We have enough space for the full text.
 			drawnText = Escape(text)
-			Print(screen, drawnText, x, y, fieldWidth, AlignLeft, fieldTextColor)
+			Print(screen, []byte(drawnText), x, y, fieldWidth, AlignLeft, fieldTextColor)
 			i.offset = 0
 			iterateString(text, func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
 				if textPos >= i.cursorPos {
@@ -674,7 +675,7 @@ func (i *InputField) Draw(screen tcell.Screen) {
 			var shiftLeft int
 			if i.offset > i.cursorPos {
 				i.offset = i.cursorPos
-			} else if subWidth := stringWidth(text[i.offset:i.cursorPos]); subWidth > fieldWidth-1 {
+			} else if subWidth := runewidth.StringWidth(text[i.offset:i.cursorPos]); subWidth > fieldWidth-1 {
 				shiftLeft = subWidth - fieldWidth + 1
 			}
 			currentOffset := i.offset
@@ -693,17 +694,17 @@ func (i *InputField) Draw(screen tcell.Screen) {
 				return false
 			})
 			drawnText = Escape(text[i.offset:])
-			Print(screen, drawnText, x, y, fieldWidth, AlignLeft, fieldTextColor)
+			Print(screen, []byte(drawnText), x, y, fieldWidth, AlignLeft, fieldTextColor)
 		}
 		// Draw suggestion
 		if i.maskCharacter == 0 && i.autocompleteListSuggestion != "" {
-			Print(screen, i.autocompleteListSuggestion, x+stringWidth(drawnText), y, fieldWidth-stringWidth(drawnText), AlignLeft, i.autocompleteSuggestionTextColor)
+			Print(screen, []byte(i.autocompleteListSuggestion), x+runewidth.StringWidth(drawnText), y, fieldWidth-runewidth.StringWidth(drawnText), AlignLeft, i.autocompleteSuggestionTextColor)
 		}
 	}
 
 	// Draw field note
 	if i.fieldNote != "" {
-		Print(screen, i.fieldNote, x, y+1, fieldWidth, AlignLeft, i.fieldNoteTextColor)
+		Print(screen, []byte(i.fieldNote), x, y+1, fieldWidth, AlignLeft, i.fieldNoteTextColor)
 	}
 
 	// Draw autocomplete list.

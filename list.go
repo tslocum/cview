@@ -1,6 +1,7 @@
 package cview
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 	"sync"
@@ -871,9 +872,9 @@ func (l *List) Draw(screen tcell.Screen) {
 		}
 
 		if item.mainText == "" && item.secondaryText == "" && item.shortcut == 0 { // Divider
-			Print(screen, string(tcell.RuneLTee), (x-5)-l.paddingLeft, y, 1, AlignLeft, l.mainTextColor)
-			Print(screen, strings.Repeat(string(tcell.RuneHLine), width+4+l.paddingLeft+l.paddingRight), (x-4)-l.paddingLeft, y, width+4+l.paddingLeft+l.paddingRight, AlignLeft, l.mainTextColor)
-			Print(screen, string(tcell.RuneRTee), (x-5)+width+5+l.paddingRight, y, 1, AlignLeft, l.mainTextColor)
+			Print(screen, []byte(string(tcell.RuneLTee)), (x-5)-l.paddingLeft, y, 1, AlignLeft, l.mainTextColor)
+			Print(screen, bytes.Repeat([]byte(string(tcell.RuneHLine)), width+4+l.paddingLeft+l.paddingRight), (x-4)-l.paddingLeft, y, width+4+l.paddingLeft+l.paddingRight, AlignLeft, l.mainTextColor)
+			Print(screen, []byte(string(tcell.RuneRTee)), (x-5)+width+5+l.paddingRight, y, 1, AlignLeft, l.mainTextColor)
 
 			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
 			y++
@@ -881,11 +882,11 @@ func (l *List) Draw(screen tcell.Screen) {
 		} else if !item.enabled { // Disabled item
 			// Shortcuts.
 			if showShortcuts && item.shortcut != 0 {
-				Print(screen, fmt.Sprintf("(%s)", string(item.shortcut)), x-5, y, 4, AlignRight, tcell.ColorDarkSlateGray.TrueColor())
+				Print(screen, []byte(fmt.Sprintf("(%c)", item.shortcut)), x-5, y, 4, AlignRight, tcell.ColorDarkSlateGray.TrueColor())
 			}
 
 			// Main text.
-			Print(screen, item.mainText, x, y, width, AlignLeft, tcell.ColorGray.TrueColor())
+			Print(screen, []byte(item.mainText), x, y, width, AlignLeft, tcell.ColorGray.TrueColor())
 
 			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
 			y++
@@ -894,11 +895,11 @@ func (l *List) Draw(screen tcell.Screen) {
 
 		// Shortcuts.
 		if showShortcuts && item.shortcut != 0 {
-			Print(screen, fmt.Sprintf("(%s)", string(item.shortcut)), x-5, y, 4, AlignRight, l.shortcutColor)
+			Print(screen, []byte(fmt.Sprintf("(%c)", item.shortcut)), x-5, y, 4, AlignRight, l.shortcutColor)
 		}
 
 		// Main text.
-		Print(screen, item.mainText, x, y, width, AlignLeft, l.mainTextColor)
+		Print(screen, []byte(item.mainText), x, y, width, AlignLeft, l.mainTextColor)
 
 		// Background color of selected text.
 		if index == l.currentItem && (!l.selectedFocusOnly || hasFocus) {
@@ -930,7 +931,7 @@ func (l *List) Draw(screen tcell.Screen) {
 
 		// Secondary text.
 		if l.showSecondaryText {
-			Print(screen, item.secondaryText, x, y, width, AlignLeft, l.secondaryTextColor)
+			Print(screen, []byte(item.secondaryText), x, y, width, AlignLeft, l.secondaryTextColor)
 
 			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
 
