@@ -42,7 +42,7 @@ func TestTextViewWrite(t *testing.T) {
 			t.Parallel()
 
 			var (
-				tv           = tvc(NewTextView(), c)
+				tv           = tvc(c)
 				expectedData []byte
 				n            int
 				err          error
@@ -84,7 +84,7 @@ func BenchmarkTextViewWrite(b *testing.B) {
 
 		b.Run(c.String(), func(b *testing.B) {
 			var (
-				tv  = tvc(NewTextView(), c)
+				tv  = tvc(c)
 				n   int
 				err error
 			)
@@ -123,7 +123,7 @@ func BenchmarkTextViewIndex(b *testing.B) {
 
 		b.Run(c.String(), func(b *testing.B) {
 			var (
-				tv  = tvc(NewTextView(), c)
+				tv  = tvc(c)
 				n   int
 				err error
 			)
@@ -195,7 +195,7 @@ func BenchmarkTextViewGetText(b *testing.B) {
 
 		b.Run(c.String(), func(b *testing.B) {
 			var (
-				tv  = tvc(NewTextView(), c)
+				tv  = tvc(c)
 				n   int
 				err error
 				v   []byte
@@ -236,7 +236,7 @@ func TestTextViewDraw(t *testing.T) {
 		t.Run(c.String(), func(t *testing.T) {
 			t.Parallel()
 
-			tv := tvc(NewTextView(), c)
+			tv := tvc(c)
 
 			app, err := newTestApp(tv)
 			if err != nil {
@@ -269,7 +269,7 @@ func BenchmarkTextViewDraw(b *testing.B) {
 		c := c // Capture
 
 		b.Run(c.String(), func(b *testing.B) {
-			tv := tvc(NewTextView(), c)
+			tv := tvc(c)
 
 			app, err := newTestApp(tv)
 			if err != nil {
@@ -404,8 +404,14 @@ func generateRandomData() []byte {
 	return b.Bytes()
 }
 
-func tvc(tv *TextView, c *textViewTestCase) *TextView {
-	return tv.SetDynamicColors(c.color).SetRegions(c.region).SetScrollable(c.scroll).SetWrap(c.wrap).SetWordWrap(c.wordwrap)
+func tvc(c *textViewTestCase) *TextView {
+	tv := NewTextView()
+	tv.SetDynamicColors(c.color)
+	tv.SetRegions(c.region)
+	tv.SetScrollable(c.scroll)
+	tv.SetWrap(c.wrap)
+	tv.SetWordWrap(c.wordwrap)
+	return tv
 }
 
 func cl(v bool) rune {

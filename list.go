@@ -30,17 +30,16 @@ func NewListItem(mainText string) *ListItem {
 }
 
 // SetMainBytes sets the main text of the list item.
-func (l *ListItem) SetMainBytes(val []byte) *ListItem {
+func (l *ListItem) SetMainBytes(val []byte) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.mainText = val
-	return l
 }
 
 // SetMainText sets the main text of the list item.
-func (l *ListItem) SetMainText(val string) *ListItem {
-	return l.SetMainBytes([]byte(val))
+func (l *ListItem) SetMainText(val string) {
+	l.SetMainBytes([]byte(val))
 }
 
 // GetMainBytes returns the item's main text.
@@ -57,17 +56,16 @@ func (l *ListItem) GetMainText() string {
 }
 
 // SetSecondaryBytes sets a secondary text to be shown underneath the main text.
-func (l *ListItem) SetSecondaryBytes(val []byte) *ListItem {
+func (l *ListItem) SetSecondaryBytes(val []byte) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.secondaryText = val
-	return l
 }
 
 // SetSecondaryText sets a secondary text to be shown underneath the main text.
-func (l *ListItem) SetSecondaryText(val string) *ListItem {
-	return l.SetSecondaryBytes([]byte(val))
+func (l *ListItem) SetSecondaryText(val string) {
+	l.SetSecondaryBytes([]byte(val))
 }
 
 // GetSecondaryBytes returns the item's secondary text.
@@ -84,12 +82,11 @@ func (l *ListItem) GetSecondaryText() string {
 }
 
 // SetShortcut sets the key to select the ListItem directly, 0 if there is no shortcut.
-func (l *ListItem) SetShortcut(val rune) *ListItem {
+func (l *ListItem) SetShortcut(val rune) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.shortcut = val
-	return l
 }
 
 // GetShortcut returns the ListItem's shortcut.
@@ -101,21 +98,19 @@ func (l *ListItem) GetShortcut() rune {
 }
 
 // SetSelectedFunc sets a function which is called when the ListItem is selected.
-func (l *ListItem) SetSelectedFunc(handler func()) *ListItem {
+func (l *ListItem) SetSelectedFunc(handler func()) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.selected = handler
-	return l
 }
 
 // SetReference allows you to store a reference of any type in the item
-func (l *ListItem) SetReference(val interface{}) *ListItem {
+func (l *ListItem) SetReference(val interface{}) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.reference = val
-	return l
 }
 
 // GetReference returns the item's reference object.
@@ -228,7 +223,7 @@ func NewList() *List {
 // range indices are clamped to the beginning/end.
 //
 // Calling this function triggers a "changed" event if the selection changes.
-func (l *List) SetCurrentItem(index int) *List {
+func (l *List) SetCurrentItem(index int) {
 	l.Lock()
 
 	if index < 0 {
@@ -254,7 +249,6 @@ func (l *List) SetCurrentItem(index int) *List {
 	}
 
 	l.Unlock()
-	return l
 }
 
 // GetCurrentItem returns the currently selected list item,
@@ -292,12 +286,12 @@ func (l *List) GetItems() []*ListItem {
 //
 // The currently selected item is shifted accordingly. If it is the one that is
 // removed, a "changed" event is fired.
-func (l *List) RemoveItem(index int) *List {
+func (l *List) RemoveItem(index int) {
 	l.Lock()
 
 	if len(l.items) == 0 {
 		l.Unlock()
-		return l
+		return
 	}
 
 	// Adjust index.
@@ -317,7 +311,7 @@ func (l *List) RemoveItem(index int) *List {
 	// If there is nothing left, we're done.
 	if len(l.items) == 0 {
 		l.Unlock()
-		return l
+		return
 	}
 
 	// Shift current item.
@@ -334,13 +328,11 @@ func (l *List) RemoveItem(index int) *List {
 	} else {
 		l.Unlock()
 	}
-
-	return l
 }
 
 // SetOffset sets the number of list items skipped at the top before the first
 // item is drawn.
-func (l *List) SetOffset(offset int) *List {
+func (l *List) SetOffset(offset int) {
 	l.Lock()
 	defer l.Unlock()
 
@@ -349,7 +341,6 @@ func (l *List) SetOffset(offset int) *List {
 	}
 
 	l.offset = offset
-	return l
 }
 
 // GetOffset returns the number of list items skipped at the top before the
@@ -362,137 +353,124 @@ func (l *List) GetOffset() int {
 }
 
 // SetMainTextColor sets the color of the items' main text.
-func (l *List) SetMainTextColor(color tcell.Color) *List {
+func (l *List) SetMainTextColor(color tcell.Color) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.mainTextColor = color
-	return l
 }
 
 // SetSecondaryTextColor sets the color of the items' secondary text.
-func (l *List) SetSecondaryTextColor(color tcell.Color) *List {
+func (l *List) SetSecondaryTextColor(color tcell.Color) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.secondaryTextColor = color
-	return l
 }
 
 // SetShortcutColor sets the color of the items' shortcut.
-func (l *List) SetShortcutColor(color tcell.Color) *List {
+func (l *List) SetShortcutColor(color tcell.Color) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.shortcutColor = color
-	return l
 }
 
 // SetSelectedTextColor sets the text color of selected items.
-func (l *List) SetSelectedTextColor(color tcell.Color) *List {
+func (l *List) SetSelectedTextColor(color tcell.Color) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.selectedTextColor = color
-	return l
 }
 
 // SetSelectedTextAttributes sets the style attributes of selected items.
-func (l *List) SetSelectedTextAttributes(attr tcell.AttrMask) *List {
+func (l *List) SetSelectedTextAttributes(attr tcell.AttrMask) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.selectedTextAttributes = attr
-	return l
 }
 
 // SetSelectedBackgroundColor sets the background color of selected items.
-func (l *List) SetSelectedBackgroundColor(color tcell.Color) *List {
+func (l *List) SetSelectedBackgroundColor(color tcell.Color) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.selectedBackgroundColor = color
-	return l
 }
 
 // SetSelectedFocusOnly sets a flag which determines when the currently selected
 // list item is highlighted. If set to true, selected items are only highlighted
 // when the list has focus. If set to false, they are always highlighted.
-func (l *List) SetSelectedFocusOnly(focusOnly bool) *List {
+func (l *List) SetSelectedFocusOnly(focusOnly bool) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.selectedFocusOnly = focusOnly
-	return l
 }
 
 // SetSelectedAlwaysVisible sets a flag which determines whether the currently
 // selected list item must remain visible when scrolling.
-func (l *List) SetSelectedAlwaysVisible(alwaysVisible bool) *List {
+func (l *List) SetSelectedAlwaysVisible(alwaysVisible bool) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.selectedAlwaysVisible = alwaysVisible
-	return l
 }
 
 // SetSelectedAlwaysCentered sets a flag which determines whether the currently
 // selected list item must remain centered when scrolling.
-func (l *List) SetSelectedAlwaysCentered(alwaysCentered bool) *List {
+func (l *List) SetSelectedAlwaysCentered(alwaysCentered bool) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.selectedAlwaysCentered = alwaysCentered
-	return l
 }
 
 // SetHighlightFullLine sets a flag which determines whether the colored
 // background of selected items spans the entire width of the view. If set to
 // true, the highlight spans the entire view. If set to false, only the text of
 // the selected item from beginning to end is highlighted.
-func (l *List) SetHighlightFullLine(highlight bool) *List {
+func (l *List) SetHighlightFullLine(highlight bool) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.highlightFullLine = highlight
-	return l
 }
 
 // ShowSecondaryText determines whether or not to show secondary item texts.
-func (l *List) ShowSecondaryText(show bool) *List {
+func (l *List) ShowSecondaryText(show bool) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.showSecondaryText = show
-	return l
+	return
 }
 
 // SetScrollBarVisibility specifies the display of the scroll bar.
-func (l *List) SetScrollBarVisibility(visibility ScrollBarVisibility) *List {
+func (l *List) SetScrollBarVisibility(visibility ScrollBarVisibility) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.scrollBarVisibility = visibility
-	return l
 }
 
 // SetScrollBarColor sets the color of the scroll bar.
-func (l *List) SetScrollBarColor(color tcell.Color) *List {
+func (l *List) SetScrollBarColor(color tcell.Color) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.scrollBarColor = color
-	return l
 }
 
 // SetHover sets the flag that determines whether hovering over an item will
 // highlight it (without triggering callbacks set with SetSelectedFunc).
-func (l *List) SetHover(hover bool) *List {
+func (l *List) SetHover(hover bool) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.hover = hover
-	return l
 }
 
 // SetWrapAround sets the flag that determines whether navigating the list will
@@ -500,12 +478,11 @@ func (l *List) SetHover(hover bool) *List {
 // selection to the first item (similarly in the other direction). If set to
 // false, the selection won't change when navigating downwards on the last item
 // or navigating upwards on the first item.
-func (l *List) SetWrapAround(wrapAround bool) *List {
+func (l *List) SetWrapAround(wrapAround bool) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.wrapAround = wrapAround
-	return l
 }
 
 // SetChangedFunc sets the function which is called when the user navigates to
@@ -514,39 +491,35 @@ func (l *List) SetWrapAround(wrapAround bool) *List {
 //
 // This function is also called when the first item is added or when
 // SetCurrentItem() is called.
-func (l *List) SetChangedFunc(handler func(index int, item *ListItem)) *List {
+func (l *List) SetChangedFunc(handler func(index int, item *ListItem)) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.changed = handler
-	return l
 }
 
 // SetSelectedFunc sets the function which is called when the user selects a
 // list item by pressing Enter on the current selection. The function receives
 // the item's index in the list of items (starting with 0) and its struct.
-func (l *List) SetSelectedFunc(handler func(int, *ListItem)) *List {
+func (l *List) SetSelectedFunc(handler func(int, *ListItem)) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.selected = handler
-	return l
 }
 
 // SetDoneFunc sets a function which is called when the user presses the Escape
 // key.
-func (l *List) SetDoneFunc(handler func()) *List {
+func (l *List) SetDoneFunc(handler func()) {
 	l.Lock()
 	defer l.Unlock()
 
 	l.done = handler
-	return l
 }
 
 // AddItem calls InsertItem() with an index of -1.
-func (l *List) AddItem(item *ListItem) *List {
+func (l *List) AddItem(item *ListItem) {
 	l.InsertItem(-1, item)
-	return l
 }
 
 // InsertItem adds a new item to the list at the specified index. An index of 0
@@ -571,7 +544,7 @@ func (l *List) AddItem(item *ListItem) *List {
 // The currently selected item will shift its position accordingly. If the list
 // was previously empty, a "changed" event is fired because the new item becomes
 // selected.
-func (l *List) InsertItem(index int, item *ListItem) *List {
+func (l *List) InsertItem(index int, item *ListItem) {
 	l.Lock()
 
 	item.enabled = true
@@ -606,8 +579,6 @@ func (l *List) InsertItem(index int, item *ListItem) *List {
 	} else {
 		l.Unlock()
 	}
-
-	return l
 }
 
 // GetItem returns the ListItem at the given index.
@@ -637,25 +608,23 @@ func (l *List) GetItemText(index int) (main, secondary string) {
 
 // SetItemText sets an item's main and secondary text. Panics if the index is
 // out of range.
-func (l *List) SetItemText(index int, main, secondary string) *List {
+func (l *List) SetItemText(index int, main, secondary string) {
 	l.Lock()
 	defer l.Unlock()
 
 	item := l.items[index]
 	item.mainText = []byte(main)
 	item.secondaryText = []byte(secondary)
-	return l
 }
 
 // SetItemEnabled sets whether an item is selectable. Panics if the index is
 // out of range.
-func (l *List) SetItemEnabled(index int, enabled bool) *List {
+func (l *List) SetItemEnabled(index int, enabled bool) {
 	l.Lock()
 	defer l.Unlock()
 
 	item := l.items[index]
 	item.enabled = enabled
-	return l
 }
 
 // FindItems searches the main and secondary texts for the given strings and
@@ -705,14 +674,13 @@ func (l *List) FindItems(mainSearch, secondarySearch string, mustContainBoth, ig
 }
 
 // Clear removes all items from the list.
-func (l *List) Clear() *List {
+func (l *List) Clear() {
 	l.Lock()
 	defer l.Unlock()
 
 	l.items = nil
 	l.currentItem = 0
 	l.offset = 0
-	return l
 }
 
 // Focus is called by the application when the primitive receives focus.

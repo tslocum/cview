@@ -26,6 +26,14 @@ maintainers and allowing code changes which may be outside of tview's scope.
 
 # Differences
 
+## Primitive methods do not return the primitive they belong to
+
+When chaining multiple method calls on a primitive together, application
+developers might accidentally end the chain with a different return type than
+the first method call. This could result in unexpected return types. For
+example, ending a chain with `SetTitle` would result in a `Box` rather than the
+original primitive.
+
 ## cview is [thread-safe](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#hdr-Concurrency)
 
 tview [is not thread-safe](https://godoc.org/github.com/rivo/tview#hdr-Concurrency).
@@ -38,11 +46,6 @@ tview [blocks until the queued function returns](https://github.com/rivo/tview/b
 
 All clicks are handled as single clicks until an interval is set with [Application.SetDoubleClickInterval](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Application.SetDoubleClickInterval).
 
-## Setting a primitive's background color to `tcell.ColorDefault` does not result in transparency
-
-Call [Box.SetBackgroundTransparent](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Box.SetBackgroundTransparent)
-to enable background transparency.
-
 ## Tables are sorted when a fixed row is clicked by default
 
 Call [Table.SetSortClicked](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Table.SetSortClicked)
@@ -52,6 +55,11 @@ to disable this behavior.
 
 Call [List.SetWrapAround](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#List.SetWrapAround)
 to wrap around when navigating.
+
+## Setting a primitive's background color to `tcell.ColorDefault` does not result in transparency
+
+Call [Box.SetBackgroundTransparent](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Box.SetBackgroundTransparent)
+to enable background transparency.
 
 ## TextViews store their text as []byte instead of string
 

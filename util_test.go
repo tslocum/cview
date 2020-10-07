@@ -11,8 +11,9 @@ func newTestApp(root Primitive) (*Application, error) {
 	sc.SetSize(80, 24)
 
 	// Initialize application
-	app := NewApplication().
-		SetScreen(sc).
-		SetRoot(root, true)
+	app := NewApplication()
+	app.SetScreen(sc)
+	app.SetRoot(root, true)
+
 	return app, nil
 }

@@ -71,14 +71,14 @@ func NewTreeNode(text string) *TreeNode {
 // this node) with the traversed node and its parent node (nil for this node).
 // The callback returns whether traversal should continue with the traversed
 // node's child nodes (true) or not recurse any deeper (false).
-func (n *TreeNode) Walk(callback func(node, parent *TreeNode) bool) *TreeNode {
+func (n *TreeNode) Walk(callback func(node, parent *TreeNode) bool) {
 	n.Lock()
 	defer n.Unlock()
 
-	return n.walk(callback)
+	n.walk(callback)
 }
 
-func (n *TreeNode) walk(callback func(node, parent *TreeNode) bool) *TreeNode {
+func (n *TreeNode) walk(callback func(node, parent *TreeNode) bool) {
 	n.parent = nil
 	nodes := []*TreeNode{n}
 	for len(nodes) > 0 {
@@ -96,19 +96,16 @@ func (n *TreeNode) walk(callback func(node, parent *TreeNode) bool) *TreeNode {
 			nodes = append(nodes, node.children[index])
 		}
 	}
-
-	return n
 }
 
 // SetReference allows you to store a reference of any type in this node. This
 // will allow you to establish a mapping between the TreeView hierarchy and your
 // internal tree structure.
-func (n *TreeNode) SetReference(reference interface{}) *TreeNode {
+func (n *TreeNode) SetReference(reference interface{}) {
 	n.Lock()
 	defer n.Unlock()
 
 	n.reference = reference
-	return n
 }
 
 // GetReference returns this node's reference object.
@@ -120,12 +117,11 @@ func (n *TreeNode) GetReference() interface{} {
 }
 
 // SetChildren sets this node's child nodes.
-func (n *TreeNode) SetChildren(childNodes []*TreeNode) *TreeNode {
+func (n *TreeNode) SetChildren(childNodes []*TreeNode) {
 	n.Lock()
 	defer n.Unlock()
 
 	n.children = childNodes
-	return n
 }
 
 // GetText returns this node's text.
@@ -145,98 +141,88 @@ func (n *TreeNode) GetChildren() []*TreeNode {
 }
 
 // ClearChildren removes all child nodes from this node.
-func (n *TreeNode) ClearChildren() *TreeNode {
+func (n *TreeNode) ClearChildren() {
 	n.Lock()
 	defer n.Unlock()
 
 	n.children = nil
-	return n
 }
 
 // AddChild adds a new child node to this node.
-func (n *TreeNode) AddChild(node *TreeNode) *TreeNode {
+func (n *TreeNode) AddChild(node *TreeNode) {
 	n.Lock()
 	defer n.Unlock()
 
 	n.children = append(n.children, node)
-	return n
 }
 
 // SetSelectable sets a flag indicating whether this node can be focused and
 // selected by the user.
-func (n *TreeNode) SetSelectable(selectable bool) *TreeNode {
+func (n *TreeNode) SetSelectable(selectable bool) {
 	n.Lock()
 	defer n.Unlock()
 
 	n.selectable = selectable
-	return n
 }
 
 // SetFocusedFunc sets the function which is called when the user navigates to
 // this node.
 //
 // This function is also called when the user selects this node.
-func (n *TreeNode) SetFocusedFunc(handler func()) *TreeNode {
+func (n *TreeNode) SetFocusedFunc(handler func()) {
 	n.Lock()
 	defer n.Unlock()
 
 	n.focused = handler
-	return n
 }
 
 // SetSelectedFunc sets a function which is called when the user selects this
 // node by hitting Enter when it is focused.
-func (n *TreeNode) SetSelectedFunc(handler func()) *TreeNode {
+func (n *TreeNode) SetSelectedFunc(handler func()) {
 	n.Lock()
 	defer n.Unlock()
 
 	n.selected = handler
-	return n
 }
 
 // SetExpanded sets whether or not this node's child nodes should be displayed.
-func (n *TreeNode) SetExpanded(expanded bool) *TreeNode {
+func (n *TreeNode) SetExpanded(expanded bool) {
 	n.Lock()
 	defer n.Unlock()
 
 	n.expanded = expanded
-	return n
 }
 
 // Expand makes the child nodes of this node appear.
-func (n *TreeNode) Expand() *TreeNode {
+func (n *TreeNode) Expand() {
 	n.Lock()
 	defer n.Unlock()
 
 	n.expanded = true
-	return n
 }
 
 // Collapse makes the child nodes of this node disappear.
-func (n *TreeNode) Collapse() *TreeNode {
+func (n *TreeNode) Collapse() {
 	n.Lock()
 	defer n.Unlock()
 
 	n.expanded = false
-	return n
 }
 
 // ExpandAll expands this node and all descendent nodes.
-func (n *TreeNode) ExpandAll() *TreeNode {
+func (n *TreeNode) ExpandAll() {
 	n.Walk(func(node, parent *TreeNode) bool {
 		node.expanded = true
 		return true
 	})
-	return n
 }
 
 // CollapseAll collapses this node and all descendent nodes.
-func (n *TreeNode) CollapseAll() *TreeNode {
+func (n *TreeNode) CollapseAll() {
 	n.Walk(func(node, parent *TreeNode) bool {
 		n.expanded = false
 		return true
 	})
-	return n
 }
 
 // IsExpanded returns whether the child nodes of this node are visible.
@@ -248,12 +234,11 @@ func (n *TreeNode) IsExpanded() bool {
 }
 
 // SetText sets the node's text which is displayed.
-func (n *TreeNode) SetText(text string) *TreeNode {
+func (n *TreeNode) SetText(text string) {
 	n.Lock()
 	defer n.Unlock()
 
 	n.text = text
-	return n
 }
 
 // GetColor returns the node's color.
@@ -265,23 +250,21 @@ func (n *TreeNode) GetColor() tcell.Color {
 }
 
 // SetColor sets the node's text color.
-func (n *TreeNode) SetColor(color tcell.Color) *TreeNode {
+func (n *TreeNode) SetColor(color tcell.Color) {
 	n.Lock()
 	defer n.Unlock()
 
 	n.color = color
-	return n
 }
 
 // SetIndent sets an additional indentation for this node's text. A value of 0
 // keeps the text as far left as possible with a minimum of line graphics. Any
 // value greater than that moves the text to the right.
-func (n *TreeNode) SetIndent(indent int) *TreeNode {
+func (n *TreeNode) SetIndent(indent int) {
 	n.Lock()
 	defer n.Unlock()
 
 	n.indent = indent
-	return n
 }
 
 // TreeView displays tree structures. A tree consists of nodes (TreeNode
@@ -384,12 +367,11 @@ func NewTreeView() *TreeView {
 }
 
 // SetRoot sets the root node of the tree.
-func (t *TreeView) SetRoot(root *TreeNode) *TreeView {
+func (t *TreeView) SetRoot(root *TreeNode) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.root = root
-	return t
 }
 
 // GetRoot returns the root node of the tree. If no such node was previously
@@ -406,7 +388,7 @@ func (t *TreeView) GetRoot() *TreeNode {
 // changed to the top-most selectable and visible node.
 //
 // This function does NOT trigger the "changed" callback.
-func (t *TreeView) SetCurrentNode(node *TreeNode) *TreeView {
+func (t *TreeView) SetCurrentNode(node *TreeNode) {
 	t.Lock()
 	defer t.Unlock()
 
@@ -416,7 +398,6 @@ func (t *TreeView) SetCurrentNode(node *TreeNode) *TreeView {
 		t.currentNode.focused()
 		t.Lock()
 	}
-	return t
 }
 
 // GetCurrentNode returns the currently selected node or nil of no node is
@@ -431,12 +412,11 @@ func (t *TreeView) GetCurrentNode() *TreeNode {
 // SetTopLevel sets the first tree level that is visible with 0 referring to the
 // root, 1 to the root's child nodes, and so on. Nodes above the top level are
 // not displayed.
-func (t *TreeView) SetTopLevel(topLevel int) *TreeView {
+func (t *TreeView) SetTopLevel(topLevel int) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.topLevel = topLevel
-	return t
 }
 
 // SetPrefixes defines the strings drawn before the nodes' texts. This is a
@@ -448,7 +428,7 @@ func (t *TreeView) SetTopLevel(topLevel int) *TreeView {
 //
 //   treeView.SetGraphics(false).
 //     SetPrefixes([]string{"* ", "- ", "x "})
-func (t *TreeView) SetPrefixes(prefixes []string) *TreeView {
+func (t *TreeView) SetPrefixes(prefixes []string) {
 	t.Lock()
 	defer t.Unlock()
 
@@ -456,101 +436,90 @@ func (t *TreeView) SetPrefixes(prefixes []string) *TreeView {
 	for i := range prefixes {
 		t.prefixes[i] = []byte(prefixes[i])
 	}
-	return t
 }
 
 // SetAlign controls the horizontal alignment of the node texts. If set to true,
 // all texts except that of top-level nodes will be placed in the same column.
 // If set to false, they will indent with the hierarchy.
-func (t *TreeView) SetAlign(align bool) *TreeView {
+func (t *TreeView) SetAlign(align bool) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.align = align
-	return t
 }
 
 // SetGraphics sets a flag which determines whether or not line graphics are
 // drawn to illustrate the tree's hierarchy.
-func (t *TreeView) SetGraphics(showGraphics bool) *TreeView {
+func (t *TreeView) SetGraphics(showGraphics bool) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.graphics = showGraphics
-	return t
 }
 
 // SetSelectedTextColor sets the text color of selected items.
-func (t *TreeView) SetSelectedTextColor(color tcell.Color) *TreeView {
+func (t *TreeView) SetSelectedTextColor(color tcell.Color) {
 	t.Lock()
 	defer t.Unlock()
 	t.selectedTextColor = &color
-	return t
 }
 
 // SetSelectedBackgroundColor sets the background color of selected items.
-func (t *TreeView) SetSelectedBackgroundColor(color tcell.Color) *TreeView {
+func (t *TreeView) SetSelectedBackgroundColor(color tcell.Color) {
 	t.Lock()
 	defer t.Unlock()
 	t.selectedBackgroundColor = &color
-	return t
 }
 
 // SetGraphicsColor sets the colors of the lines used to draw the tree structure.
-func (t *TreeView) SetGraphicsColor(color tcell.Color) *TreeView {
+func (t *TreeView) SetGraphicsColor(color tcell.Color) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.graphicsColor = color
-	return t
 }
 
 // SetScrollBarVisibility specifies the display of the scroll bar.
-func (t *TreeView) SetScrollBarVisibility(visibility ScrollBarVisibility) *TreeView {
+func (t *TreeView) SetScrollBarVisibility(visibility ScrollBarVisibility) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.scrollBarVisibility = visibility
-	return t
 }
 
 // SetScrollBarColor sets the color of the scroll bar.
-func (t *TreeView) SetScrollBarColor(color tcell.Color) *TreeView {
+func (t *TreeView) SetScrollBarColor(color tcell.Color) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.scrollBarColor = color
-	return t
 }
 
 // SetChangedFunc sets the function which is called when the user navigates to
 // a new tree node.
-func (t *TreeView) SetChangedFunc(handler func(node *TreeNode)) *TreeView {
+func (t *TreeView) SetChangedFunc(handler func(node *TreeNode)) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.changed = handler
-	return t
 }
 
 // SetSelectedFunc sets the function which is called when the user selects a
 // node by pressing Enter on the current selection.
-func (t *TreeView) SetSelectedFunc(handler func(node *TreeNode)) *TreeView {
+func (t *TreeView) SetSelectedFunc(handler func(node *TreeNode)) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.selected = handler
-	return t
 }
 
 // SetDoneFunc sets a handler which is called whenever the user presses the
 // Escape, Tab, or Backtab key.
-func (t *TreeView) SetDoneFunc(handler func(key tcell.Key)) *TreeView {
+func (t *TreeView) SetDoneFunc(handler func(key tcell.Key)) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.done = handler
-	return t
 }
 
 // GetScrollOffset returns the number of node rows that were skipped at the top

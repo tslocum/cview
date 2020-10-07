@@ -11,12 +11,15 @@ import (
 
 // Show a navigable tree view of the current directory.
 func main() {
+	app := cview.NewApplication()
+	app.EnableMouse(true)
+
 	rootDir := "."
-	root := cview.NewTreeNode(rootDir).
-		SetColor(tcell.ColorRed.TrueColor())
-	tree := cview.NewTreeView().
-		SetRoot(root).
-		SetCurrentNode(root)
+	root := cview.NewTreeNode(rootDir)
+	root.SetColor(tcell.ColorRed.TrueColor())
+	tree := cview.NewTreeView()
+	tree.SetRoot(root)
+	tree.SetCurrentNode(root)
 
 	// A helper function which adds the files and directories of the given path
 	// to the given target node.
@@ -26,9 +29,9 @@ func main() {
 			panic(err)
 		}
 		for _, file := range files {
-			node := cview.NewTreeNode(file.Name()).
-				SetReference(filepath.Join(path, file.Name())).
-				SetSelectable(file.IsDir())
+			node := cview.NewTreeNode(file.Name())
+			node.SetReference(filepath.Join(path, file.Name()))
+			node.SetSelectable(file.IsDir())
 			if file.IsDir() {
 				node.SetColor(tcell.ColorGreen.TrueColor())
 			}
@@ -56,7 +59,8 @@ func main() {
 		}
 	})
 
-	if err := cview.NewApplication().SetRoot(tree, true).EnableMouse(true).Run(); err != nil {
+	app.SetRoot(tree, true)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

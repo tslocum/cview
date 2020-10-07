@@ -10,25 +10,26 @@ const loremIpsumText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit,
 func Window(nextSlide func()) (title string, content cview.Primitive) {
 	wm := cview.NewWindowManager()
 
-	list := cview.NewList().
-		AddItem(cview.NewListItem("Item #1")).
-		AddItem(cview.NewListItem("Item #2")).
-		AddItem(cview.NewListItem("Item #3")).
-		AddItem(cview.NewListItem("Item #4")).
-		AddItem(cview.NewListItem("Item #5")).
-		AddItem(cview.NewListItem("Item #6")).
-		AddItem(cview.NewListItem("Item #7")).
-		ShowSecondaryText(false)
+	list := cview.NewList()
+	list.ShowSecondaryText(false)
+	list.AddItem(cview.NewListItem("Item #1"))
+	list.AddItem(cview.NewListItem("Item #2"))
+	list.AddItem(cview.NewListItem("Item #3"))
+	list.AddItem(cview.NewListItem("Item #4"))
+	list.AddItem(cview.NewListItem("Item #5"))
+	list.AddItem(cview.NewListItem("Item #6"))
+	list.AddItem(cview.NewListItem("Item #7"))
 
-	loremIpsum := cview.NewTextView().SetText(loremIpsumText)
+	loremIpsum := cview.NewTextView()
+	loremIpsum.SetText(loremIpsumText)
 
-	w1 := cview.NewWindow(list).
-		SetPosition(2, 2).
-		SetSize(10, 7)
+	w1 := cview.NewWindow(list)
+	w1.SetPosition(2, 2)
+	w1.SetSize(10, 7)
 
-	w2 := cview.NewWindow(loremIpsum).
-		SetPosition(7, 4).
-		SetSize(12, 12)
+	w2 := cview.NewWindow(loremIpsum)
+	w2.SetPosition(7, 4)
+	w2.SetSize(12, 12)
 
 	w1.SetTitle("List")
 	w2.SetTitle("Lorem Ipsum")

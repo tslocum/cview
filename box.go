@@ -98,12 +98,11 @@ func (b *Box) GetBorderPadding() (top, bottom, left, right int) {
 }
 
 // SetBorderPadding sets the size of the borders around the box content.
-func (b *Box) SetBorderPadding(top, bottom, left, right int) *Box {
+func (b *Box) SetBorderPadding(top, bottom, left, right int) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
 	b.paddingTop, b.paddingBottom, b.paddingLeft, b.paddingRight = top, bottom, left, right
-	return b
 }
 
 // GetRect returns the current position of the rectangle, x, y, width, and
@@ -172,12 +171,11 @@ func (b *Box) SetRect(x, y, width, height int) {
 // must return the box's inner dimensions (x, y, width, height) which will be
 // returned by GetInnerRect(), used by descendent primitives to draw their own
 // content.
-func (b *Box) SetDrawFunc(handler func(screen tcell.Screen, x, y, width, height int) (int, int, int, int)) *Box {
+func (b *Box) SetDrawFunc(handler func(screen tcell.Screen, x, y, width, height int) (int, int, int, int)) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
 	b.draw = handler
-	return b
 }
 
 // GetDrawFunc returns the callback function which was installed with
@@ -227,12 +225,11 @@ func (b *Box) InputHandler() func(event *tcell.EventKey, setFocus func(p Primiti
 // can have focus at a time. Composing primitives such as Form pass the focus on
 // to their contained primitives and thus never receive any key events
 // themselves. Therefore, they cannot intercept key events.
-func (b *Box) SetInputCapture(capture func(event *tcell.EventKey) *tcell.EventKey) *Box {
+func (b *Box) SetInputCapture(capture func(event *tcell.EventKey) *tcell.EventKey) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
 	b.inputCapture = capture
-	return b
 }
 
 // GetInputCapture returns the function installed with SetInputCapture() or nil
@@ -280,9 +277,8 @@ func (b *Box) MouseHandler() func(action MouseAction, event *tcell.EventMouse, s
 // called.
 //
 // Providing a nil handler will remove a previously existing handler.
-func (b *Box) SetMouseCapture(capture func(action MouseAction, event *tcell.EventMouse) (MouseAction, *tcell.EventMouse)) *Box {
+func (b *Box) SetMouseCapture(capture func(action MouseAction, event *tcell.EventMouse) (MouseAction, *tcell.EventMouse)) {
 	b.mouseCapture = capture
-	return b
 }
 
 // InRect returns true if the given coordinate is within the bounds of the box's
@@ -299,12 +295,11 @@ func (b *Box) GetMouseCapture() func(action MouseAction, event *tcell.EventMouse
 }
 
 // SetBackgroundColor sets the box's background color.
-func (b *Box) SetBackgroundColor(color tcell.Color) *Box {
+func (b *Box) SetBackgroundColor(color tcell.Color) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
 	b.backgroundColor = color
-	return b
 }
 
 // GetBackgroundColor returns the box's background color.
@@ -316,12 +311,11 @@ func (b *Box) GetBackgroundColor() tcell.Color {
 
 // SetBackgroundTransparent sets the flag indicating whether or not the box's
 // background is transparent.
-func (b *Box) SetBackgroundTransparent(transparent bool) *Box {
+func (b *Box) SetBackgroundTransparent(transparent bool) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
 	b.backgroundTransparent = transparent
-	return b
 }
 
 // GetBorder returns a value indicating whether the box have a border
@@ -334,50 +328,45 @@ func (b *Box) GetBorder() bool {
 
 // SetBorder sets the flag indicating whether or not the box should have a
 // border.
-func (b *Box) SetBorder(show bool) *Box {
+func (b *Box) SetBorder(show bool) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
 	b.border = show
-	return b
 }
 
 // SetBorderColor sets the box's border color.
-func (b *Box) SetBorderColor(color tcell.Color) *Box {
+func (b *Box) SetBorderColor(color tcell.Color) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
 	b.borderColor = color
-	return b
 }
 
 // SetBorderColorFocused sets the box's border color when the box is focused.
-func (b *Box) SetBorderColorFocused(color tcell.Color) *Box {
+func (b *Box) SetBorderColorFocused(color tcell.Color) {
 	b.l.Lock()
 	defer b.l.Unlock()
 	b.borderColorFocused = color
-	return b
 }
 
 // SetBorderAttributes sets the border's style attributes. You can combine
 // different attributes using bitmask operations:
 //
 //   box.SetBorderAttributes(tcell.AttrUnderline | tcell.AttrBold)
-func (b *Box) SetBorderAttributes(attr tcell.AttrMask) *Box {
+func (b *Box) SetBorderAttributes(attr tcell.AttrMask) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
 	b.borderAttributes = attr
-	return b
 }
 
 // SetTitle sets the box's title.
-func (b *Box) SetTitle(title string) *Box {
+func (b *Box) SetTitle(title string) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
 	b.title = []byte(title)
-	return b
 }
 
 // GetTitle returns the box's current title.
@@ -389,22 +378,21 @@ func (b *Box) GetTitle() string {
 }
 
 // SetTitleColor sets the box's title color.
-func (b *Box) SetTitleColor(color tcell.Color) *Box {
+func (b *Box) SetTitleColor(color tcell.Color) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
 	b.titleColor = color
-	return b
 }
 
 // SetTitleAlign sets the alignment of the title, one of AlignLeft, AlignCenter,
 // or AlignRight.
-func (b *Box) SetTitleAlign(align int) *Box {
+func (b *Box) SetTitleAlign(align int) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
 	b.titleAlign = align
-	return b
+
 }
 
 // Draw draws this primitive onto the screen.
@@ -527,12 +515,11 @@ func (b *Box) Draw(screen tcell.Screen) {
 
 // ShowFocus sets the flag indicating whether or not the borders of this
 // primitive should change thickness when focused.
-func (b *Box) ShowFocus(showFocus bool) *Box {
+func (b *Box) ShowFocus(showFocus bool) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
 	b.showFocus = showFocus
-	return b
 }
 
 // Focus is called when this primitive receives focus.

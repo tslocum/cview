@@ -221,7 +221,7 @@ func NewTextView() *TextView {
 // SetScrollable sets the flag that decides whether or not the text view is
 // scrollable. If true, text is kept in a buffer and can be navigated. If false,
 // the last line will always be visible.
-func (t *TextView) SetScrollable(scrollable bool) *TextView {
+func (t *TextView) SetScrollable(scrollable bool) {
 	t.Lock()
 	defer t.Unlock()
 
@@ -229,31 +229,28 @@ func (t *TextView) SetScrollable(scrollable bool) *TextView {
 	if !scrollable {
 		t.trackEnd = true
 	}
-	return t
 }
 
 // SetScrollBarVisibility specifies the display of the scroll bar.
-func (t *TextView) SetScrollBarVisibility(visibility ScrollBarVisibility) *TextView {
+func (t *TextView) SetScrollBarVisibility(visibility ScrollBarVisibility) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.scrollBarVisibility = visibility
-	return t
 }
 
 // SetScrollBarColor sets the color of the scroll bar.
-func (t *TextView) SetScrollBarColor(color tcell.Color) *TextView {
+func (t *TextView) SetScrollBarColor(color tcell.Color) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.scrollBarColor = color
-	return t
 }
 
 // SetWrap sets the flag that, if true, leads to lines that are longer than the
 // available width being wrapped onto the next line. If false, any characters
 // beyond the available width are not displayed.
-func (t *TextView) SetWrap(wrap bool) *TextView {
+func (t *TextView) SetWrap(wrap bool) {
 	t.Lock()
 	defer t.Unlock()
 
@@ -261,7 +258,6 @@ func (t *TextView) SetWrap(wrap bool) *TextView {
 		t.index = nil
 	}
 	t.wrap = wrap
-	return t
 }
 
 // SetWordWrap sets the flag that, if true and if the "wrap" flag is also true
@@ -269,7 +265,7 @@ func (t *TextView) SetWrap(wrap bool) *TextView {
 // that trailing spaces will not be printed.
 //
 // This flag is ignored if the "wrap" flag is false.
-func (t *TextView) SetWordWrap(wrapOnWords bool) *TextView {
+func (t *TextView) SetWordWrap(wrapOnWords bool) {
 	t.Lock()
 	defer t.Unlock()
 
@@ -277,12 +273,11 @@ func (t *TextView) SetWordWrap(wrapOnWords bool) *TextView {
 		t.index = nil
 	}
 	t.wordWrap = wrapOnWords
-	return t
 }
 
 // SetTextAlign sets the text alignment within the text view. This must be
 // either AlignLeft, AlignCenter, or AlignRight.
-func (t *TextView) SetTextAlign(align int) *TextView {
+func (t *TextView) SetTextAlign(align int) {
 	t.Lock()
 	defer t.Unlock()
 
@@ -290,35 +285,32 @@ func (t *TextView) SetTextAlign(align int) *TextView {
 		t.index = nil
 	}
 	t.align = align
-	return t
 }
 
 // SetTextColor sets the initial color of the text (which can be changed
 // dynamically by sending color strings in square brackets to the text view if
 // dynamic colors are enabled).
-func (t *TextView) SetTextColor(color tcell.Color) *TextView {
+func (t *TextView) SetTextColor(color tcell.Color) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.textColor = color
-	return t
 }
 
 // SetBytes sets the text of this text view to the provided byte slice.
 // Previously contained text will be removed.
-func (t *TextView) SetBytes(text []byte) *TextView {
+func (t *TextView) SetBytes(text []byte) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.clear()
 	t.write(text)
-	return t
 }
 
 // SetText sets the text of this text view to the provided string. Previously
 // contained text will be removed.
-func (t *TextView) SetText(text string) *TextView {
-	return t.SetBytes([]byte(text))
+func (t *TextView) SetText(text string) {
+	t.SetBytes([]byte(text))
 }
 
 // GetBytes returns the current text of this text view. If "stripTags" is set
@@ -360,7 +352,7 @@ func (t *TextView) GetText(stripTags bool) string {
 
 // SetDynamicColors sets the flag that allows the text color to be changed
 // dynamically. See class description for details.
-func (t *TextView) SetDynamicColors(dynamic bool) *TextView {
+func (t *TextView) SetDynamicColors(dynamic bool) {
 	t.Lock()
 	defer t.Unlock()
 
@@ -368,12 +360,11 @@ func (t *TextView) SetDynamicColors(dynamic bool) *TextView {
 		t.index = nil
 	}
 	t.dynamicColors = dynamic
-	return t
 }
 
 // SetRegions sets the flag that allows to define regions in the text. See class
 // description for details.
-func (t *TextView) SetRegions(regions bool) *TextView {
+func (t *TextView) SetRegions(regions bool) {
 	t.Lock()
 	defer t.Unlock()
 
@@ -381,7 +372,6 @@ func (t *TextView) SetRegions(regions bool) *TextView {
 		t.index = nil
 	}
 	t.regions = regions
-	return t
 }
 
 // SetChangedFunc sets a handler function which is called when the text of the
@@ -400,23 +390,21 @@ func (t *TextView) SetRegions(regions bool) *TextView {
 //     Application.QueueUpdate().
 //
 // See package description for details on dealing with concurrency.
-func (t *TextView) SetChangedFunc(handler func()) *TextView {
+func (t *TextView) SetChangedFunc(handler func()) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.changed = handler
-	return t
 }
 
 // SetDoneFunc sets a handler which is called when the user presses on the
 // following keys: Escape, Enter, Tab, Backtab. The key is passed to the
 // handler.
-func (t *TextView) SetDoneFunc(handler func(key tcell.Key)) *TextView {
+func (t *TextView) SetDoneFunc(handler func(key tcell.Key)) {
 	t.Lock()
 	defer t.Unlock()
 
 	t.done = handler
-	return t
 }
 
 // SetHighlightedFunc sets a handler which is called when the list of currently
@@ -426,9 +414,8 @@ func (t *TextView) SetDoneFunc(handler func(key tcell.Key)) *TextView {
 //
 // Note that because regions are only determined during drawing, this function
 // can only fire for regions that have existed during the last call to Draw().
-func (t *TextView) SetHighlightedFunc(handler func(added, removed, remaining []string)) *TextView {
+func (t *TextView) SetHighlightedFunc(handler func(added, removed, remaining []string)) {
 	t.highlighted = handler
-	return t
 }
 
 func (t *TextView) clipBuffer() {
@@ -444,54 +431,50 @@ func (t *TextView) clipBuffer() {
 
 // SetMaxLines sets the maximum number of newlines the text view will hold
 // before discarding older data from the buffer.
-func (t *TextView) SetMaxLines(maxLines int) *TextView {
+func (t *TextView) SetMaxLines(maxLines int) {
 	t.maxLines = maxLines
 	t.clipBuffer()
-	return t
 }
 
 // ScrollTo scrolls to the specified row and column (both starting with 0).
-func (t *TextView) ScrollTo(row, column int) *TextView {
+func (t *TextView) ScrollTo(row, column int) {
 	t.Lock()
 	defer t.Unlock()
 
 	if !t.scrollable {
-		return t
+		return
 	}
 	t.lineOffset = row
 	t.columnOffset = column
 	t.trackEnd = false
-	return t
 }
 
 // ScrollToBeginning scrolls to the top left corner of the text if the text view
 // is scrollable.
-func (t *TextView) ScrollToBeginning() *TextView {
+func (t *TextView) ScrollToBeginning() {
 	t.Lock()
 	defer t.Unlock()
 
 	if !t.scrollable {
-		return t
+		return
 	}
 	t.trackEnd = false
 	t.lineOffset = 0
 	t.columnOffset = 0
-	return t
 }
 
 // ScrollToEnd scrolls to the bottom left corner of the text if the text view
 // is scrollable. Adding new rows to the end of the text view will cause it to
 // scroll with the new data.
-func (t *TextView) ScrollToEnd() *TextView {
+func (t *TextView) ScrollToEnd() {
 	t.Lock()
 	defer t.Unlock()
 
 	if !t.scrollable {
-		return t
+		return
 	}
 	t.trackEnd = true
 	t.columnOffset = 0
-	return t
 }
 
 // GetScrollOffset returns the number of rows and columns that are skipped at
@@ -504,20 +487,19 @@ func (t *TextView) GetScrollOffset() (row, column int) {
 }
 
 // Clear removes all text from the buffer.
-func (t *TextView) Clear() *TextView {
+func (t *TextView) Clear() {
 	t.Lock()
 	defer t.Unlock()
 
-	return t.clear()
+	t.clear()
 }
 
-func (t *TextView) clear() *TextView {
+func (t *TextView) clear() {
 	t.buffer = nil
 	t.recentBytes = nil
 	if t.reindex {
 		t.index = nil
 	}
-	return t
 }
 
 // Highlight specifies which regions should be highlighted. If highlight
@@ -532,7 +514,7 @@ func (t *TextView) clear() *TextView {
 //
 // Text in highlighted regions will be drawn inverted, i.e. with their
 // background and foreground colors swapped.
-func (t *TextView) Highlight(regionIDs ...string) *TextView {
+func (t *TextView) Highlight(regionIDs ...string) {
 	t.Lock()
 
 	// Toggle highlights.
@@ -588,8 +570,6 @@ func (t *TextView) Highlight(regionIDs ...string) *TextView {
 	} else {
 		t.Unlock()
 	}
-
-	return t
 }
 
 // GetHighlights returns the IDs of all currently highlighted regions.
@@ -607,9 +587,8 @@ func (t *TextView) GetHighlights() (regionIDs []string) {
 // When set to true, the Highlight() function (or a mouse click) will toggle the
 // provided/selected regions. When set to false, Highlight() (or a mouse click)
 // will simply highlight the provided regions.
-func (t *TextView) SetToggleHighlights(toggle bool) *TextView {
+func (t *TextView) SetToggleHighlights(toggle bool) {
 	t.toggleHighlights = toggle
-	return t
 }
 
 // ScrollToHighlight will cause the visible area to be scrolled so that the
@@ -620,17 +599,16 @@ func (t *TextView) SetToggleHighlights(toggle bool) *TextView {
 //
 // Nothing happens if there are no highlighted regions or if the text view is
 // not scrollable.
-func (t *TextView) ScrollToHighlight() *TextView {
+func (t *TextView) ScrollToHighlight() {
 	t.Lock()
 	defer t.Unlock()
 
 	if len(t.highlights) == 0 || !t.scrollable || !t.regions {
-		return t
+		return
 	}
 	t.index = nil
 	t.scrollToHighlights = true
 	t.trackEnd = false
-	return t
 }
 
 // GetRegionText returns the text of the region with the given ID. If dynamic
@@ -801,7 +779,7 @@ func (t *TextView) write(p []byte) (n int, err error) {
 // it is modified. This improves the performance of TextViews whose contents
 // always have line-breaks in the same location. This must be called after the
 // buffer has been indexed.
-func (t *TextView) SetReindexBuffer(reindex bool) *TextView {
+func (t *TextView) SetReindexBuffer(reindex bool) {
 	t.Lock()
 	defer t.Unlock()
 
@@ -810,8 +788,6 @@ func (t *TextView) SetReindexBuffer(reindex bool) *TextView {
 	if reindex {
 		t.index = nil
 	}
-
-	return t
 }
 
 // reindexBuffer re-indexes the buffer such that we can use it to easily draw

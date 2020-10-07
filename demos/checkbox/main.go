@@ -7,8 +7,13 @@ import (
 
 func main() {
 	app := cview.NewApplication()
-	checkbox := cview.NewCheckBox().SetLabel("Hit Enter to check box: ")
-	if err := app.SetRoot(checkbox, true).EnableMouse(true).Run(); err != nil {
+	app.EnableMouse(true)
+
+	checkbox := cview.NewCheckBox()
+	checkbox.SetLabel("Hit Enter to check box: ")
+
+	app.SetRoot(checkbox, true)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

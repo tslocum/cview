@@ -5,11 +5,17 @@ import "gitlab.com/tslocum/cview"
 
 func main() {
 	app := cview.NewApplication()
-	button := cview.NewButton("Hit Enter to close").SetSelectedFunc(func() {
+	app.EnableMouse(true)
+
+	button := cview.NewButton("Hit Enter to close")
+	button.SetBorder(true)
+	button.SetRect(0, 0, 22, 3)
+	button.SetSelectedFunc(func() {
 		app.Stop()
 	})
-	button.SetBorder(true).SetRect(0, 0, 22, 3)
-	if err := app.SetRoot(button, false).EnableMouse(true).Run(); err != nil {
+
+	app.SetRoot(button, false)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

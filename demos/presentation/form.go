@@ -30,14 +30,15 @@ const form = `[green]package[white] main
 
 // Form demonstrates forms.
 func Form(nextSlide func()) (title string, content cview.Primitive) {
-	f := cview.NewForm().
-		AddInputField("First name:", "", 20, nil, nil).
-		AddInputField("Last name:", "", 20, nil, nil).
-		AddDropDownSimple("Role:", 0, nil, "Engineer", "Manager", "Administration").
-		AddPasswordField("Password:", "", 10, '*', nil).
-		AddCheckBox("", "On vacation", false, nil).
-		AddButton("Save", nextSlide).
-		AddButton("Cancel", nextSlide)
-	f.SetBorder(true).SetTitle("Employee Information")
+	f := cview.NewForm()
+	f.AddInputField("First name:", "", 20, nil, nil)
+	f.AddInputField("Last name:", "", 20, nil, nil)
+	f.AddDropDownSimple("Role:", 0, nil, "Engineer", "Manager", "Administration")
+	f.AddPasswordField("Password:", "", 10, '*', nil)
+	f.AddCheckBox("", "On vacation", false, nil)
+	f.AddButton("Save", nextSlide)
+	f.AddButton("Cancel", nextSlide)
+	f.SetBorder(true)
+	f.SetTitle("Employee Information")
 	return "Forms", Code(f, 36, 15, form)
 }

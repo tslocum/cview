@@ -10,7 +10,9 @@ import (
 func main() {
 	app := cview.NewApplication()
 
-	grid := cview.NewGrid().SetColumns(-1, 6, 4, 30, -1).SetRows(-1, 12, 4, 4, -1)
+	grid := cview.NewGrid()
+	grid.SetColumns(-1, 6, 4, 30, -1)
+	grid.SetRows(-1, 12, 4, 4, -1)
 	grid.SetBackgroundColor(cview.Styles.PrimitiveBackgroundColor)
 
 	verticalProgressBar := cview.NewProgressBar()
@@ -51,7 +53,8 @@ func main() {
 		}
 	}()
 
-	if err := app.SetRoot(grid, true).Run(); err != nil {
+	app.SetRoot(grid, true)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

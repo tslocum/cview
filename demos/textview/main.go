@@ -21,13 +21,15 @@ Capitalize on low hanging fruit to identify a ballpark value added activity to b
 
 func main() {
 	app := cview.NewApplication()
-	textView := cview.NewTextView().
-		SetDynamicColors(true).
-		SetRegions(true).
-		SetWordWrap(true).
-		SetChangedFunc(func() {
-			app.Draw()
-		})
+	app.EnableMouse(true)
+
+	textView := cview.NewTextView()
+	textView.SetDynamicColors(true)
+	textView.SetRegions(true)
+	textView.SetWordWrap(true)
+	textView.SetChangedFunc(func() {
+		app.Draw()
+	})
 	numSelections := 0
 	go func() {
 		for _, word := range strings.Split(corporate, " ") {
@@ -48,7 +50,8 @@ func main() {
 			if len(currentSelection) > 0 {
 				textView.Highlight()
 			} else {
-				textView.Highlight("0").ScrollToHighlight()
+				textView.Highlight("0")
+				textView.ScrollToHighlight()
 			}
 		} else if len(currentSelection) > 0 {
 			index, _ := strconv.Atoi(currentSelection[0])
@@ -59,11 +62,14 @@ func main() {
 			} else {
 				return
 			}
-			textView.Highlight(strconv.Itoa(index)).ScrollToHighlight()
+			textView.Highlight(strconv.Itoa(index))
+			textView.ScrollToHighlight()
 		}
 	})
 	textView.SetBorder(true)
-	if err := app.SetRoot(textView, true).EnableMouse(true).Run(); err != nil {
+
+	app.SetRoot(textView, true)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

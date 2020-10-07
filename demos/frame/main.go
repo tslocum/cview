@@ -8,15 +8,22 @@ import (
 
 func main() {
 	app := cview.NewApplication()
-	frame := cview.NewFrame(cview.NewBox().SetBackgroundColor(tcell.ColorBlue.TrueColor())).
-		SetBorders(2, 2, 2, 2, 4, 4).
-		AddText("Header left", true, cview.AlignLeft, tcell.ColorWhite.TrueColor()).
-		AddText("Header middle", true, cview.AlignCenter, tcell.ColorWhite.TrueColor()).
-		AddText("Header right", true, cview.AlignRight, tcell.ColorWhite.TrueColor()).
-		AddText("Header second middle", true, cview.AlignCenter, tcell.ColorRed.TrueColor()).
-		AddText("Footer middle", false, cview.AlignCenter, tcell.ColorGreen.TrueColor()).
-		AddText("Footer second middle", false, cview.AlignCenter, tcell.ColorGreen.TrueColor())
-	if err := app.SetRoot(frame, true).EnableMouse(true).Run(); err != nil {
+	app.EnableMouse(true)
+
+	box := cview.NewBox()
+	box.SetBackgroundColor(tcell.ColorBlue.TrueColor())
+
+	frame := cview.NewFrame(box)
+	frame.SetBorders(2, 2, 2, 2, 4, 4)
+	frame.AddText("Header left", true, cview.AlignLeft, tcell.ColorWhite.TrueColor())
+	frame.AddText("Header middle", true, cview.AlignCenter, tcell.ColorWhite.TrueColor())
+	frame.AddText("Header right", true, cview.AlignRight, tcell.ColorWhite.TrueColor())
+	frame.AddText("Header second middle", true, cview.AlignCenter, tcell.ColorRed.TrueColor())
+	frame.AddText("Footer middle", false, cview.AlignCenter, tcell.ColorGreen.TrueColor())
+	frame.AddText("Footer second middle", false, cview.AlignCenter, tcell.ColorGreen.TrueColor())
+
+	app.SetRoot(frame, true)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

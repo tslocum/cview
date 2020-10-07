@@ -31,12 +31,12 @@ const textView1 = `[green]func[white] [yellow]main[white]() {
 
 // TextView1 demonstrates the basic text view.
 func TextView1(nextSlide func()) (title string, content cview.Primitive) {
-	textView := cview.NewTextView().
-		SetTextColor(tcell.ColorYellow.TrueColor()).
-		SetScrollable(false).
-		SetDoneFunc(func(key tcell.Key) {
-			nextSlide()
-		})
+	textView := cview.NewTextView()
+	textView.SetTextColor(tcell.ColorYellow.TrueColor())
+	textView.SetScrollable(false)
+	textView.SetDoneFunc(func(key tcell.Key) {
+		nextSlide()
+	})
 	textView.SetChangedFunc(func() {
 		if textView.HasFocus() {
 			app.Draw()
@@ -55,7 +55,8 @@ func TextView1(nextSlide func()) (title string, content cview.Primitive) {
 			time.Sleep(200 * time.Millisecond)
 		}
 	}()
-	textView.SetBorder(true).SetTitle("TextView implements io.Writer")
+	textView.SetBorder(true)
+	textView.SetTitle("TextView implements io.Writer")
 	return "Text 1", Code(textView, 36, 13, textView1)
 }
 
@@ -108,49 +109,54 @@ const textView2 = `[green]package[white] main
 
 // TextView2 demonstrates the extended text view.
 func TextView2(nextSlide func()) (title string, content cview.Primitive) {
-	codeView := cview.NewTextView().
-		SetWrap(false)
+	codeView := cview.NewTextView()
+	codeView.SetWrap(false)
 	fmt.Fprint(codeView, textView2)
-	codeView.SetBorder(true).SetTitle("Buffer content")
+	codeView.SetBorder(true)
+	codeView.SetTitle("Buffer content")
 
 	textView := cview.NewTextView()
-	textView.SetDynamicColors(true).
-		SetWrap(false).
-		SetRegions(true).
-		SetDoneFunc(func(key tcell.Key) {
-			if key == tcell.KeyEscape {
-				nextSlide()
-				return
+	textView.SetDynamicColors(true)
+	textView.SetWrap(false)
+	textView.SetRegions(true)
+	textView.SetDoneFunc(func(key tcell.Key) {
+		if key == tcell.KeyEscape {
+			nextSlide()
+			return
+		}
+		highlights := textView.GetHighlights()
+		hasHighlights := len(highlights) > 0
+		switch key {
+		case tcell.KeyEnter:
+			if hasHighlights {
+				textView.Highlight()
+			} else {
+				textView.Highlight("0")
+				textView.ScrollToHighlight()
 			}
-			highlights := textView.GetHighlights()
-			hasHighlights := len(highlights) > 0
-			switch key {
-			case tcell.KeyEnter:
-				if hasHighlights {
-					textView.Highlight()
-				} else {
-					textView.Highlight("0").
-						ScrollToHighlight()
-				}
-			case tcell.KeyTab:
-				if hasHighlights {
-					current, _ := strconv.Atoi(highlights[0])
-					next := (current + 1) % 9
-					textView.Highlight(strconv.Itoa(next)).
-						ScrollToHighlight()
-				}
-			case tcell.KeyBacktab:
-				if hasHighlights {
-					current, _ := strconv.Atoi(highlights[0])
-					next := (current - 1 + 9) % 9
-					textView.Highlight(strconv.Itoa(next)).
-						ScrollToHighlight()
-				}
+		case tcell.KeyTab:
+			if hasHighlights {
+				current, _ := strconv.Atoi(highlights[0])
+				next := (current + 1) % 9
+				textView.Highlight(strconv.Itoa(next))
+				textView.ScrollToHighlight()
 			}
-		})
+		case tcell.KeyBacktab:
+			if hasHighlights {
+				current, _ := strconv.Atoi(highlights[0])
+				next := (current - 1 + 9) % 9
+				textView.Highlight(strconv.Itoa(next))
+				textView.ScrollToHighlight()
+			}
+		}
+	})
 	fmt.Fprint(textView, textView2)
-	textView.SetBorder(true).SetTitle("TextView output")
-	return "Text 2", cview.NewFlex().
-		AddItem(textView, 0, 1, true).
-		AddItem(codeView, 0, 1, false)
+	textView.SetBorder(true)
+	textView.SetTitle("TextView output")
+
+	flex := cview.NewFlex()
+	flex.AddItem(textView, 0, 1, true)
+	flex.AddItem(codeView, 0, 1, false)
+
+	return "Text 2", flex
 }

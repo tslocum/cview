@@ -44,6 +44,8 @@ func main() {
 		}()
 	}
 
+	app.EnableMouse(true)
+
 	// The presentation slides.
 	slides := []Slide{
 		Cover,
@@ -66,25 +68,25 @@ func main() {
 	// The bottom row has some info on where we are.
 	info := cview.NewTextView()
 	info.
-		SetDynamicColors(true).
-		SetRegions(true).
-		SetWrap(false).
-		SetHighlightedFunc(func(added, removed, remaining []string) {
-			pages.SwitchToPage(added[0])
-		})
+		SetDynamicColors(true)
+	info.SetRegions(true)
+	info.SetWrap(false)
+	info.SetHighlightedFunc(func(added, removed, remaining []string) {
+		pages.SwitchToPage(added[0])
+	})
 
 	// Create the pages for all slides.
 	previousSlide := func() {
 		slide, _ := strconv.Atoi(info.GetHighlights()[0])
 		slide = (slide - 1 + len(slides)) % len(slides)
-		info.Highlight(strconv.Itoa(slide)).
-			ScrollToHighlight()
+		info.Highlight(strconv.Itoa(slide))
+		info.ScrollToHighlight()
 	}
 	nextSlide := func() {
 		slide, _ := strconv.Atoi(info.GetHighlights()[0])
 		slide = (slide + 1) % len(slides)
-		info.Highlight(strconv.Itoa(slide)).
-			ScrollToHighlight()
+		info.Highlight(strconv.Itoa(slide))
+		info.ScrollToHighlight()
 	}
 
 	cursor := 0
@@ -101,10 +103,10 @@ func main() {
 	info.Highlight("0")
 
 	// Create the main layout.
-	layout := cview.NewFlex().
-		SetDirection(cview.FlexRow).
-		AddItem(pages, 0, 1, true).
-		AddItem(info, 1, 1, false)
+	layout := cview.NewFlex()
+	layout.SetDirection(cview.FlexRow)
+	layout.AddItem(pages, 0, 1, true)
+	layout.AddItem(info, 1, 1, false)
 
 	// Shortcuts to navigate the slides.
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
@@ -117,7 +119,8 @@ func main() {
 	})
 
 	// Start the application.
-	if err := app.SetRoot(layout, true).EnableMouse(true).Run(); err != nil {
+	app.SetRoot(layout, true)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

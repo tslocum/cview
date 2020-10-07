@@ -58,7 +58,7 @@ type node struct {
 var (
 	tree          = cview.NewTreeView()
 	treeNextSlide func()
-	treeCode      = cview.NewTextView().SetWrap(false).SetDynamicColors(true)
+	treeCode      = cview.NewTextView()
 )
 
 var rootNode = &node{
@@ -74,7 +74,10 @@ var rootNode = &node{
 			{text: "Tree list starts one level down"},
 			{text: "Works better for lists where no top node is needed"},
 			{text: "Switch to this layout", selected: func() {
-				tree.SetAlign(false).SetTopLevel(1).SetGraphics(true).SetPrefixes(nil)
+				tree.SetAlign(false)
+				tree.SetTopLevel(1)
+				tree.SetGraphics(true)
+				tree.SetPrefixes(nil)
 				treeCode.SetText(strings.Replace(treeAllCode, "$$$", treeTopLevelCode, -1))
 			}},
 		}},
@@ -82,7 +85,10 @@ var rootNode = &node{
 			{text: "For trees that are similar to lists"},
 			{text: "Hierarchy shown only in line drawings"},
 			{text: "Switch to this layout", selected: func() {
-				tree.SetAlign(true).SetTopLevel(0).SetGraphics(true).SetPrefixes(nil)
+				tree.SetAlign(true)
+				tree.SetTopLevel(0)
+				tree.SetGraphics(true)
+				tree.SetPrefixes(nil)
 				treeCode.SetText(strings.Replace(treeAllCode, "$$$", treeAlignCode, -1))
 			}},
 		}},
@@ -90,7 +96,10 @@ var rootNode = &node{
 			{text: "Best for hierarchical bullet point lists"},
 			{text: "You can define your own prefixes per level"},
 			{text: "Switch to this layout", selected: func() {
-				tree.SetAlign(false).SetTopLevel(1).SetGraphics(false).SetPrefixes([]string{"[red]* ", "[darkcyan]- ", "[darkmagenta]- "})
+				tree.SetAlign(false)
+				tree.SetTopLevel(1)
+				tree.SetGraphics(false)
+				tree.SetPrefixes([]string{"[red]* ", "[darkcyan]- ", "[darkmagenta]- "})
 				treeCode.SetText(strings.Replace(treeAllCode, "$$$", treePrefixCode, -1))
 			}},
 		}},
@@ -98,7 +107,10 @@ var rootNode = &node{
 			{text: "Lines illustrate hierarchy"},
 			{text: "Basic indentation"},
 			{text: "Switch to this layout", selected: func() {
-				tree.SetAlign(false).SetTopLevel(0).SetGraphics(true).SetPrefixes(nil)
+				tree.SetAlign(false)
+				tree.SetTopLevel(0)
+				tree.SetGraphics(true)
+				tree.SetPrefixes(nil)
 				treeCode.SetText(strings.Replace(treeAllCode, "$$$", treeBasicCode, -1))
 			}},
 		}},
@@ -108,16 +120,16 @@ var rootNode = &node{
 // TreeView demonstrates the tree view.
 func TreeView(nextSlide func()) (title string, content cview.Primitive) {
 	treeNextSlide = nextSlide
-	tree.SetBorder(true).
-		SetTitle("TreeView")
+	tree.SetBorder(true)
+	tree.SetTitle("TreeView")
 
 	// Add nodes.
 	var add func(target *node) *cview.TreeNode
 	add = func(target *node) *cview.TreeNode {
-		node := cview.NewTreeNode(target.text).
-			SetSelectable(target.expand || target.selected != nil).
-			SetExpanded(target == rootNode).
-			SetReference(target)
+		node := cview.NewTreeNode(target.text)
+		node.SetSelectable(target.expand || target.selected != nil)
+		node.SetExpanded(target == rootNode)
+		node.SetReference(target)
 		if target.expand {
 			node.SetColor(tcell.ColorGreen.TrueColor())
 		} else if target.selected != nil {
@@ -129,21 +141,25 @@ func TreeView(nextSlide func()) (title string, content cview.Primitive) {
 		return node
 	}
 	root := add(rootNode)
-	tree.SetRoot(root).
-		SetCurrentNode(root).
-		SetSelectedFunc(func(n *cview.TreeNode) {
-			original := n.GetReference().(*node)
-			if original.expand {
-				n.SetExpanded(!n.IsExpanded())
-			} else if original.selected != nil {
-				original.selected()
-			}
-		})
+	tree.SetRoot(root)
+	tree.SetCurrentNode(root)
+	tree.SetSelectedFunc(func(n *cview.TreeNode) {
+		original := n.GetReference().(*node)
+		if original.expand {
+			n.SetExpanded(!n.IsExpanded())
+		} else if original.selected != nil {
+			original.selected()
+		}
+	})
 
-	treeCode.SetText(strings.Replace(treeAllCode, "$$$", treeBasicCode, -1)).
-		SetBorderPadding(1, 1, 2, 0)
+	treeCode.SetWrap(false)
+	treeCode.SetDynamicColors(true)
+	treeCode.SetText(strings.Replace(treeAllCode, "$$$", treeBasicCode, -1))
+	treeCode.SetBorderPadding(1, 1, 2, 0)
 
-	return "Tree", cview.NewFlex().
-		AddItem(tree, 0, 1, true).
-		AddItem(treeCode, codeWidth, 1, false)
+	flex := cview.NewFlex()
+	flex.AddItem(tree, 0, 1, true)
+	flex.AddItem(treeCode, codeWidth, 1, false)
+
+	return "Tree", flex
 }

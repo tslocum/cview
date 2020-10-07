@@ -60,11 +60,15 @@ func (r *RadioButtons) InputHandler() func(event *tcell.EventKey, setFocus func(
 }
 
 func main() {
+	app := cview.NewApplication()
+
 	radioButtons := NewRadioButtons([]string{"Lions", "Elephants", "Giraffes"})
-	radioButtons.SetBorder(true).
-		SetTitle("Radio Button Demo").
-		SetRect(0, 0, 30, 5)
-	if err := cview.NewApplication().SetRoot(radioButtons, false).Run(); err != nil {
+	radioButtons.SetBorder(true)
+	radioButtons.SetTitle("Radio Button Demo")
+	radioButtons.SetRect(0, 0, 30, 5)
+
+	app.SetRoot(radioButtons, false)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

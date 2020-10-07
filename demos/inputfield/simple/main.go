@@ -8,15 +8,19 @@ import (
 
 func main() {
 	app := cview.NewApplication()
-	inputField := cview.NewInputField().
-		SetLabel("Enter a number: ").
-		SetPlaceholder("E.g. 1234").
-		SetFieldWidth(10).
-		SetAcceptanceFunc(cview.InputFieldInteger).
-		SetDoneFunc(func(key tcell.Key) {
-			app.Stop()
-		})
-	if err := app.SetRoot(inputField, true).EnableMouse(true).Run(); err != nil {
+	app.EnableMouse(true)
+
+	inputField := cview.NewInputField()
+	inputField.SetLabel("Enter a number: ")
+	inputField.SetPlaceholder("E.g. 1234")
+	inputField.SetFieldWidth(10)
+	inputField.SetAcceptanceFunc(cview.InputFieldInteger)
+	inputField.SetDoneFunc(func(key tcell.Key) {
+		app.Stop()
+	})
+
+	app.SetRoot(inputField, true)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

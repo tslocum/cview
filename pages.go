@@ -45,12 +45,11 @@ func NewPages() *Pages {
 
 // SetChangedFunc sets a handler which is called whenever the visibility or the
 // order of any visible pages changes. This can be used to redraw the pages.
-func (p *Pages) SetChangedFunc(handler func()) *Pages {
+func (p *Pages) SetChangedFunc(handler func()) {
 	p.Lock()
 	defer p.Unlock()
 
 	p.changed = handler
-	return p
 }
 
 // GetPageCount returns the number of pages currently stored in this object.
@@ -70,7 +69,7 @@ func (p *Pages) GetPageCount() int {
 // was changed in one of the other functions). If "resize" is set to true, the
 // primitive will be set to the size available to the Pages primitive whenever
 // the pages are drawn.
-func (p *Pages) AddPage(name string, item Primitive, resize, visible bool) *Pages {
+func (p *Pages) AddPage(name string, item Primitive, resize, visible bool) {
 	hasFocus := p.HasFocus()
 
 	p.Lock()
@@ -93,20 +92,18 @@ func (p *Pages) AddPage(name string, item Primitive, resize, visible bool) *Page
 		p.Focus(p.setFocus)
 		p.Lock()
 	}
-	return p
 }
 
 // AddAndSwitchToPage calls AddPage(), then SwitchToPage() on that newly added
 // page.
-func (p *Pages) AddAndSwitchToPage(name string, item Primitive, resize bool) *Pages {
+func (p *Pages) AddAndSwitchToPage(name string, item Primitive, resize bool) {
 	p.AddPage(name, item, resize, true)
 	p.SwitchToPage(name)
-	return p
 }
 
 // RemovePage removes the page with the given name. If that page was the only
 // visible page, visibility is assigned to the last page.
-func (p *Pages) RemovePage(name string) *Pages {
+func (p *Pages) RemovePage(name string) {
 	hasFocus := p.HasFocus()
 
 	p.Lock()
@@ -141,7 +138,6 @@ func (p *Pages) RemovePage(name string) *Pages {
 		p.Focus(p.setFocus)
 		p.Lock()
 	}
-	return p
 }
 
 // HasPage returns true if a page with the given name exists in this object.
@@ -159,7 +155,7 @@ func (p *Pages) HasPage(name string) bool {
 
 // ShowPage sets a page's visibility to "true" (in addition to any other pages
 // which are already visible).
-func (p *Pages) ShowPage(name string) *Pages {
+func (p *Pages) ShowPage(name string) {
 	hasFocus := p.HasFocus()
 
 	p.Lock()
@@ -181,11 +177,10 @@ func (p *Pages) ShowPage(name string) *Pages {
 		p.Focus(p.setFocus)
 		p.Lock()
 	}
-	return p
 }
 
 // HidePage sets a page's visibility to "false".
-func (p *Pages) HidePage(name string) *Pages {
+func (p *Pages) HidePage(name string) {
 	hasFocus := p.HasFocus()
 
 	p.Lock()
@@ -207,12 +202,11 @@ func (p *Pages) HidePage(name string) *Pages {
 		p.Focus(p.setFocus)
 		p.Lock()
 	}
-	return p
 }
 
 // SwitchToPage sets a page's visibility to "true" and all other pages'
 // visibility to "false".
-func (p *Pages) SwitchToPage(name string) *Pages {
+func (p *Pages) SwitchToPage(name string) {
 	hasFocus := p.HasFocus()
 
 	p.Lock()
@@ -235,13 +229,12 @@ func (p *Pages) SwitchToPage(name string) *Pages {
 		p.Focus(p.setFocus)
 		p.Lock()
 	}
-	return p
 }
 
 // SendToFront changes the order of the pages such that the page with the given
 // name comes last, causing it to be drawn last with the next update (if
 // visible).
-func (p *Pages) SendToFront(name string) *Pages {
+func (p *Pages) SendToFront(name string) {
 	hasFocus := p.HasFocus()
 
 	p.Lock()
@@ -265,13 +258,12 @@ func (p *Pages) SendToFront(name string) *Pages {
 		p.Focus(p.setFocus)
 		p.Lock()
 	}
-	return p
 }
 
 // SendToBack changes the order of the pages such that the page with the given
 // name comes first, causing it to be drawn first with the next update (if
 // visible).
-func (p *Pages) SendToBack(name string) *Pages {
+func (p *Pages) SendToBack(name string) {
 	hasFocus := p.HasFocus()
 
 	p.Lock()
@@ -295,7 +287,6 @@ func (p *Pages) SendToBack(name string) *Pages {
 		p.Focus(p.setFocus)
 		p.Lock()
 	}
-	return p
 }
 
 // GetFrontPage returns the front-most visible page. If there are no visible

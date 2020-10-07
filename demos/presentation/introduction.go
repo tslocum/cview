@@ -6,15 +6,25 @@ import "gitlab.com/tslocum/cview"
 func Introduction(nextSlide func()) (title string, content cview.Primitive) {
 	list := cview.NewList()
 
+	listText := [][]string{
+		{"A Go package for terminal based UIs", "with a special focus on rich interactive widgets"},
+		{"Based on github.com/gdamore/tcell", "Like termbox but better (see tcell docs)"},
+		{"Designed to be simple", `"Hello world" is 5 lines of code`},
+		{"Good for data entry", `For charts, use "termui" - for low-level views, use "gocui" - ...`},
+		{"Supports context menus", "Right click on one of these items or press Alt+Enter"},
+		{"Extensive documentation", "Demo code is available for each widget"},
+	}
+
 	reset := func() {
-		list.
-			Clear().
-			AddItem(cview.NewListItem("A Go package for terminal based UIs").SetSecondaryText("with a special focus on rich interactive widgets").SetShortcut('1').SetSelectedFunc(nextSlide)).
-			AddItem(cview.NewListItem("Based on github.com/gdamore/tcell").SetSecondaryText("Like termbox but better (see tcell docs)").SetShortcut('2').SetSelectedFunc(nextSlide)).
-			AddItem(cview.NewListItem("Designed to be simple").SetSecondaryText(`"Hello world" is 5 lines of code`).SetShortcut('3').SetSelectedFunc(nextSlide)).
-			AddItem(cview.NewListItem("Good for data entry").SetSecondaryText(`For charts, use "termui" - for low-level views, use "gocui" - ...`).SetShortcut('4').SetSelectedFunc(nextSlide)).
-			AddItem(cview.NewListItem("Supports context menus").SetSecondaryText("Right click on one of these items or press Alt+Enter").SetShortcut('5').SetSelectedFunc(nextSlide)).
-			AddItem(cview.NewListItem("Extensive documentation").SetSecondaryText("Demo code is available for each widget").SetShortcut('6').SetSelectedFunc(nextSlide))
+		list.Clear()
+
+		for i, itemText := range listText {
+			item := cview.NewListItem(itemText[0])
+			item.SetSecondaryText(itemText[1])
+			item.SetShortcut(rune('1' + i))
+			item.SetSelectedFunc(nextSlide)
+			list.AddItem(item)
+		}
 
 		list.ContextMenuList().SetItemEnabled(3, false)
 	}

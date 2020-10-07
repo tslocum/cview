@@ -19,15 +19,15 @@ The [black:red]tags [black:green]look [black:yellow]like [::u]this:
 
 // Colors demonstrates how to use colors.
 func Colors(nextSlide func()) (title string, content cview.Primitive) {
-	tv := cview.NewTextView().
-		SetWordWrap(true).
-		SetDynamicColors(true).
-		SetText(colorsText).
-		SetDoneFunc(func(key tcell.Key) {
-			nextSlide()
-		})
-	tv.
-		SetBorder(true).
-		SetTitle("A [red]c[yellow]o[green]l[darkcyan]o[blue]r[darkmagenta]f[red]u[yellow]l[white] [black:red]c[:yellow]o[:green]l[:darkcyan]o[:blue]r[:darkmagenta]f[:red]u[:yellow]l[white:] [::bu]title")
+	tv := cview.NewTextView()
+	tv.SetBorder(true)
+	tv.SetTitle("A [red]c[yellow]o[green]l[darkcyan]o[blue]r[darkmagenta]f[red]u[yellow]l[white] [black:red]c[:yellow]o[:green]l[:darkcyan]o[:blue]r[:darkmagenta]f[:red]u[:yellow]l[white:] [::bu]title")
+	tv.SetDynamicColors(true)
+	tv.SetWordWrap(true)
+	tv.SetText(colorsText)
+	tv.SetDoneFunc(func(key tcell.Key) {
+		nextSlide()
+	})
+
 	return "Colors", Center(44, 16, tv)
 }

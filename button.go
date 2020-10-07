@@ -34,7 +34,8 @@ type Button struct {
 
 // NewButton returns a new input field.
 func NewButton(label string) *Button {
-	box := NewBox().SetBackgroundColor(Styles.ContrastBackgroundColor)
+	box := NewBox()
+	box.SetBackgroundColor(Styles.ContrastBackgroundColor)
 	box.SetRect(0, 0, TaggedStringWidth(label)+4, 1)
 	return &Button{
 		Box:                    box,
@@ -46,12 +47,11 @@ func NewButton(label string) *Button {
 }
 
 // SetLabel sets the button text.
-func (b *Button) SetLabel(label string) *Button {
+func (b *Button) SetLabel(label string) {
 	b.Lock()
 	defer b.Unlock()
 
 	b.label = []byte(label)
-	return b
 }
 
 // GetLabel returns the button text.
@@ -63,41 +63,37 @@ func (b *Button) GetLabel() string {
 }
 
 // SetLabelColor sets the color of the button text.
-func (b *Button) SetLabelColor(color tcell.Color) *Button {
+func (b *Button) SetLabelColor(color tcell.Color) {
 	b.Lock()
 	defer b.Unlock()
 
 	b.labelColor = color
-	return b
 }
 
 // SetLabelColorFocused sets the color of the button text when the button is
 // in focus.
-func (b *Button) SetLabelColorFocused(color tcell.Color) *Button {
+func (b *Button) SetLabelColorFocused(color tcell.Color) {
 	b.Lock()
 	defer b.Unlock()
 
 	b.labelColorFocused = color
-	return b
 }
 
 // SetBackgroundColorFocused sets the background color of the button text when
 // the button is in focus.
-func (b *Button) SetBackgroundColorFocused(color tcell.Color) *Button {
+func (b *Button) SetBackgroundColorFocused(color tcell.Color) {
 	b.Lock()
 	defer b.Unlock()
 
 	b.backgroundColorFocused = color
-	return b
 }
 
 // SetSelectedFunc sets a handler which is called when the button was selected.
-func (b *Button) SetSelectedFunc(handler func()) *Button {
+func (b *Button) SetSelectedFunc(handler func()) {
 	b.Lock()
 	defer b.Unlock()
 
 	b.selected = handler
-	return b
 }
 
 // SetBlurFunc sets a handler which is called when the user leaves the button.
@@ -107,12 +103,11 @@ func (b *Button) SetSelectedFunc(handler func()) *Button {
 //   - KeyEscape: Leaving the button with no specific direction.
 //   - KeyTab: Move to the next field.
 //   - KeyBacktab: Move to the previous field.
-func (b *Button) SetBlurFunc(handler func(key tcell.Key)) *Button {
+func (b *Button) SetBlurFunc(handler func(key tcell.Key)) {
 	b.Lock()
 	defer b.Unlock()
 
 	b.blur = handler
-	return b
 }
 
 // Draw draws this primitive onto the screen.

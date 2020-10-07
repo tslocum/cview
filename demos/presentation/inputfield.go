@@ -31,9 +31,10 @@ const inputField = `[green]package[white] main
 
 // InputField demonstrates the InputField.
 func InputField(nextSlide func()) (title string, content cview.Primitive) {
-	input := cview.NewInputField().
-		SetLabel("Enter a number: ").
-		SetAcceptanceFunc(cview.InputFieldInteger).SetDoneFunc(func(key tcell.Key) {
+	input := cview.NewInputField()
+	input.SetLabel("Enter a number: ")
+	input.SetAcceptanceFunc(cview.InputFieldInteger)
+	input.SetDoneFunc(func(key tcell.Key) {
 		nextSlide()
 	})
 	return "Input", Code(input, 30, 1, inputField)

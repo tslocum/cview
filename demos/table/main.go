@@ -12,8 +12,10 @@ const loremIpsumText = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
 
 func main() {
 	app := cview.NewApplication()
-	table := cview.NewTable().
-		SetBorders(true)
+	app.EnableMouse(true)
+
+	table := cview.NewTable()
+	table.SetBorders(true)
 	lorem := strings.Split(loremIpsumText, " ")
 	cols, rows := 10, 40
 	word := 0
@@ -23,25 +25,30 @@ func main() {
 			if c < 1 || r < 1 {
 				color = tcell.ColorYellow.TrueColor()
 			}
-			table.SetCell(r, c,
-				cview.NewTableCell(lorem[word]).
-					SetTextColor(color).
-					SetAlign(cview.AlignCenter))
+			cell := cview.NewTableCell(lorem[word])
+			cell.SetTextColor(color)
+			cell.SetAlign(cview.AlignCenter)
+			table.SetCell(r, c, cell)
 			word = (word + 1) % len(lorem)
 		}
 	}
-	table.Select(0, 0).SetFixed(1, 1).SetDoneFunc(func(key tcell.Key) {
+	table.Select(0, 0)
+	table.SetFixed(1, 1)
+	table.SetDoneFunc(func(key tcell.Key) {
 		if key == tcell.KeyEscape {
 			app.Stop()
 		}
 		if key == tcell.KeyEnter {
 			table.SetSelectable(true, true)
 		}
-	}).SetSelectedFunc(func(row int, column int) {
+	})
+	table.SetSelectedFunc(func(row int, column int) {
 		table.GetCell(row, column).SetTextColor(tcell.ColorRed.TrueColor())
 		table.SetSelectable(false, false)
 	})
-	if err := app.SetRoot(table, true).EnableMouse(true).Run(); err != nil {
+
+	app.SetRoot(table, true)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

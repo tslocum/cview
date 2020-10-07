@@ -24,7 +24,10 @@ func TestList(t *testing.T) {
 
 	// Add item 0
 
-	l.AddItem(NewListItem(listTextA).SetSecondaryText(listTextB).SetShortcut('a'))
+	itemA := NewListItem(listTextA)
+	itemA.SetSecondaryText(listTextB)
+	itemA.SetShortcut('a')
+	l.AddItem(itemA)
 	if l.GetItemCount() != 1 {
 		t.Errorf("failed to update List: expected item count 1, got %d", l.GetItemCount())
 	} else if l.GetCurrentItemIndex() != 0 {
@@ -42,7 +45,10 @@ func TestList(t *testing.T) {
 
 	// Add item 1
 
-	l.AddItem(NewListItem(listTextB).SetSecondaryText(listTextC).SetShortcut('a'))
+	itemB := NewListItem(listTextB)
+	itemB.SetSecondaryText(listTextC)
+	itemB.SetShortcut('a')
+	l.AddItem(itemB)
 	if l.GetItemCount() != 2 {
 		t.Errorf("failed to update List: expected item count 1, got %v", l.GetItemCount())
 	} else if l.GetCurrentItemIndex() != 0 {

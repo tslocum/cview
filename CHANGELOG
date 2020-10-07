@@ -4,6 +4,7 @@ v1.5.1 (WIP)
 - Add TableCell.SetBytes, TableCell.GetBytes and TableCell.GetText
 - Allow modification of scroll bar render text
 - Optimize TextView (writing is 90% faster, drawing is 50% faster)
+- Remove return values from methods which return their primitive (breaks chaining)
 
 v1.5.0 (2020-10-03)
 - Add scroll bar to TextView

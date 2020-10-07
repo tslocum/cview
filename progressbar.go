@@ -38,14 +38,16 @@ type ProgressBar struct {
 
 // NewProgressBar returns a new progress bar.
 func NewProgressBar() *ProgressBar {
-	return &ProgressBar{
-		Box:         NewBox().SetBackgroundColor(Styles.PrimitiveBackgroundColor),
+	p := &ProgressBar{
+		Box:         NewBox(),
 		emptyRune:   ' ',
 		emptyColor:  Styles.PrimitiveBackgroundColor,
 		filledRune:  tcell.RuneBlock,
 		filledColor: Styles.PrimaryTextColor,
 		max:         100,
 	}
+	p.SetBackgroundColor(Styles.PrimitiveBackgroundColor)
+	return p
 }
 
 // SetEmptyRune sets the rune used for the empty area of the progress bar.

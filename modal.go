@@ -40,82 +40,81 @@ func NewModal() *Modal {
 		Box:       NewBox(),
 		textColor: Styles.PrimaryTextColor,
 	}
-	m.form = NewForm().
-		SetButtonsAlign(AlignCenter).
-		SetButtonBackgroundColor(Styles.PrimitiveBackgroundColor).
-		SetButtonTextColor(Styles.PrimaryTextColor)
-	m.form.SetBackgroundColor(Styles.ContrastBackgroundColor).SetBorderPadding(0, 0, 0, 0)
+
+	m.form = NewForm()
+	m.form.SetButtonsAlign(AlignCenter)
+	m.form.SetButtonBackgroundColor(Styles.PrimitiveBackgroundColor)
+	m.form.SetButtonTextColor(Styles.PrimaryTextColor)
+	m.form.SetBackgroundColor(Styles.ContrastBackgroundColor)
+	m.form.SetBorderPadding(0, 0, 0, 0)
 	m.form.SetCancelFunc(func() {
 		if m.done != nil {
 			m.done(-1, "")
 		}
 	})
-	m.frame = NewFrame(m.form).SetBorders(0, 0, 1, 0, 0, 0)
-	m.frame.SetBorder(true).
-		SetBackgroundColor(Styles.ContrastBackgroundColor).
-		SetBorderPadding(1, 1, 1, 1)
+
+	m.frame = NewFrame(m.form)
+	m.frame.SetBorder(true)
+	m.frame.SetBorders(0, 0, 1, 0, 0, 0)
+	m.frame.SetBackgroundColor(Styles.ContrastBackgroundColor)
+	m.frame.SetBorderPadding(1, 1, 1, 1)
+
 	m.focus = m
 	return m
 }
 
 // SetBackgroundColor sets the color of the Modal Frame background.
-func (m *Modal) SetBackgroundColor(color tcell.Color) *Modal {
+func (m *Modal) SetBackgroundColor(color tcell.Color) {
 	m.Lock()
 	defer m.Unlock()
 
 	m.form.SetBackgroundColor(color)
 	m.frame.SetBackgroundColor(color)
-	return m
 }
 
 // SetTextColor sets the color of the message text.
-func (m *Modal) SetTextColor(color tcell.Color) *Modal {
+func (m *Modal) SetTextColor(color tcell.Color) {
 	m.Lock()
 	defer m.Unlock()
 
 	m.textColor = color
-	return m
 }
 
 // SetButtonBackgroundColor sets the background color of the buttons.
-func (m *Modal) SetButtonBackgroundColor(color tcell.Color) *Modal {
+func (m *Modal) SetButtonBackgroundColor(color tcell.Color) {
 	m.Lock()
 	defer m.Unlock()
 
 	m.form.SetButtonBackgroundColor(color)
-	return m
 }
 
 // SetButtonTextColor sets the color of the button texts.
-func (m *Modal) SetButtonTextColor(color tcell.Color) *Modal {
+func (m *Modal) SetButtonTextColor(color tcell.Color) {
 	m.Lock()
 	defer m.Unlock()
 
 	m.form.SetButtonTextColor(color)
-	return m
 }
 
 // SetDoneFunc sets a handler which is called when one of the buttons was
 // pressed. It receives the index of the button as well as its label text. The
 // handler is also called when the user presses the Escape key. The index will
 // then be negative and the label text an empty string.
-func (m *Modal) SetDoneFunc(handler func(buttonIndex int, buttonLabel string)) *Modal {
+func (m *Modal) SetDoneFunc(handler func(buttonIndex int, buttonLabel string)) {
 	m.Lock()
 	defer m.Unlock()
 
 	m.done = handler
-	return m
 }
 
 // SetText sets the message text of the window. The text may contain line
 // breaks. Note that words are wrapped, too, based on the final size of the
 // window.
-func (m *Modal) SetText(text string) *Modal {
+func (m *Modal) SetText(text string) {
 	m.Lock()
 	defer m.Unlock()
 
 	m.text = text
-	return m
 }
 
 // GetForm returns the Form embedded in the window. The returned Form may be
@@ -137,7 +136,7 @@ func (m *Modal) GetFrame() *Frame {
 
 // AddButtons adds buttons to the window. There must be at least one button and
 // a "done" handler so the window can be closed again.
-func (m *Modal) AddButtons(labels []string) *Modal {
+func (m *Modal) AddButtons(labels []string) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -160,25 +159,22 @@ func (m *Modal) AddButtons(labels []string) *Modal {
 			})
 		}(index, label)
 	}
-	return m
 }
 
 // ClearButtons removes all buttons from the window.
-func (m *Modal) ClearButtons() *Modal {
+func (m *Modal) ClearButtons() {
 	m.Lock()
 	defer m.Unlock()
 
 	m.form.ClearButtons()
-	return m
 }
 
 // SetFocus shifts the focus to the button with the given index.
-func (m *Modal) SetFocus(index int) *Modal {
+func (m *Modal) SetFocus(index int) {
 	m.Lock()
 	defer m.Unlock()
 
 	m.form.SetFocus(index)
-	return m
 }
 
 // Focus is called when this primitive receives focus.

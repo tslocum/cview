@@ -17,12 +17,12 @@ type company struct {
 
 func main() {
 	app := cview.NewApplication()
-	inputField := cview.NewInputField().
-		SetLabel("Enter a company name: ").
-		SetFieldWidth(30).
-		SetDoneFunc(func(key tcell.Key) {
-			app.Stop()
-		})
+	inputField := cview.NewInputField()
+	inputField.SetLabel("Enter a company name: ")
+	inputField.SetFieldWidth(30)
+	inputField.SetDoneFunc(func(key tcell.Key) {
+		app.Stop()
+	})
 
 	// Set up autocomplete function.
 	var mutex sync.RWMutex
@@ -75,7 +75,8 @@ func main() {
 		return nil
 	})
 
-	if err := app.SetRoot(inputField, true).Run(); err != nil {
+	app.SetRoot(inputField, true)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

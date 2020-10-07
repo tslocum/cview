@@ -36,31 +36,28 @@ func NewWindow(primitive Primitive) *Window {
 }
 
 // SetPosition sets the position of the window.
-func (w *Window) SetPosition(x, y int) *Window {
+func (w *Window) SetPosition(x, y int) {
 	w.Lock()
 	defer w.Unlock()
 
 	w.x, w.y = x, y
-	return w
 }
 
 // SetSize sets the size of the window.
-func (w *Window) SetSize(width, height int) *Window {
+func (w *Window) SetSize(width, height int) {
 	w.Lock()
 	defer w.Unlock()
 
 	w.width, w.height = width, height
-	return w
 }
 
 // SetFullscreen sets the flag indicating whether or not the the window should
 // be drawn fullscreen.
-func (w *Window) SetFullscreen(fullscreen bool) *Window {
+func (w *Window) SetFullscreen(fullscreen bool) {
 	w.Lock()
 	defer w.Unlock()
 
 	w.fullscreen = fullscreen
-	return w
 }
 
 // Focus is called when this primitive receives focus.

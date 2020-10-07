@@ -249,8 +249,8 @@ const tableSelectCell = `[green]func[white] [yellow]main[white]() {
 
 // Table demonstrates the Table.
 func Table(nextSlide func()) (title string, content cview.Primitive) {
-	table := cview.NewTable().
-		SetFixed(1, 1)
+	table := cview.NewTable()
+	table.SetFixed(1, 1)
 	for row, line := range strings.Split(tableData, "\n") {
 		for column, cell := range strings.Split(line, "|") {
 			color := tcell.ColorWhite.TrueColor()
@@ -265,68 +265,69 @@ func Table(nextSlide func()) (title string, content cview.Primitive) {
 			} else if column == 0 || column >= 4 {
 				align = cview.AlignRight
 			}
-			tableCell := cview.NewTableCell(cell).
-				SetTextColor(color).
-				SetAlign(align).
-				SetSelectable(row != 0 && column != 0)
+			tableCell := cview.NewTableCell(cell)
+			tableCell.SetTextColor(color)
+			tableCell.SetAlign(align)
+			tableCell.SetSelectable(row != 0 && column != 0)
 			if column >= 1 && column <= 3 {
 				tableCell.SetExpansion(1)
 			}
 			table.SetCell(row, column, tableCell)
 		}
 	}
-	table.SetBorder(true).SetTitle("Table")
+	table.SetBorder(true)
+	table.SetTitle("Table")
 
-	code := cview.NewTextView().
-		SetWrap(false).
-		SetDynamicColors(true)
+	code := cview.NewTextView()
+	code.SetWrap(false)
+	code.SetDynamicColors(true)
 	code.SetBorderPadding(1, 1, 2, 0)
 
 	list := cview.NewList()
 
 	basic := func() {
-		table.SetBorders(false).
-			SetSelectable(false, false).
-			SetSeparator(' ')
+		table.SetBorders(false)
+		table.SetSelectable(false, false)
+		table.SetSeparator(' ')
 		code.Clear()
 		fmt.Fprint(code, tableBasic)
 	}
 
 	separator := func() {
-		table.SetBorders(false).
-			SetSelectable(false, false).
-			SetSeparator(cview.Borders.Vertical)
+		table.SetBorders(false)
+		table.SetSelectable(false, false)
+		table.SetSeparator(cview.Borders.Vertical)
 		code.Clear()
 		fmt.Fprint(code, tableSeparator)
 	}
 
 	borders := func() {
-		table.SetBorders(true).
-			SetSelectable(false, false)
+		table.SetBorders(true)
+		table.SetSelectable(false, false)
 		code.Clear()
 		fmt.Fprint(code, tableBorders)
 	}
 
 	selectRow := func() {
-		table.SetBorders(false).
-			SetSelectable(true, false).
-			SetSeparator(' ')
+		table.SetBorders(false)
+		table.SetSelectable(true, false)
+		table.SetSeparator(' ')
 		code.Clear()
 		fmt.Fprint(code, tableSelectRow)
 	}
 
 	selectColumn := func() {
-		table.SetBorders(false).
-			SetSelectable(false, true).
-			SetSeparator(' ')
+		table.SetBorders(false)
+		table.SetSelectable(false, true)
+		table.SetSeparator(' ')
 		code.Clear()
 		fmt.Fprint(code, tableSelectColumn)
 	}
 
 	selectCell := func() {
-		table.SetBorders(false).
-			SetSelectable(true, true).
-			SetSeparator(' ')
+		table.SetBorders(false)
+		table.SetSelectable(true, true)
+		table.SetSeparator(' ')
 		code.Clear()
 		fmt.Fprint(code, tableSelectCell)
 	}
@@ -335,28 +336,47 @@ func Table(nextSlide func()) (title string, content cview.Primitive) {
 		app.SetFocus(table)
 		table.SetDoneFunc(func(key tcell.Key) {
 			app.SetFocus(list)
-		}).SetSelectedFunc(func(row int, column int) {
+		})
+		table.SetSelectedFunc(func(row int, column int) {
 			app.SetFocus(list)
 		})
 	}
 
-	list.ShowSecondaryText(false).
-		AddItem(cview.NewListItem("Basic table").SetShortcut('b').SetSelectedFunc(basic)).
-		AddItem(cview.NewListItem("Table with separator").SetShortcut('s').SetSelectedFunc(separator)).
-		AddItem(cview.NewListItem("Table with borders").SetShortcut('o').SetSelectedFunc(borders)).
-		AddItem(cview.NewListItem("Selectable rows").SetShortcut('r').SetSelectedFunc(selectRow)).
-		AddItem(cview.NewListItem("Selectable columns").SetShortcut('c').SetSelectedFunc(selectColumn)).
-		AddItem(cview.NewListItem("Selectable cells").SetShortcut('l').SetSelectedFunc(selectCell)).
-		AddItem(cview.NewListItem("Navigate").SetShortcut('n').SetSelectedFunc(navigate)).
-		AddItem(cview.NewListItem("Next slide").SetShortcut('x').SetSelectedFunc(nextSlide))
+	list.ShowSecondaryText(false)
 	list.SetBorderPadding(1, 1, 2, 2)
+
+	var demoTableText = []struct {
+		text     string
+		shortcut rune
+		selected func()
+	}{
+		{"Basic table", 'b', basic},
+		{"Table with separator", 's', separator},
+		{"Table with borders", 'o', borders},
+		{"Selectable rows", 'r', selectRow},
+		{"Selectable columns", 'c', selectColumn},
+		{"Selectable cells", 'l', selectCell},
+		{"Navigate", 'n', navigate},
+		{"Next slide", 'x', nextSlide},
+	}
+
+	for _, tableText := range demoTableText {
+		item := cview.NewListItem(tableText.text)
+		item.SetShortcut(tableText.shortcut)
+		item.SetSelectedFunc(tableText.selected)
+		list.AddItem(item)
+	}
 
 	basic()
 
-	return "Table", cview.NewFlex().
-		AddItem(cview.NewFlex().
-			SetDirection(cview.FlexRow).
-			AddItem(list, 10, 1, true).
-			AddItem(table, 0, 1, false), 0, 1, true).
-		AddItem(code, codeWidth, 1, false)
+	subFlex := cview.NewFlex()
+	subFlex.SetDirection(cview.FlexRow)
+	subFlex.AddItem(list, 10, 1, true)
+	subFlex.AddItem(table, 0, 1, false)
+
+	flex := cview.NewFlex()
+	flex.AddItem(subFlex, 0, 1, true)
+	flex.AddItem(code, codeWidth, 1, false)
+
+	return "Table", flex
 }

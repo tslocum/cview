@@ -2,23 +2,32 @@
 package main
 
 import (
+	"fmt"
+
 	"gitlab.com/tslocum/cview"
 )
 
 func main() {
 	app := cview.NewApplication()
+	app.EnableMouse(true)
+
 	list := cview.NewList()
 
 	reset := func() {
-		list.
-			Clear().
-			AddItem(cview.NewListItem("List item 1").SetSecondaryText("Some explanatory text").SetShortcut('a')).
-			AddItem(cview.NewListItem("List item 2").SetSecondaryText("Some explanatory text").SetShortcut('b')).
-			AddItem(cview.NewListItem("List item 3").SetSecondaryText("Some explanatory text").SetShortcut('c')).
-			AddItem(cview.NewListItem("List item 4").SetSecondaryText("Some explanatory text").SetShortcut('d')).
-			AddItem(cview.NewListItem("Quit").SetSecondaryText("Press to exit").SetShortcut('q').SetSelectedFunc(func() {
-				app.Stop()
-			}))
+		list.Clear()
+		for i := 0; i < 4; i++ {
+			item := cview.NewListItem(fmt.Sprintf("List item %d", i+1))
+			item.SetSecondaryText("Some explanatory text")
+			item.SetShortcut(rune('a' + i))
+			list.AddItem(item)
+		}
+		quitItem := cview.NewListItem("Quit")
+		quitItem.SetSecondaryText("Press to exit")
+		quitItem.SetShortcut('q')
+		quitItem.SetSelectedFunc(func() {
+			app.Stop()
+		})
+		list.AddItem(quitItem)
 
 		list.ContextMenuList().SetItemEnabled(3, false)
 	}
@@ -52,7 +61,8 @@ func main() {
 	})
 
 	reset()
-	if err := app.SetRoot(list, true).EnableMouse(true).Run(); err != nil {
+	app.SetRoot(list, true)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

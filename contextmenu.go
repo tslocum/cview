@@ -28,18 +28,17 @@ func (c *ContextMenu) initializeList() {
 		return
 	}
 
-	c.list = NewList().
-		ShowSecondaryText(false).
-		SetHover(true).
-		SetWrapAround(true)
-	c.list.
-		ShowFocus(false).
-		SetBorder(true).
-		SetBorderPadding(
-			Styles.ContextMenuPaddingTop,
-			Styles.ContextMenuPaddingBottom,
-			Styles.ContextMenuPaddingLeft,
-			Styles.ContextMenuPaddingRight)
+	c.list = NewList()
+	c.list.ShowSecondaryText(false)
+	c.list.SetHover(true)
+	c.list.SetWrapAround(true)
+	c.list.ShowFocus(false)
+	c.list.SetBorder(true)
+	c.list.SetBorderPadding(
+		Styles.ContextMenuPaddingTop,
+		Styles.ContextMenuPaddingBottom,
+		Styles.ContextMenuPaddingLeft,
+		Styles.ContextMenuPaddingRight)
 }
 
 // ContextMenuList returns the underlying List of the context menu.
@@ -54,21 +53,23 @@ func (c *ContextMenu) ContextMenuList() *List {
 
 // AddContextItem adds an item to the context menu. Adding an item with no text
 // or shortcut will add a divider.
-func (c *ContextMenu) AddContextItem(text string, shortcut rune, selected func(index int)) *ContextMenu {
+func (c *ContextMenu) AddContextItem(text string, shortcut rune, selected func(index int)) {
 	c.l.Lock()
 	defer c.l.Unlock()
 
 	c.initializeList()
 
-	c.list.AddItem(NewListItem(text).SetShortcut(shortcut).SetSelectedFunc(c.wrap(selected)))
+	item := NewListItem(text)
+	item.SetShortcut(shortcut)
+	item.SetSelectedFunc(c.wrap(selected))
+
+	c.list.AddItem(item)
 	if text == "" && shortcut == 0 {
 		c.list.Lock()
 		index := len(c.list.items) - 1
 		c.list.items[index].enabled = false
 		c.list.Unlock()
 	}
-
-	return c
 }
 
 func (c *ContextMenu) wrap(f func(index int)) func() {
@@ -78,27 +79,24 @@ func (c *ContextMenu) wrap(f func(index int)) func() {
 }
 
 // ClearContextMenu removes all items from the context menu.
-func (c *ContextMenu) ClearContextMenu() *ContextMenu {
+func (c *ContextMenu) ClearContextMenu() {
 	c.l.Lock()
 	defer c.l.Unlock()
 
 	c.initializeList()
 
 	c.list.Clear()
-
-	return c
 }
 
 // SetContextSelectedFunc sets the function which is called when the user
 // selects a context menu item. The function receives the item's index in the
 // menu (starting with 0), its text and its shortcut rune. SetSelectedFunc must
 // be called before the context menu is shown.
-func (c *ContextMenu) SetContextSelectedFunc(handler func(index int, text string, shortcut rune)) *ContextMenu {
+func (c *ContextMenu) SetContextSelectedFunc(handler func(index int, text string, shortcut rune)) {
 	c.l.Lock()
 	defer c.l.Unlock()
 
 	c.selected = handler
-	return c
 }
 
 // ShowContextMenu shows the context menu. Provide -1 for both to position on
@@ -158,7 +156,8 @@ func (c *ContextMenu) show(item int, x int, y int, setFocus func(Primitive)) {
 		} else {
 			c.l.Unlock()
 		}
-	}).SetDoneFunc(func() {
+	})
+	c.list.SetDoneFunc(func() {
 		c.l.Lock()
 		defer c.l.Unlock()
 

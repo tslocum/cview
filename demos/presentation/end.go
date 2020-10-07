@@ -9,7 +9,8 @@ import (
 
 // End shows the final slide.
 func End(nextSlide func()) (title string, content cview.Primitive) {
-	textView := cview.NewTextView().SetDoneFunc(func(key tcell.Key) {
+	textView := cview.NewTextView()
+	textView.SetDoneFunc(func(key tcell.Key) {
 		nextSlide()
 	})
 	url := "https://gitlab.com/tslocum/cview"

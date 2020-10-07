@@ -33,30 +33,32 @@ func Cover(nextSlide func()) (title string, content cview.Primitive) {
 			logoWidth = len(line)
 		}
 	}
-	logoBox := cview.NewTextView().
-		SetTextColor(tcell.ColorGreen.TrueColor()).
-		SetDoneFunc(func(key tcell.Key) {
-			nextSlide()
-		})
+	logoBox := cview.NewTextView()
+	logoBox.SetTextColor(tcell.ColorGreen.TrueColor())
+	logoBox.SetDoneFunc(func(key tcell.Key) {
+		nextSlide()
+	})
 	fmt.Fprint(logoBox, logo)
 
 	// Create a frame for the subtitle and navigation infos.
-	frame := cview.NewFrame(cview.NewBox()).
-		SetBorders(0, 0, 0, 0, 0, 0).
-		AddText(subtitle, true, cview.AlignCenter, tcell.ColorWhite.TrueColor()).
-		AddText("", true, cview.AlignCenter, tcell.ColorWhite.TrueColor()).
-		AddText(mouse, true, cview.AlignCenter, tcell.ColorDarkMagenta.TrueColor()).
-		AddText(navigation, true, cview.AlignCenter, tcell.ColorDarkMagenta.TrueColor())
+	frame := cview.NewFrame(cview.NewBox())
+	frame.SetBorders(0, 0, 0, 0, 0, 0)
+	frame.AddText(subtitle, true, cview.AlignCenter, tcell.ColorWhite.TrueColor())
+	frame.AddText("", true, cview.AlignCenter, tcell.ColorWhite.TrueColor())
+	frame.AddText(mouse, true, cview.AlignCenter, tcell.ColorDarkMagenta.TrueColor())
+	frame.AddText(navigation, true, cview.AlignCenter, tcell.ColorDarkMagenta.TrueColor())
 
 	// Create a Flex layout that centers the logo and subtitle.
-	flex := cview.NewFlex().
-		SetDirection(cview.FlexRow).
-		AddItem(cview.NewBox(), 0, 7, false).
-		AddItem(cview.NewFlex().
-			AddItem(cview.NewBox(), 0, 1, false).
-			AddItem(logoBox, logoWidth, 1, true).
-			AddItem(cview.NewBox(), 0, 1, false), logoHeight, 1, true).
-		AddItem(frame, 0, 10, false)
+	subFlex := cview.NewFlex()
+	subFlex.AddItem(cview.NewBox(), 0, 1, false)
+	subFlex.AddItem(logoBox, logoWidth, 1, true)
+	subFlex.AddItem(cview.NewBox(), 0, 1, false)
+
+	flex := cview.NewFlex()
+	flex.SetDirection(cview.FlexRow)
+	flex.AddItem(cview.NewBox(), 0, 7, false)
+	flex.AddItem(subFlex, logoHeight, 1, true)
+	flex.AddItem(frame, 0, 10, false)
 
 	return "Start", flex
 }
