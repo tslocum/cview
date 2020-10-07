@@ -253,7 +253,7 @@ func decomposeText(text []byte, findColors, findRegions bool) (colorIndices [][]
 	var from int
 	buf := make([]byte, 0, len(text))
 	for _, indices := range allIndices {
-		buf = append(buf, []byte(text[from:indices[0]])...)
+		buf = append(buf, text[from:indices[0]]...)
 		from = indices[1]
 	}
 	buf = append(buf, text[from:]...)
@@ -564,6 +564,16 @@ func WordWrap(text []byte, width int) (lines [][]byte) {
 	}
 
 	return
+}
+
+// EscapeBytes escapes the given text such that color and/or region tags are not
+// recognized and substituted by the print functions of this package. For
+// example, to include a tag-like string in a box title or in a TextView:
+//
+//   box.SetTitle(cview.Escape("[squarebrackets]"))
+//   fmt.Fprint(textView, cview.EscapeBytes(`["quoted"]`))
+func EscapeBytes(text []byte) []byte {
+	return nonEscapePattern.ReplaceAll(text, []byte("$1[]"))
 }
 
 // Escape escapes the given text such that color and/or region tags are not

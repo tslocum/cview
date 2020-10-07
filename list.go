@@ -909,7 +909,7 @@ func (l *List) Draw(screen tcell.Screen) {
 			}
 
 			// Main text.
-			Print(screen, []byte(item.mainText), x, y, width, AlignLeft, tcell.ColorGray.TrueColor())
+			Print(screen, item.mainText, x, y, width, AlignLeft, tcell.ColorGray.TrueColor())
 
 			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
 			y++
@@ -922,7 +922,7 @@ func (l *List) Draw(screen tcell.Screen) {
 		}
 
 		// Main text.
-		Print(screen, []byte(item.mainText), x, y, width, AlignLeft, l.mainTextColor)
+		Print(screen, item.mainText, x, y, width, AlignLeft, l.mainTextColor)
 
 		// Background color of selected text.
 		if index == l.currentItem && (!l.selectedFocusOnly || hasFocus) {
@@ -954,7 +954,7 @@ func (l *List) Draw(screen tcell.Screen) {
 
 		// Secondary text.
 		if l.showSecondaryText {
-			Print(screen, []byte(item.secondaryText), x, y, width, AlignLeft, l.secondaryTextColor)
+			Print(screen, item.secondaryText, x, y, width, AlignLeft, l.secondaryTextColor)
 
 			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
 

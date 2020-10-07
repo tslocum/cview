@@ -1,9 +1,9 @@
 package cview
 
 import (
+	"bytes"
 	"math"
 	"regexp"
-	"strings"
 	"sync"
 	"unicode/utf8"
 
@@ -33,13 +33,13 @@ type InputField struct {
 	*Box
 
 	// The text that was entered.
-	text string
+	text []byte
 
 	// The text to be displayed before the input area.
-	label string
+	label []byte
 
 	// The text to be displayed in the input area when "text" is empty.
-	placeholder string
+	placeholder []byte
 
 	// The label color.
 	labelColor tcell.Color
@@ -84,7 +84,7 @@ type InputField struct {
 	fieldNoteTextColor tcell.Color
 
 	// The note to show below the input field.
-	fieldNote string
+	fieldNote []byte
 
 	// The screen width of the label area. A value of 0 means use the width of
 	// the label text.
@@ -113,7 +113,7 @@ type InputField struct {
 	autocompleteList *List
 
 	// The suggested completion of the current autocomplete ListItem.
-	autocompleteListSuggestion string
+	autocompleteListSuggestion []byte
 
 	// An optional function which may reject the last character that was entered.
 	accept func(text string, ch rune) bool
@@ -164,7 +164,7 @@ func NewInputField() *InputField {
 func (i *InputField) SetText(text string) *InputField {
 	i.Lock()
 
-	i.text = text
+	i.text = []byte(text)
 	i.cursorPos = len(text)
 	if i.changed != nil {
 		i.Unlock()
@@ -181,7 +181,7 @@ func (i *InputField) GetText() string {
 	i.RLock()
 	defer i.RUnlock()
 
-	return i.text
+	return string(i.text)
 }
 
 // SetLabel sets the text to be displayed before the input area.
@@ -189,7 +189,7 @@ func (i *InputField) SetLabel(label string) *InputField {
 	i.Lock()
 	defer i.Unlock()
 
-	i.label = label
+	i.label = []byte(label)
 	return i
 }
 
@@ -198,7 +198,7 @@ func (i *InputField) GetLabel() string {
 	i.RLock()
 	defer i.RUnlock()
 
-	return i.label
+	return string(i.label)
 }
 
 // SetLabelWidth sets the screen width of the label. A value of 0 will cause the
@@ -216,7 +216,7 @@ func (i *InputField) SetPlaceholder(text string) *InputField {
 	i.Lock()
 	defer i.Unlock()
 
-	i.placeholder = text
+	i.placeholder = []byte(text)
 	return i
 }
 
@@ -358,7 +358,7 @@ func (i *InputField) SetFieldNote(note string) *InputField {
 	i.Lock()
 	defer i.Unlock()
 
-	i.fieldNote = note
+	i.fieldNote = []byte(note)
 	return i
 }
 
@@ -367,7 +367,7 @@ func (i *InputField) ResetFieldNote() *InputField {
 	i.Lock()
 	defer i.Unlock()
 
-	i.fieldNote = ""
+	i.fieldNote = nil
 	return i
 }
 
@@ -393,7 +393,7 @@ func (i *InputField) GetFieldWidth() int {
 func (i *InputField) GetFieldHeight() int {
 	i.RLock()
 	defer i.RUnlock()
-	if i.fieldNote == "" {
+	if len(i.fieldNote) == 0 {
 		return 1
 	}
 	return 2
@@ -457,12 +457,12 @@ func (i *InputField) Autocomplete() *InputField {
 	i.Unlock()
 
 	// Do we have any autocomplete entries?
-	entries := i.autocomplete(i.text)
+	entries := i.autocomplete(string(i.text))
 	if len(entries) == 0 {
 		// No entries, no list.
 		i.Lock()
 		i.autocompleteList = nil
-		i.autocompleteListSuggestion = ""
+		i.autocompleteListSuggestion = nil
 		i.Unlock()
 		return i
 	}
@@ -488,7 +488,7 @@ func (i *InputField) Autocomplete() *InputField {
 	for index, entry := range entries {
 		entry.enabled = true
 		i.autocompleteList.AddItem(entry)
-		if currentEntry < 0 && entry.GetMainText() == i.text {
+		if currentEntry < 0 && entry.GetMainText() == string(i.text) {
 			currentEntry = index
 		}
 	}
@@ -505,14 +505,14 @@ func (i *InputField) Autocomplete() *InputField {
 // autocompleteChanged gets called when another item in the
 // autocomplete list has been selected.
 func (i *InputField) autocompleteChanged(_ int, item *ListItem) {
-	mainText := item.GetMainText()
-	secondaryText := item.GetSecondaryText()
-	if len(secondaryText) > 0 && len(i.text) < len(secondaryText) {
+	mainText := item.GetMainBytes()
+	secondaryText := item.GetSecondaryBytes()
+	if len(i.text) < len(secondaryText) {
 		i.autocompleteListSuggestion = secondaryText[len(i.text):]
-	} else if len(mainText) > len(i.text)+1 {
-		i.autocompleteListSuggestion = mainText[len(i.text)+1:]
+	} else if len(i.text) < len(mainText) {
+		i.autocompleteListSuggestion = mainText[len(i.text):]
 	} else {
-		i.autocompleteListSuggestion = ""
+		i.autocompleteListSuggestion = nil
 	}
 }
 
@@ -616,10 +616,10 @@ func (i *InputField) Draw(screen tcell.Screen) {
 		if labelWidth > rightLimit-x {
 			labelWidth = rightLimit - x
 		}
-		Print(screen, []byte(i.label), x, y, labelWidth, AlignLeft, labelColor)
+		Print(screen, i.label, x, y, labelWidth, AlignLeft, labelColor)
 		x += labelWidth
 	} else {
-		_, drawnWidth := Print(screen, []byte(i.label), x, y, rightLimit-x, AlignLeft, labelColor)
+		_, drawnWidth := Print(screen, i.label, x, y, rightLimit-x, AlignLeft, labelColor)
 		x += drawnWidth
 	}
 
@@ -640,26 +640,26 @@ func (i *InputField) Draw(screen tcell.Screen) {
 	// Text.
 	var cursorScreenPos int
 	text := i.text
-	if text == "" && i.placeholder != "" {
+	if len(text) == 0 && len(i.placeholder) > 0 {
 		// Draw placeholder text.
 		placeholderTextColor := i.placeholderTextColor
 		if i.GetFocusable().HasFocus() && i.placeholderTextColorFocused != ColorUnset {
 			placeholderTextColor = i.placeholderTextColorFocused
 		}
-		Print(screen, []byte(Escape(i.placeholder)), x, y, fieldWidth, AlignLeft, placeholderTextColor)
+		Print(screen, EscapeBytes(i.placeholder), x, y, fieldWidth, AlignLeft, placeholderTextColor)
 		i.offset = 0
 	} else {
 		// Draw entered text.
 		if i.maskCharacter > 0 {
-			text = strings.Repeat(string(i.maskCharacter), utf8.RuneCountInString(i.text))
+			text = bytes.Repeat([]byte(string(i.maskCharacter)), utf8.RuneCount(i.text))
 		}
-		drawnText := ""
-		if fieldWidth >= runewidth.StringWidth(text) {
+		var drawnText []byte
+		if fieldWidth >= runewidth.StringWidth(string(text)) {
 			// We have enough space for the full text.
-			drawnText = Escape(text)
-			Print(screen, []byte(drawnText), x, y, fieldWidth, AlignLeft, fieldTextColor)
+			drawnText = EscapeBytes(text)
+			Print(screen, drawnText, x, y, fieldWidth, AlignLeft, fieldTextColor)
 			i.offset = 0
-			iterateString(text, func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
+			iterateString(string(text), func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
 				if textPos >= i.cursorPos {
 					return true
 				}
@@ -677,11 +677,11 @@ func (i *InputField) Draw(screen tcell.Screen) {
 			var shiftLeft int
 			if i.offset > i.cursorPos {
 				i.offset = i.cursorPos
-			} else if subWidth := runewidth.StringWidth(text[i.offset:i.cursorPos]); subWidth > fieldWidth-1 {
+			} else if subWidth := runewidth.StringWidth(string(text[i.offset:i.cursorPos])); subWidth > fieldWidth-1 {
 				shiftLeft = subWidth - fieldWidth + 1
 			}
 			currentOffset := i.offset
-			iterateString(text, func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
+			iterateString(string(text), func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
 				if textPos >= currentOffset {
 					if shiftLeft > 0 {
 						i.offset = textPos + textWidth
@@ -695,18 +695,18 @@ func (i *InputField) Draw(screen tcell.Screen) {
 				}
 				return false
 			})
-			drawnText = Escape(text[i.offset:])
-			Print(screen, []byte(drawnText), x, y, fieldWidth, AlignLeft, fieldTextColor)
+			drawnText = EscapeBytes(text[i.offset:])
+			Print(screen, drawnText, x, y, fieldWidth, AlignLeft, fieldTextColor)
 		}
 		// Draw suggestion
-		if i.maskCharacter == 0 && i.autocompleteListSuggestion != "" {
-			Print(screen, []byte(i.autocompleteListSuggestion), x+runewidth.StringWidth(drawnText), y, fieldWidth-runewidth.StringWidth(drawnText), AlignLeft, i.autocompleteSuggestionTextColor)
+		if i.maskCharacter == 0 && len(i.autocompleteListSuggestion) > 0 {
+			Print(screen, i.autocompleteListSuggestion, x+runewidth.StringWidth(string(drawnText)), y, fieldWidth-runewidth.StringWidth(string(drawnText)), AlignLeft, i.autocompleteSuggestionTextColor)
 		}
 	}
 
 	// Draw field note
-	if i.fieldNote != "" {
-		Print(screen, []byte(i.fieldNote), x, y+1, fieldWidth, AlignLeft, i.fieldNoteTextColor)
+	if len(i.fieldNote) > 0 {
+		Print(screen, i.fieldNote, x, y+1, fieldWidth, AlignLeft, i.fieldNoteTextColor)
 	}
 
 	// Draw autocomplete list.
@@ -760,10 +760,10 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 			newText := i.text
 			i.Unlock()
 
-			if newText != currentText {
+			if !bytes.Equal(newText, currentText) {
 				i.Autocomplete()
 				if i.changed != nil {
-					i.changed(i.text)
+					i.changed(string(i.text))
 				}
 			}
 		}()
@@ -772,29 +772,29 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 		home := func() { i.cursorPos = 0 }
 		end := func() { i.cursorPos = len(i.text) }
 		moveLeft := func() {
-			iterateStringReverse(i.text[:i.cursorPos], func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
+			iterateStringReverse(string(i.text[:i.cursorPos]), func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
 				i.cursorPos -= textWidth
 				return true
 			})
 		}
 		moveRight := func() {
-			iterateString(i.text[i.cursorPos:], func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
+			iterateString(string(i.text[i.cursorPos:]), func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
 				i.cursorPos += textWidth
 				return true
 			})
 		}
 		moveWordLeft := func() {
-			i.cursorPos = len(regexRightWord.ReplaceAllString(i.text[:i.cursorPos], ""))
+			i.cursorPos = len(regexRightWord.ReplaceAll(i.text[:i.cursorPos], nil))
 		}
 		moveWordRight := func() {
-			i.cursorPos = len(i.text) - len(regexLeftWord.ReplaceAllString(i.text[i.cursorPos:], ""))
+			i.cursorPos = len(i.text) - len(regexLeftWord.ReplaceAll(i.text[i.cursorPos:], nil))
 		}
 
 		// Add character function. Returns whether or not the rune character is
 		// accepted.
 		add := func(r rune) bool {
-			newText := i.text[:i.cursorPos] + string(r) + i.text[i.cursorPos:]
-			if i.accept != nil && !i.accept(newText, r) {
+			newText := append(append(i.text[:i.cursorPos], []byte(string(r))...), i.text[i.cursorPos:]...)
+			if i.accept != nil && !i.accept(string(newText), r) {
 				return false
 			}
 			i.text = newText
@@ -840,17 +840,17 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 				}
 			}
 		case tcell.KeyCtrlU: // Delete all.
-			i.text = ""
+			i.text = nil
 			i.cursorPos = 0
 		case tcell.KeyCtrlK: // Delete until the end of the line.
 			i.text = i.text[:i.cursorPos]
 		case tcell.KeyCtrlW: // Delete last word.
-			newText := regexRightWord.ReplaceAllString(i.text[:i.cursorPos], "") + i.text[i.cursorPos:]
+			newText := append(regexRightWord.ReplaceAll(i.text[:i.cursorPos], nil), i.text[i.cursorPos:]...)
 			i.cursorPos -= len(i.text) - len(newText)
 			i.text = newText
 		case tcell.KeyBackspace, tcell.KeyBackspace2: // Delete character before the cursor.
-			iterateStringReverse(i.text[:i.cursorPos], func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
-				i.text = i.text[:textPos] + i.text[textPos+textWidth:]
+			iterateStringReverse(string(i.text[:i.cursorPos]), func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
+				i.text = append(i.text[:textPos], i.text[textPos+textWidth:]...)
 				i.cursorPos -= textWidth
 				return true
 			})
@@ -858,8 +858,8 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 				i.offset = 0
 			}
 		case tcell.KeyDelete: // Delete character after the cursor.
-			iterateString(i.text[i.cursorPos:], func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
-				i.text = i.text[:i.cursorPos] + i.text[i.cursorPos+textWidth:]
+			iterateString(string(i.text[i.cursorPos:]), func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
+				i.text = append(i.text[:i.cursorPos], i.text[i.cursorPos+textWidth:]...)
 				return true
 			})
 		case tcell.KeyLeft:
@@ -889,7 +889,7 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 				i.SetText(selectionText)
 				i.Lock()
 				i.autocompleteList = nil
-				i.autocompleteListSuggestion = ""
+				i.autocompleteListSuggestion = nil
 				i.Unlock()
 			} else {
 				i.Unlock()
@@ -899,7 +899,7 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 		case tcell.KeyEscape:
 			if i.autocompleteList != nil {
 				i.autocompleteList = nil
-				i.autocompleteListSuggestion = ""
+				i.autocompleteListSuggestion = nil
 				i.Unlock()
 			} else {
 				i.Unlock()
@@ -952,7 +952,7 @@ func (i *InputField) MouseHandler() func(action MouseAction, event *tcell.EventM
 		if action == MouseLeftClick && y == rectY {
 			// Determine where to place the cursor.
 			if x >= i.fieldX {
-				if !iterateString(i.text, func(main rune, comb []rune, textPos int, textWidth int, screenPos int, screenWidth int) bool {
+				if !iterateString(string(i.text), func(main rune, comb []rune, textPos int, textWidth int, screenPos int, screenWidth int) bool {
 					if x-i.fieldX < screenPos+screenWidth {
 						i.cursorPos = textPos
 						return true
