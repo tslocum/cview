@@ -1,8 +1,8 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
-	"strings"
 
 	"github.com/gdamore/tcell/v2"
 	"gitlab.com/tslocum/cview"
@@ -251,8 +251,8 @@ const tableSelectCell = `[green]func[white] [yellow]main[white]() {
 func Table(nextSlide func()) (title string, content cview.Primitive) {
 	table := cview.NewTable().
 		SetFixed(1, 1)
-	for row, line := range strings.Split(tableData, "\n") {
-		for column, cell := range strings.Split(line, "|") {
+	for row, line := range bytes.Split([]byte(tableData), []byte("\n")) {
+		for column, cell := range bytes.Split(line, []byte("|")) {
 			color := tcell.ColorWhite.TrueColor()
 			if row == 0 {
 				color = tcell.ColorYellow.TrueColor()

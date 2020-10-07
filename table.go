@@ -1,6 +1,7 @@
 package cview
 
 import (
+	"bytes"
 	"sort"
 	"sync"
 
@@ -16,7 +17,7 @@ type TableCell struct {
 	Reference interface{}
 
 	// The text to be displayed in the table cell.
-	Text string
+	Text []byte
 
 	// The alignment of the cell text. One of AlignLeft (default), AlignCenter,
 	// or AlignRight.
@@ -52,7 +53,7 @@ type TableCell struct {
 // NewTableCell returns a new table cell with sensible defaults. That is, left
 // aligned text with the primary text color (see Styles) and a transparent
 // background (using the background of the Table).
-func NewTableCell(text string) *TableCell {
+func NewTableCell(text []byte) *TableCell {
 	return &TableCell{
 		Text:            text,
 		Align:           AlignLeft,
@@ -61,13 +62,31 @@ func NewTableCell(text string) *TableCell {
 	}
 }
 
-// SetText sets the cell's text.
-func (c *TableCell) SetText(text string) *TableCell {
+// SetBytes sets the cell's text.
+func (c *TableCell) SetBytes(text []byte) *TableCell {
 	c.Lock()
 	defer c.Unlock()
 
 	c.Text = text
 	return c
+}
+
+// SetText sets the cell's text.
+func (c *TableCell) SetText(text string) *TableCell {
+	return c.SetBytes([]byte(text))
+}
+
+// GetBytes returns the cell's text.
+func (c *TableCell) GetBytes() []byte {
+	c.RLock()
+	defer c.RUnlock()
+
+	return c.Text
+}
+
+// GetText returns the cell's text.
+func (c *TableCell) GetText() string {
+	return string(c.GetBytes())
 }
 
 // SetAlign sets the cell's text alignment, one of AlignLeft, AlignCenter, or
@@ -285,7 +304,7 @@ type Table struct {
 	// If set to true, the table's last row will always be visible.
 	trackEnd bool
 
-	// The sort function of the table. Defaults to a case-sensitive string comparison.
+	// The sort function of the table. Defaults to a case-sensitive comparison.
 	sortFunc func(column, i, j int) bool
 
 	// Whether or not the table should be sorted when a fixed row is clicked.
@@ -591,7 +610,7 @@ func (t *Table) SetCell(row, column int, cell *TableCell) *Table {
 }
 
 // SetCellSimple calls SetCell() with the given text, left-aligned, in white.
-func (t *Table) SetCellSimple(row, column int, text string) *Table {
+func (t *Table) SetCellSimple(row, column int, text []byte) *Table {
 	return t.SetCell(row, column, NewTableCell(text))
 }
 
@@ -797,7 +816,7 @@ func (t *Table) Sort(column int, descending bool) *Table {
 
 	if t.sortFunc == nil {
 		t.sortFunc = func(column, i, j int) bool {
-			return t.cells[i][column].Text < t.cells[j][column].Text
+			return bytes.Compare(t.cells[i][column].Text, t.cells[j][column].Text) == -1
 		}
 	}
 
@@ -995,7 +1014,7 @@ ColumnLoop:
 		}
 		for _, row := range evaluationRows {
 			if cell := getCell(row, column); cell != nil {
-				_, _, _, _, _, _, cellWidth := decomposeText([]byte(cell.Text), true, false)
+				_, _, _, _, _, _, cellWidth := decomposeText(cell.Text, true, false)
 				if cell.MaxWidth > 0 && cell.MaxWidth < cellWidth {
 					cellWidth = cell.MaxWidth
 				}
@@ -1089,8 +1108,8 @@ ColumnLoop:
 				finalWidth = width - columnX - 1
 			}
 			cell.x, cell.y, cell.width = x+columnX+1, y+rowY, finalWidth
-			_, printed := printWithStyle(screen, []byte(cell.Text), x+columnX+1, y+rowY, finalWidth, cell.Align, SetAttributes(tcell.StyleDefault.Foreground(cell.Color), cell.Attributes))
-			if TaggedStringWidth(cell.Text)-printed > 0 && printed > 0 {
+			_, printed := printWithStyle(screen, cell.Text, x+columnX+1, y+rowY, finalWidth, cell.Align, SetAttributes(tcell.StyleDefault.Foreground(cell.Color), cell.Attributes))
+			if TaggedTextWidth(cell.Text)-printed > 0 && printed > 0 {
 				_, _, style, _ := screen.GetContent(x+columnX+finalWidth, y+rowY)
 				printWithStyle(screen, []byte(string(SemigraphicsHorizontalEllipsis)), x+columnX+finalWidth, y+rowY, 1, AlignLeft, style)
 			}
@@ -1201,7 +1220,7 @@ ColumnLoop:
 	// the drawing of a cell by background color, selected cells last.
 	type cellInfo struct {
 		x, y, w, h int
-		text       tcell.Color
+		color      tcell.Color
 		selected   bool
 	}
 	cellsByBackgroundColor := make(map[tcell.Color][]*cellInfo)
@@ -1229,7 +1248,7 @@ ColumnLoop:
 				y:        by,
 				w:        bw,
 				h:        bh,
-				text:     cell.Color,
+				color:    cell.Color,
 				selected: cellSelected,
 			})
 			if !ok {
@@ -1256,7 +1275,7 @@ ColumnLoop:
 				if t.selectedStyle != tcell.StyleDefault {
 					defer colorBackground(cell.x, cell.y, cell.w, cell.h, selBg, selFg, selAttr, false)
 				} else {
-					defer colorBackground(cell.x, cell.y, cell.w, cell.h, bgColor, cell.text, 0, true)
+					defer colorBackground(cell.x, cell.y, cell.w, cell.h, bgColor, cell.color, 0, true)
 				}
 			} else {
 				colorBackground(cell.x, cell.y, cell.w, cell.h, bgColor, tcell.ColorDefault, 0, false)
