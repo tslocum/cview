@@ -488,7 +488,7 @@ func (i *InputField) Autocomplete() *InputField {
 	for index, entry := range entries {
 		entry.enabled = true
 		i.autocompleteList.AddItem(entry)
-		if currentEntry < 0 && entry.mainText == i.text {
+		if currentEntry < 0 && entry.GetMainText() == i.text {
 			currentEntry = index
 		}
 	}
@@ -505,10 +505,12 @@ func (i *InputField) Autocomplete() *InputField {
 // autocompleteChanged gets called when another item in the
 // autocomplete list has been selected.
 func (i *InputField) autocompleteChanged(_ int, item *ListItem) {
-	if len(item.secondaryText) > 0 && len(i.text) < len(item.secondaryText) {
-		i.autocompleteListSuggestion = item.secondaryText[len(i.text):]
-	} else if len(item.mainText) > len(i.text)+1 {
-		i.autocompleteListSuggestion = item.mainText[len(i.text)+1:]
+	mainText := item.GetMainText()
+	secondaryText := item.GetSecondaryText()
+	if len(secondaryText) > 0 && len(i.text) < len(secondaryText) {
+		i.autocompleteListSuggestion = secondaryText[len(i.text):]
+	} else if len(mainText) > len(i.text)+1 {
+		i.autocompleteListSuggestion = mainText[len(i.text)+1:]
 	} else {
 		i.autocompleteListSuggestion = ""
 	}
@@ -879,9 +881,9 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 		case tcell.KeyEnter: // We might be done.
 			if i.autocompleteList != nil {
 				currentItem := i.autocompleteList.GetCurrentItem()
-				selectionText := currentItem.mainText
-				if currentItem.secondaryText != "" {
-					selectionText = currentItem.secondaryText
+				selectionText := currentItem.GetMainText()
+				if currentItem.GetSecondaryText() != "" {
+					selectionText = currentItem.GetSecondaryText()
 				}
 				i.Unlock()
 				i.SetText(selectionText)

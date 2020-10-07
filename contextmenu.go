@@ -154,7 +154,7 @@ func (c *ContextMenu) show(item int, x int, y int, setFocus func(Primitive)) {
 
 		if c.selected != nil {
 			c.l.Unlock()
-			c.selected(index, item.mainText, item.shortcut)
+			c.selected(index, string(item.mainText), item.shortcut)
 		} else {
 			c.l.Unlock()
 		}

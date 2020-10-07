@@ -53,9 +53,9 @@ type TableCell struct {
 // NewTableCell returns a new table cell with sensible defaults. That is, left
 // aligned text with the primary text color (see Styles) and a transparent
 // background (using the background of the Table).
-func NewTableCell(text []byte) *TableCell {
+func NewTableCell(text string) *TableCell {
 	return &TableCell{
-		Text:            text,
+		Text:            []byte(text),
 		Align:           AlignLeft,
 		Color:           Styles.PrimaryTextColor,
 		BackgroundColor: tcell.ColorDefault,
@@ -610,7 +610,7 @@ func (t *Table) SetCell(row, column int, cell *TableCell) *Table {
 }
 
 // SetCellSimple calls SetCell() with the given text, left-aligned, in white.
-func (t *Table) SetCellSimple(row, column int, text []byte) *Table {
+func (t *Table) SetCellSimple(row, column int, text string) *Table {
 	return t.SetCell(row, column, NewTableCell(text))
 }
 

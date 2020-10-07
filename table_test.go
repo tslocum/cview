@@ -96,7 +96,7 @@ func tc(c *tableTestCase) *Table {
 
 	for row := 0; row < c.rows; row++ {
 		for column := 0; column < c.columns; column++ {
-			table.SetCellSimple(row, column, []byte(fmt.Sprintf("%d,%d", column, row)))
+			table.SetCellSimple(row, column, fmt.Sprintf("%d,%d", column, row))
 		}
 	}
 

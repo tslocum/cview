@@ -12,8 +12,8 @@ import (
 // ListItem represents an item in a List.
 type ListItem struct {
 	enabled       bool        // Whether or not the list item is selectable.
-	mainText      string      // The main text of the list item.
-	secondaryText string      // A secondary text to be shown underneath the main text.
+	mainText      []byte      // The main text of the list item.
+	secondaryText []byte      // A secondary text to be shown underneath the main text.
 	shortcut      rune        // The key to select the list item directly, 0 if there is no shortcut.
 	selected      func()      // The optional function which is called when the item is selected.
 	reference     interface{} // An optional reference object.
@@ -24,13 +24,13 @@ type ListItem struct {
 // NewListItem returns a new item for a list.
 func NewListItem(mainText string) *ListItem {
 	return &ListItem{
-		mainText: mainText,
+		mainText: []byte(mainText),
 		enabled:  true,
 	}
 }
 
-// SetMainText sets the main text of the list item.
-func (l *ListItem) SetMainText(val string) *ListItem {
+// SetMainBytes sets the main text of the list item.
+func (l *ListItem) SetMainBytes(val []byte) *ListItem {
 	l.Lock()
 	defer l.Unlock()
 
@@ -38,16 +38,26 @@ func (l *ListItem) SetMainText(val string) *ListItem {
 	return l
 }
 
-// GetMainText returns the item's main text.
-func (l *ListItem) GetMainText() string {
+// SetMainText sets the main text of the list item.
+func (l *ListItem) SetMainText(val string) *ListItem {
+	return l.SetMainBytes([]byte(val))
+}
+
+// GetMainBytes returns the item's main text.
+func (l *ListItem) GetMainBytes() []byte {
 	l.RLock()
 	defer l.RUnlock()
 
 	return l.mainText
 }
 
-// SetSecondaryText sets a secondary text to be shown underneath the main text.
-func (l *ListItem) SetSecondaryText(val string) *ListItem {
+// GetMainText returns the item's main text.
+func (l *ListItem) GetMainText() string {
+	return string(l.GetMainBytes())
+}
+
+// SetSecondaryBytes sets a secondary text to be shown underneath the main text.
+func (l *ListItem) SetSecondaryBytes(val []byte) *ListItem {
 	l.Lock()
 	defer l.Unlock()
 
@@ -55,12 +65,22 @@ func (l *ListItem) SetSecondaryText(val string) *ListItem {
 	return l
 }
 
-// GetSecondaryText returns the item's secondary text.
-func (l *ListItem) GetSecondaryText() string {
+// SetSecondaryText sets a secondary text to be shown underneath the main text.
+func (l *ListItem) SetSecondaryText(val string) *ListItem {
+	return l.SetSecondaryBytes([]byte(val))
+}
+
+// GetSecondaryBytes returns the item's secondary text.
+func (l *ListItem) GetSecondaryBytes() []byte {
 	l.RLock()
 	defer l.RUnlock()
 
 	return l.secondaryText
+}
+
+// GetSecondaryText returns the item's secondary text.
+func (l *ListItem) GetSecondaryText() string {
+	return string(l.GetSecondaryBytes())
 }
 
 // SetShortcut sets the key to select the ListItem directly, 0 if there is no shortcut.
@@ -612,7 +632,7 @@ func (l *List) GetItemCount() int {
 func (l *List) GetItemText(index int) (main, secondary string) {
 	l.RLock()
 	defer l.RUnlock()
-	return l.items[index].mainText, l.items[index].secondaryText
+	return string(l.items[index].mainText), string(l.items[index].secondaryText)
 }
 
 // SetItemText sets an item's main and secondary text. Panics if the index is
@@ -622,8 +642,8 @@ func (l *List) SetItemText(index int, main, secondary string) *List {
 	defer l.Unlock()
 
 	item := l.items[index]
-	item.mainText = main
-	item.secondaryText = secondary
+	item.mainText = []byte(main)
+	item.secondaryText = []byte(secondary)
 	return l
 }
 
@@ -661,19 +681,22 @@ func (l *List) FindItems(mainSearch, secondarySearch string, mustContainBoth, ig
 		secondarySearch = strings.ToLower(secondarySearch)
 	}
 
+	mainSearchBytes := []byte(mainSearch)
+	secondarySearchBytes := []byte(secondarySearch)
+
 	for index, item := range l.items {
 		mainText := item.mainText
 		secondaryText := item.secondaryText
 		if ignoreCase {
-			mainText = strings.ToLower(mainText)
-			secondaryText = strings.ToLower(secondaryText)
+			mainText = bytes.ToLower(mainText)
+			secondaryText = bytes.ToLower(secondaryText)
 		}
 
 		// strings.Contains() always returns true for a "" search.
-		mainContained := strings.Contains(mainText, mainSearch)
-		secondaryContained := strings.Contains(secondaryText, secondarySearch)
+		mainContained := bytes.Contains(mainText, mainSearchBytes)
+		secondaryContained := bytes.Contains(secondaryText, secondarySearchBytes)
 		if mustContainBoth && mainContained && secondaryContained ||
-			!mustContainBoth && (mainText != "" && mainContained || secondaryText != "" && secondaryContained) {
+			!mustContainBoth && (len(mainText) > 0 && mainContained || len(secondaryText) > 0 && secondaryContained) {
 			indices = append(indices, index)
 		}
 	}
@@ -871,7 +894,7 @@ func (l *List) Draw(screen tcell.Screen) {
 			break
 		}
 
-		if item.mainText == "" && item.secondaryText == "" && item.shortcut == 0 { // Divider
+		if len(item.mainText) == 0 && len(item.secondaryText) == 0 && item.shortcut == 0 { // Divider
 			Print(screen, []byte(string(tcell.RuneLTee)), (x-5)-l.paddingLeft, y, 1, AlignLeft, l.mainTextColor)
 			Print(screen, bytes.Repeat([]byte(string(tcell.RuneHLine)), width+4+l.paddingLeft+l.paddingRight), (x-4)-l.paddingLeft, y, width+4+l.paddingLeft+l.paddingRight, AlignLeft, l.mainTextColor)
 			Print(screen, []byte(string(tcell.RuneRTee)), (x-5)+width+5+l.paddingRight, y, 1, AlignLeft, l.mainTextColor)
@@ -905,7 +928,7 @@ func (l *List) Draw(screen tcell.Screen) {
 		if index == l.currentItem && (!l.selectedFocusOnly || hasFocus) {
 			textWidth := width
 			if !l.highlightFullLine {
-				if w := TaggedStringWidth(item.mainText); w < textWidth {
+				if w := TaggedTextWidth(item.mainText); w < textWidth {
 					textWidth = w
 				}
 			}
@@ -955,7 +978,7 @@ func (l *List) Draw(screen tcell.Screen) {
 		// What's the longest option text?
 		maxWidth := 0
 		for _, option := range ctx.items {
-			strWidth := TaggedStringWidth(option.mainText)
+			strWidth := TaggedTextWidth(option.mainText)
 			if option.shortcut != 0 {
 				strWidth += 4
 			}

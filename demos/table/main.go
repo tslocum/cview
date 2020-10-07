@@ -2,7 +2,7 @@
 package main
 
 import (
-	"bytes"
+	"strings"
 
 	"github.com/gdamore/tcell/v2"
 	"gitlab.com/tslocum/cview"
@@ -14,7 +14,7 @@ func main() {
 	app := cview.NewApplication()
 	table := cview.NewTable().
 		SetBorders(true)
-	lorem := bytes.Split([]byte(loremIpsumText), []byte(" "))
+	lorem := strings.Split(loremIpsumText, " ")
 	cols, rows := 10, 40
 	word := 0
 	for r := 0; r < rows; r++ {
