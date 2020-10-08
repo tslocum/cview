@@ -56,6 +56,11 @@ to disable this behavior.
 Call [List.SetWrapAround](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#List.SetWrapAround)
 to wrap around when navigating.
 
+## Tables do not wrap around when selecting a cell
+
+Attempting to move outside of the range of the table results in the selection
+remaining unchanged. 
+
 ## Setting a primitive's background color to `tcell.ColorDefault` does not result in transparency
 
 Call [Box.SetBackgroundTransparent](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Box.SetBackgroundTransparent)

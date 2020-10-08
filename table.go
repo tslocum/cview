@@ -1272,56 +1272,18 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 		// Movement functions.
 		previouslySelectedRow, previouslySelectedColumn := t.selectedRow, t.selectedColumn
 		var (
-			getCell = func(row, column int) *TableCell {
-				if row < 0 || column < 0 || row >= len(t.cells) || column >= len(t.cells[row]) {
-					return nil
+			validSelection = func(row, column int) bool {
+				if row < t.fixedRows || row >= len(t.cells) || column < t.fixedColumns || column > t.lastColumn {
+					return false
 				}
-				return t.cells[row][column]
-			}
-
-			previous = func() {
-				for t.selectedRow >= 0 {
-					cell := getCell(t.selectedRow, t.selectedColumn)
-					if cell == nil || !cell.NotSelectable {
-						return
-					}
-					t.selectedColumn--
-					if t.selectedColumn < 0 {
-						t.selectedColumn = t.lastColumn
-						t.selectedRow--
-					}
-				}
-			}
-
-			next = func() {
-				if t.selectedColumn > t.lastColumn {
-					t.selectedColumn = 0
-					t.selectedRow++
-					if t.selectedRow >= len(t.cells) {
-						t.selectedRow = len(t.cells) - 1
-					}
-				}
-				for t.selectedRow < len(t.cells) {
-					cell := getCell(t.selectedRow, t.selectedColumn)
-					if cell == nil || !cell.NotSelectable {
-						return
-					}
-					t.selectedColumn++
-					if t.selectedColumn > t.lastColumn {
-						t.selectedColumn = 0
-						t.selectedRow++
-					}
-				}
-				t.selectedColumn = t.lastColumn
-				t.selectedRow = len(t.cells) - 1
-				previous()
+				cell := t.cells[row][column]
+				return cell == nil || !cell.NotSelectable
 			}
 
 			home = func() {
 				if t.rowsSelectable {
 					t.selectedRow = 0
 					t.selectedColumn = 0
-					next()
 				} else {
 					t.trackEnd = false
 					t.rowOffset = 0
@@ -1333,7 +1295,6 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 				if t.rowsSelectable {
 					t.selectedRow = len(t.cells) - 1
 					t.selectedColumn = t.lastColumn
-					previous()
 				} else {
 					t.trackEnd = true
 					t.columnOffset = 0
@@ -1342,11 +1303,9 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 
 			down = func() {
 				if t.rowsSelectable {
-					t.selectedRow++
-					if t.selectedRow >= len(t.cells) {
-						t.selectedRow = len(t.cells) - 1
+					if validSelection(t.selectedRow+1, t.selectedColumn) {
+						t.selectedRow++
 					}
-					next()
 				} else {
 					t.rowOffset++
 				}
@@ -1354,11 +1313,9 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 
 			up = func() {
 				if t.rowsSelectable {
-					t.selectedRow--
-					if t.selectedRow < 0 {
-						t.selectedRow = 0
+					if validSelection(t.selectedRow-1, t.selectedColumn) {
+						t.selectedRow--
 					}
-					previous()
 				} else {
 					t.trackEnd = false
 					t.rowOffset--
@@ -1367,11 +1324,9 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 
 			left = func() {
 				if t.columnsSelectable {
-					t.selectedColumn--
-					if t.selectedColumn < 0 {
-						t.selectedColumn = 0
+					if validSelection(t.selectedRow, t.selectedColumn-1) {
+						t.selectedColumn--
 					}
-					previous()
 				} else {
 					t.columnOffset--
 				}
@@ -1379,11 +1334,9 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 
 			right = func() {
 				if t.columnsSelectable {
-					t.selectedColumn++
-					if t.selectedColumn > t.lastColumn {
-						t.selectedColumn = t.lastColumn
+					if validSelection(t.selectedRow, t.selectedColumn+1) {
+						t.selectedColumn++
 					}
-					next()
 				} else {
 					t.columnOffset++
 				}
@@ -1400,7 +1353,6 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 					if t.selectedRow >= len(t.cells) {
 						t.selectedRow = len(t.cells) - 1
 					}
-					next()
 				} else {
 					t.rowOffset += offsetAmount
 				}
@@ -1417,7 +1369,6 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 					if t.selectedRow < 0 {
 						t.selectedRow = 0
 					}
-					previous()
 				} else {
 					t.trackEnd = false
 					t.rowOffset -= offsetAmount
