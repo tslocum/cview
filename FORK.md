@@ -72,6 +72,10 @@ This greatly improves buffer efficiency. [TextView.Write](https://docs.rocketnin
 is 90% faster and [TextView.Draw](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#TextView.Draw)
 is 50% faster.    
 
+## `Application.ForceDraw` has been removed
+
+`Application.Draw` may be called anywhere as it is thread-safe.
+
 # Merged pull requests
 
 The following tview pull requests have been merged into cview:

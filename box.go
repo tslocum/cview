@@ -392,7 +392,6 @@ func (b *Box) SetTitleAlign(align int) {
 	defer b.l.Unlock()
 
 	b.titleAlign = align
-
 }
 
 // Draw draws this primitive onto the screen.

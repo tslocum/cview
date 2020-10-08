@@ -547,18 +547,6 @@ func (a *Application) Draw() {
 	a.QueueUpdate(func() {
 		a.draw()
 	})
-
-}
-
-// ForceDraw refreshes the screen immediately. Use this function with caution as
-// it may lead to race conditions with updates to primitives in other
-// goroutines. It is always preferrable to use Draw() instead. Never call this
-// function from a goroutine.
-//
-// It is safe to call this function during queued updates and direct event
-// handling.
-func (a *Application) ForceDraw() {
-	a.draw()
 }
 
 // draw actually does what Draw() promises to do.
