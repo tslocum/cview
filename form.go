@@ -37,6 +37,16 @@ type FormItem interface {
 	// GetLabel returns the item's label text.
 	GetLabel() string
 
+	// SetLabelWidth sets the screen width of the label. A value of 0 will cause the
+	// primitive to use the width of the label string.
+	SetLabelWidth(int)
+
+	// SetLabelColor sets the color of the label.
+	SetLabelColor(tcell.Color)
+
+	// SetLabelColor sets the color of the label when focused.
+	SetLabelColorFocused(tcell.Color)
+
 	// GetFieldWidth returns the width of the form item's field (the area which
 	// is manipulated by the user) in number of screen cells. A value of 0
 	// indicates the the field width is flexible and may use as much space as
@@ -46,8 +56,23 @@ type FormItem interface {
 	// GetFieldHeight returns the height of the form item.
 	GetFieldHeight() int
 
-	// SetAttributes applies attributes to the form item.
-	SetAttributes(attrs *FormItemAttributes)
+	// SetFieldTextColor sets the text color of the input area.
+	SetFieldTextColor(tcell.Color)
+
+	// SetFieldTextColorFocused sets the text color of the input area when focused.
+	SetFieldTextColorFocused(tcell.Color)
+
+	// SetFieldBackgroundColor sets the background color of the input area.
+	SetFieldBackgroundColor(tcell.Color)
+
+	// SetFieldBackgroundColor sets the background color of the input area when focused.
+	SetFieldBackgroundColorFocused(tcell.Color)
+
+	// SetBackgroundColor sets the background color of the form item.
+	SetBackgroundColor(tcell.Color)
+
+	// SetFinishedFunc sets a callback invoked when the user leaves the form item.
+	SetFinishedFunc(func(key tcell.Key))
 }
 
 // Form allows you to combine multiple one-line form elements into a vertical
@@ -658,7 +683,7 @@ func (f *Form) Draw(screen tcell.Screen) {
 
 		attributes := f.getAttributes()
 		attributes.LabelWidth = labelWidth
-		item.SetAttributes(attributes)
+		setFormItemAttributes(item, attributes)
 
 		// Save position.
 		positions[index].x = x
@@ -851,7 +876,7 @@ func (f *Form) Focus(delegate func(p Primitive)) {
 
 		f.Unlock()
 
-		item.SetAttributes(attributes)
+		setFormItemAttributes(item, attributes)
 		delegate(item)
 	} else {
 		// We're selecting a button.
@@ -926,4 +951,19 @@ func (f *Form) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 
 		return
 	})
+}
+
+func setFormItemAttributes(item FormItem, attrs *FormItemAttributes) {
+	item.SetLabelWidth(attrs.LabelWidth)
+	item.SetBackgroundColor(attrs.BackgroundColor)
+	item.SetLabelColor(attrs.LabelColor)
+	item.SetLabelColorFocused(attrs.LabelColorFocused)
+	item.SetFieldTextColor(attrs.FieldTextColor)
+	item.SetFieldTextColorFocused(attrs.FieldTextColorFocused)
+	item.SetFieldBackgroundColor(attrs.FieldBackgroundColor)
+	item.SetFieldBackgroundColorFocused(attrs.FieldBackgroundColorFocused)
+
+	if attrs.FinishedFunc != nil {
+		item.SetFinishedFunc(attrs.FinishedFunc)
+	}
 }

@@ -237,22 +237,6 @@ func (c *CheckBox) SetFinishedFunc(handler func(key tcell.Key)) {
 	c.finished = handler
 }
 
-// SetAttributes applies attribute settings to a form item.
-func (c *CheckBox) SetAttributes(attrs *FormItemAttributes) {
-	c.SetLabelWidth(attrs.LabelWidth)
-	c.SetBackgroundColor(attrs.BackgroundColor)
-	c.SetLabelColor(attrs.LabelColor)
-	c.SetLabelColorFocused(attrs.LabelColorFocused)
-	c.SetFieldTextColor(attrs.FieldTextColor)
-	c.SetFieldTextColorFocused(attrs.FieldTextColorFocused)
-	c.SetFieldBackgroundColor(attrs.FieldBackgroundColor)
-	c.SetFieldBackgroundColorFocused(attrs.FieldBackgroundColorFocused)
-
-	if attrs.FinishedFunc != nil {
-		c.SetFinishedFunc(attrs.FinishedFunc)
-	}
-}
-
 // Draw draws this primitive onto the screen.
 func (c *CheckBox) Draw(screen tcell.Screen) {
 	c.Box.Draw(screen)

@@ -536,22 +536,6 @@ func (i *InputField) SetFinishedFunc(handler func(key tcell.Key)) {
 	i.finished = handler
 }
 
-// SetAttributes applies attribute settings to a form item.
-func (i *InputField) SetAttributes(attrs *FormItemAttributes) {
-	i.SetLabelWidth(attrs.LabelWidth)
-	i.SetBackgroundColor(attrs.BackgroundColor)
-	i.SetLabelColor(attrs.LabelColor)
-	i.SetLabelColorFocused(attrs.LabelColorFocused)
-	i.SetFieldTextColor(attrs.FieldTextColor)
-	i.SetFieldTextColorFocused(attrs.FieldTextColorFocused)
-	i.SetFieldBackgroundColor(attrs.FieldBackgroundColor)
-	i.SetFieldBackgroundColorFocused(attrs.FieldBackgroundColorFocused)
-
-	if attrs.FinishedFunc != nil {
-		i.SetFinishedFunc(attrs.FinishedFunc)
-	}
-}
-
 // Draw draws this primitive onto the screen.
 func (i *InputField) Draw(screen tcell.Screen) {
 	i.Box.Draw(screen)

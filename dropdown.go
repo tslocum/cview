@@ -489,22 +489,6 @@ func (d *DropDown) SetFinishedFunc(handler func(key tcell.Key)) {
 	d.finished = handler
 }
 
-// SetAttributes applies attribute settings to a form item.
-func (d *DropDown) SetAttributes(attrs *FormItemAttributes) {
-	d.SetLabelWidth(attrs.LabelWidth)
-	d.SetBackgroundColor(attrs.BackgroundColor)
-	d.SetLabelColor(attrs.LabelColor)
-	d.SetLabelColorFocused(attrs.LabelColorFocused)
-	d.SetFieldTextColor(attrs.FieldTextColor)
-	d.SetFieldTextColorFocused(attrs.FieldTextColorFocused)
-	d.SetFieldBackgroundColor(attrs.FieldBackgroundColor)
-	d.SetFieldBackgroundColorFocused(attrs.FieldBackgroundColorFocused)
-
-	if attrs.FinishedFunc != nil {
-		d.SetFinishedFunc(attrs.FinishedFunc)
-	}
-}
-
 // Draw draws this primitive onto the screen.
 func (d *DropDown) Draw(screen tcell.Screen) {
 	d.Box.Draw(screen)

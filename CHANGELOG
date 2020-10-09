@@ -15,7 +15,6 @@ v1.5.0 (2020-10-03)
 - Add arrow symbol to DropDown
 - Add Makefile
 - Allow autocomplete selection value customization
-- Revamp FormItem styling as FormItem.SetAttributes
 - Provide DropDownOption in DropDown handlers
 - Provide ListItem in List handlers
 - Panic when attempting to add an invalid FormItem
