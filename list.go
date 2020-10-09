@@ -241,14 +241,13 @@ func (l *List) SetCurrentItem(index int) {
 
 	l.updateOffset()
 
-	if index != previousItem && l.changed != nil {
+	if index != previousItem && index < len(l.items) && l.changed != nil {
 		item := l.items[index]
 		l.Unlock()
 		l.changed(index, item)
-		l.Lock()
+	} else {
+		l.Unlock()
 	}
-
-	l.Unlock()
 }
 
 // GetCurrentItem returns the currently selected list item,
@@ -321,7 +320,7 @@ func (l *List) RemoveItem(index int) {
 	}
 
 	// Fire "changed" event for removed items.
-	if previousItem == index && l.changed != nil {
+	if previousItem == index && index < len(l.items) && l.changed != nil {
 		item := l.items[l.currentItem]
 		l.Unlock()
 		l.changed(l.currentItem, item)
@@ -705,9 +704,18 @@ func (l *List) HasFocus() bool {
 // Transform modifies the current selection.
 func (l *List) Transform(tr Transformation) {
 	l.Lock()
-	defer l.Unlock()
+
+	previousItem := l.currentItem
 
 	l.transform(tr)
+
+	if l.currentItem != previousItem && l.currentItem < len(l.items) && l.changed != nil {
+		item := l.items[l.currentItem]
+		l.Unlock()
+		l.changed(l.currentItem, item)
+	} else {
+		l.Unlock()
+	}
 }
 
 func (l *List) transform(tr Transformation) {
@@ -1009,8 +1017,6 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 	return l.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p Primitive)) {
 		l.Lock()
 
-		previousItem := l.currentItem
-
 		if HitShortcut(event, Keys.Cancel) {
 			if l.ContextMenu.open {
 				l.Unlock()
@@ -1049,7 +1055,6 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 			return
 		}
 
-		var matchesShortcut bool
 		if event.Key() == tcell.KeyRune {
 			ch := event.Rune()
 			if ch != ' ' {
@@ -1057,7 +1062,6 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 				for index, item := range l.items {
 					if item.enabled && item.shortcut == ch {
 						// We have a shortcut.
-						matchesShortcut = true
 						l.currentItem = index
 
 						item := l.items[l.currentItem]
@@ -1072,26 +1076,27 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 							l.Lock()
 						}
 
-						break
+						l.Unlock()
+						return
 					}
 				}
 			}
 		}
 
-		if !matchesShortcut {
-			if HitShortcut(event, Keys.MoveFirst, Keys.MoveFirst2) {
-				l.transform(TransformFirstItem)
-			} else if HitShortcut(event, Keys.MoveLast, Keys.MoveLast2) {
-				l.transform(TransformLastItem)
-			} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2, Keys.MovePreviousField) {
-				l.transform(TransformPreviousItem)
-			} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2, Keys.MoveNextField) {
-				l.transform(TransformNextItem)
-			} else if HitShortcut(event, Keys.MovePreviousPage) {
-				l.transform(TransformPreviousPage)
-			} else if HitShortcut(event, Keys.MoveNextPage) {
-				l.transform(TransformNextPage)
-			}
+		previousItem := l.currentItem
+
+		if HitShortcut(event, Keys.MoveFirst, Keys.MoveFirst2) {
+			l.transform(TransformFirstItem)
+		} else if HitShortcut(event, Keys.MoveLast, Keys.MoveLast2) {
+			l.transform(TransformLastItem)
+		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2, Keys.MovePreviousField) {
+			l.transform(TransformPreviousItem)
+		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2, Keys.MoveNextField) {
+			l.transform(TransformNextItem)
+		} else if HitShortcut(event, Keys.MovePreviousPage) {
+			l.transform(TransformPreviousPage)
+		} else if HitShortcut(event, Keys.MoveNextPage) {
+			l.transform(TransformNextPage)
 		}
 
 		if l.currentItem != previousItem && l.currentItem < len(l.items) && l.changed != nil {
