@@ -10,7 +10,7 @@ const inputField = `[green]package[white] main
 [green]import[white] (
     [red]"strconv"[white]
 
-    [red]"github.com/gdamore/tcell"[white]
+    [red]"github.com/gdamore/tcell/v2"[white]
     [red]"gitlab.com/tslocum/cview"[white]
 )
 
@@ -37,5 +37,5 @@ func InputField(nextSlide func()) (title string, content cview.Primitive) {
 	input.SetDoneFunc(func(key tcell.Key) {
 		nextSlide()
 	})
-	return "Input", Code(input, 30, 1, inputField)
+	return "InputField", Code(input, 30, 1, inputField)
 }

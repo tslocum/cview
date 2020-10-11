@@ -819,7 +819,7 @@ func (t *TextView) reindexBuffer(width int) {
 
 		// Split the line if required.
 		var splitLines []string
-		str := string(strippedStr) // TODO
+		str := string(strippedStr)
 		if t.wrap && len(str) > 0 {
 			for len(str) > 0 {
 				extract := runewidth.Truncate(str, width, "")

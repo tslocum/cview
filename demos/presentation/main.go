@@ -54,6 +54,7 @@ func main() {
 		TextView1,
 		TextView2,
 		InputField,
+		Slider,
 		Form,
 		Table,
 		TreeView,

@@ -40,5 +40,5 @@ func Form(nextSlide func()) (title string, content cview.Primitive) {
 	f.AddButton("Cancel", nextSlide)
 	f.SetBorder(true)
 	f.SetTitle("Employee Information")
-	return "Forms", Code(f, 36, 15, form)
+	return "Form", Code(f, 36, 15, form)
 }

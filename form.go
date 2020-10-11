@@ -383,6 +383,24 @@ func (f *Form) AddCheckBox(label string, message string, checked bool, changed f
 	f.items = append(f.items, c)
 }
 
+// AddSlider adds a slider to the form. It has a label, an initial value, a
+// maximum value, an amount to increment by when modified via keyboard, and an
+// (optional) callback function which is invoked when the state of the slider
+// was changed by the user.
+func (f *Form) AddSlider(label string, current, max, increment int, changed func(value int)) {
+	f.Lock()
+	defer f.Unlock()
+
+	s := NewSlider()
+	s.SetLabel(label)
+	s.SetMax(max)
+	s.SetProgress(current)
+	s.SetIncrement(increment)
+	s.SetChangedFunc(changed)
+
+	f.items = append(f.items, s)
+}
+
 // AddButton adds a new button to the form. The "selected" function is called
 // when the user selects this button. It may be nil.
 func (f *Form) AddButton(label string, selected func()) {

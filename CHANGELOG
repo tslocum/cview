@@ -1,5 +1,5 @@
 v1.5.1 (WIP)
-- Store TextView buffer as [][]byte instead of []string
+- Add Slider
 - Add TextView.SetBytes and TextView.GetBytes
 - Add TableCell.SetBytes, TableCell.GetBytes and TableCell.GetText
 - Fix List.Transform not calling handler set via SetChangedFunc

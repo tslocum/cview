@@ -57,7 +57,7 @@ func TextView1(nextSlide func()) (title string, content cview.Primitive) {
 	}()
 	textView.SetBorder(true)
 	textView.SetTitle("TextView implements io.Writer")
-	return "Text 1", Code(textView, 36, 13, textView1)
+	return "TextView 1", Code(textView, 36, 13, textView1)
 }
 
 const textView2 = `[green]package[white] main
@@ -65,7 +65,7 @@ const textView2 = `[green]package[white] main
 [green]import[white] (
     [red]"strconv"[white]
 
-    [red]"github.com/gdamore/tcell"[white]
+    [red]"github.com/gdamore/tcell/v2"[white]
     [red]"gitlab.com/tslocum/cview"[white]
 )
 
@@ -158,5 +158,5 @@ func TextView2(nextSlide func()) (title string, content cview.Primitive) {
 	flex.AddItem(textView, 0, 1, true)
 	flex.AddItem(codeView, 0, 1, false)
 
-	return "Text 2", flex
+	return "TextView 2", flex
 }

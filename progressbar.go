@@ -40,7 +40,7 @@ type ProgressBar struct {
 func NewProgressBar() *ProgressBar {
 	p := &ProgressBar{
 		Box:         NewBox(),
-		emptyRune:   ' ',
+		emptyRune:   tcell.RuneBlock,
 		emptyColor:  Styles.PrimitiveBackgroundColor,
 		filledRune:  tcell.RuneBlock,
 		filledColor: Styles.PrimaryTextColor,
@@ -112,6 +112,11 @@ func (p *ProgressBar) AddProgress(progress int) {
 	defer p.Unlock()
 
 	p.progress += progress
+	if p.progress < 0 {
+		p.progress = 0
+	} else if p.progress > p.max {
+		p.progress = p.max
+	}
 }
 
 // SetProgress sets the current progress.
@@ -120,6 +125,11 @@ func (p *ProgressBar) SetProgress(progress int) {
 	defer p.Unlock()
 
 	p.progress = progress
+	if p.progress < 0 {
+		p.progress = 0
+	} else if p.progress > p.max {
+		p.progress = p.max
+	}
 }
 
 // GetProgress gets the current progress.
