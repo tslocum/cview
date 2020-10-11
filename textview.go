@@ -564,7 +564,7 @@ func (t *TextView) Highlight(regionIDs ...string) {
 	t.index = nil
 
 	// Notify.
-	if t.highlighted != nil && len(added) > 0 || len(removed) > 0 {
+	if t.highlighted != nil && (len(added) > 0 || len(removed) > 0) {
 		t.Unlock()
 		t.highlighted(added, removed, remaining)
 	} else {
@@ -1121,7 +1121,7 @@ func (t *TextView) Draw(screen tcell.Screen) {
 						colorPos++
 					} else if regionPos < len(regionIndices) && textPos+tagOffset >= regionIndices[regionPos][0] && textPos+tagOffset < regionIndices[regionPos][1] {
 						// Get the region.
-						if len(regionID) > 0 && len(t.regionInfos) > 0 && !bytes.Equal(t.regionInfos[len(t.regionInfos)-1].ID, regionID) {
+						if len(regionID) > 0 && len(t.regionInfos) > 0 && bytes.Equal(t.regionInfos[len(t.regionInfos)-1].ID, regionID) {
 							// End last region.
 							t.regionInfos[len(t.regionInfos)-1].ToX = x + posX
 							t.regionInfos[len(t.regionInfos)-1].ToY = y + line - t.lineOffset

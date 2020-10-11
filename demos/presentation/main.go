@@ -67,8 +67,7 @@ func main() {
 
 	// The bottom row has some info on where we are.
 	info := cview.NewTextView()
-	info.
-		SetDynamicColors(true)
+	info.SetDynamicColors(true)
 	info.SetRegions(true)
 	info.SetWrap(false)
 	info.SetHighlightedFunc(func(added, removed, remaining []string) {

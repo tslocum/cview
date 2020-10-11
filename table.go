@@ -1401,9 +1401,7 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 		}
 
 		// If the selection has changed, notify the handler.
-		if t.selectionChanged != nil &&
-			(t.rowsSelectable && previouslySelectedRow != t.selectedRow ||
-				t.columnsSelectable && previouslySelectedColumn != t.selectedColumn) {
+		if t.selectionChanged != nil && ((t.rowsSelectable && previouslySelectedRow != t.selectedRow) || (t.columnsSelectable && previouslySelectedColumn != t.selectedColumn)) {
 			t.Unlock()
 			t.selectionChanged(t.selectedRow, t.selectedColumn)
 			t.Lock()
