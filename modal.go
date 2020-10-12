@@ -209,9 +209,9 @@ func (m *Modal) Draw(screen tcell.Screen) {
 
 	// Reset the text and find out how wide it is.
 	m.frame.Clear()
-	lines := WordWrap([]byte(m.text), width)
+	lines := WordWrap(m.text, width)
 	for _, line := range lines {
-		m.frame.AddText(string(line), true, AlignCenter, m.textColor)
+		m.frame.AddText(line, true, AlignCenter, m.textColor)
 	}
 
 	// Set the Modal's position and size.

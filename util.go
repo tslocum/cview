@@ -469,8 +469,8 @@ func TaggedStringWidth(text string) int {
 // This function considers color tags to have no width.
 //
 // Text is always split at newline characters ('\n').
-func WordWrap(text []byte, width int) (lines [][]byte) {
-	colorTagIndices, _, _, _, escapeIndices, strippedText, _ := decomposeText(text, true, false)
+func WordWrap(text string, width int) (lines []string) {
+	colorTagIndices, _, _, _, escapeIndices, strippedText, _ := decomposeText([]byte(text), true, false)
 
 	// Find candidate breakpoints.
 	breakpoints := boundaryPattern.FindAllSubmatchIndex(strippedText, -1)
@@ -485,12 +485,12 @@ func WordWrap(text []byte, width int) (lines [][]byte) {
 		lineWidth, overflow                                int
 		forceBreak                                         bool
 	)
-	unescape := func(substr []byte, startIndex int) []byte {
+	unescape := func(substr string, startIndex int) string {
 		// A helper function to unescape escaped tags.
 		for index := escapePos; index >= 0; index-- {
 			if index < len(escapeIndices) && startIndex > escapeIndices[index][0] && startIndex < escapeIndices[index][1]-1 {
 				pos := escapeIndices[index][1] - 2 - startIndex
-				return append(substr[:pos], substr[pos+1:]...)
+				return substr[:pos] + substr[pos+1:]
 			}
 		}
 		return substr
