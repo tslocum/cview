@@ -264,23 +264,30 @@ func (s *Slider) Draw(screen tcell.Screen) {
 // InputHandler returns the handler for this primitive.
 func (s *Slider) InputHandler() func(event *tcell.EventKey, setFocus func(p Primitive)) {
 	return s.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p Primitive)) {
-		if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2, Keys.MoveLeft, Keys.MoveLeft2) {
-			s.AddProgress(s.increment * -1)
-			if s.changed != nil {
-				s.changed(s.progress)
-			}
-		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2, Keys.MoveRight, Keys.MoveRight2) {
-			s.AddProgress(s.increment)
-			if s.changed != nil {
-				s.changed(s.progress)
-			}
-		} else if HitShortcut(event, Keys.Cancel, Keys.MovePreviousField, Keys.MoveNextField) {
+		if HitShortcut(event, Keys.Cancel, Keys.MovePreviousField, Keys.MoveNextField) {
 			if s.done != nil {
 				s.done(event.Key())
 			}
 			if s.finished != nil {
 				s.finished(event.Key())
 			}
+			return
+		}
+
+		previous := s.progress
+
+		if HitShortcut(event, Keys.MoveFirst, Keys.MoveFirst2) {
+			s.SetProgress(0)
+		} else if HitShortcut(event, Keys.MoveLast, Keys.MoveLast2) {
+			s.SetProgress(s.max)
+		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2, Keys.MoveRight, Keys.MoveRight2, Keys.MovePreviousField) {
+			s.AddProgress(s.increment)
+		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2, Keys.MoveLeft, Keys.MoveLeft2, Keys.MoveNextField) {
+			s.AddProgress(s.increment * -1)
+		}
+
+		if s.progress != previous && s.changed != nil {
+			s.changed(s.progress)
 		}
 	})
 }
