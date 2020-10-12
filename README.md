@@ -51,8 +51,15 @@ import (
 )
 
 func main() {
-	box := cview.NewBox().SetBorder(true).SetTitle("Hello, world!")
-	if err := cview.NewApplication().SetRoot(box, true).Run(); err != nil {
+	app := cview.NewApplication()
+	
+	box := cview.NewTextView()
+	box.SetBorder(true)
+	box.SetTitle("Hello, world!")
+	box.SetText("Lorem ipsum dolor sit amet")
+	
+	app.SetRoot(box, true)
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }
