@@ -13,7 +13,7 @@ const (
 	queueSize = 100
 
 	// The minimum duration between resize event callbacks.
-	resizeEventThrottle = 200 * time.Millisecond
+	resizeEventThrottle = 50 * time.Millisecond
 )
 
 // Application represents the top node of an application.
@@ -33,6 +33,9 @@ type Application struct {
 	// set directly. Always use the screenReplacement channel after calling
 	// Fini(), to set a new screen (or nil to stop the application).
 	screen tcell.Screen
+
+	// The size of the application's screen.
+	width, height int
 
 	// The primitive which currently has the keyboard focus.
 	focus Primitive
@@ -191,6 +194,21 @@ func (a *Application) SetScreen(screen tcell.Screen) {
 	a.Unlock()
 	oldScreen.Fini()
 	a.screenReplacement <- screen
+}
+
+// GetScreen returns the current tcell.Screen of the application. Lock the
+// application when manipulating the screen to prevent race conditions.
+func (a *Application) GetScreen() tcell.Screen {
+	a.RLock()
+	defer a.RUnlock()
+	return a.screen
+}
+
+// GetScreenSize returns the size of the application's screen.
+func (a *Application) GetScreenSize() (width, height int) {
+	a.RLock()
+	defer a.RUnlock()
+	return a.width, a.height
 }
 
 // EnableMouse enables mouse events.
@@ -357,12 +375,13 @@ EventLoop:
 				if screen == nil {
 					continue
 				}
+
 				screen.Clear()
+				a.width, a.height = event.Size()
 
 				// Call afterResize handler if there is one.
 				if a.afterResize != nil {
-					width, height := screen.Size()
-					a.afterResize(width, height)
+					a.afterResize(a.width, a.height)
 				}
 
 				a.draw()
@@ -567,8 +586,7 @@ func (a *Application) draw() {
 
 	// Resize if requested.
 	if fullscreen && root != nil {
-		width, height := screen.Size()
-		root.SetRect(0, 0, width, height)
+		root.SetRect(0, 0, a.width, a.height)
 	}
 
 	// Call before handler if there is one.
@@ -662,7 +680,7 @@ func (a *Application) SetRoot(root Primitive, fullscreen bool) {
 // screen.
 func (a *Application) ResizeToFullScreen(p Primitive) {
 	a.RLock()
-	width, height := a.screen.Size()
+	width, height := a.width, a.height
 	a.RUnlock()
 	p.SetRect(0, 0, width, height)
 }
