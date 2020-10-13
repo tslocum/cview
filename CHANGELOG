@@ -6,6 +6,7 @@ v1.5.1 (WIP)
 - Fix List.Transform not calling handler set via SetChangedFunc
 - Fix WordWrap bounds out of range
 - Allow modification of scroll bar render text
+- Allow scrolling List horizontally
 - Optimize TextView (writing is 90% faster, drawing is 50% faster)
 - Remove return values from methods which return their primitive (breaks chaining)
 - Remove Application.ForceDraw (Application.Draw may be called anywhere)

@@ -177,8 +177,9 @@ type List struct {
 	// Whether or not hovering over an item will highlight it.
 	hover bool
 
-	// The number of list items skipped at the top before the first item is drawn.
-	offset int
+	// The number of list items and columns by which the list is scrolled
+	// down/to the right.
+	itemOffset, columnOffset int
 
 	// An optional function which is called when the user has navigated to a list
 	// item.
@@ -329,26 +330,29 @@ func (l *List) RemoveItem(index int) {
 	}
 }
 
-// SetOffset sets the number of list items skipped at the top before the first
-// item is drawn.
-func (l *List) SetOffset(offset int) {
+// SetOffset sets the number of list items and columns by which the list is
+// scrolled down/to the right.
+func (l *List) SetOffset(items, columns int) {
 	l.Lock()
 	defer l.Unlock()
 
-	if offset < 0 {
-		offset = 0
+	if items < 0 {
+		items = 0
+	}
+	if columns < 0 {
+		columns = 0
 	}
 
-	l.offset = offset
+	l.itemOffset, l.columnOffset = items, columns
 }
 
-// GetOffset returns the number of list items skipped at the top before the
-// first item is drawn.
-func (l *List) GetOffset() int {
+// GetOffset returns the number of list items and columns by which the list is
+// scrolled down/to the right.
+func (l *List) GetOffset() (int, int) {
 	l.Lock()
 	defer l.Unlock()
 
-	return l.offset
+	return l.itemOffset, l.columnOffset
 }
 
 // SetMainTextColor sets the color of the items' main text.
@@ -679,7 +683,8 @@ func (l *List) Clear() {
 
 	l.items = nil
 	l.currentItem = 0
-	l.offset = 0
+	l.itemOffset = 0
+	l.columnOffset = 0
 }
 
 // Focus is called by the application when the primitive receives focus.
@@ -732,7 +737,7 @@ func (l *List) transform(tr Transformation) {
 	switch tr {
 	case TransformFirstItem:
 		l.currentItem = 0
-		l.offset = 0
+		l.itemOffset = 0
 		decreasing = true
 	case TransformLastItem:
 		l.currentItem = len(l.items) - 1
@@ -746,7 +751,7 @@ func (l *List) transform(tr Transformation) {
 		decreasing = true
 	case TransformNextPage:
 		l.currentItem += pageItems
-		l.offset += pageItems
+		l.itemOffset += pageItems
 	}
 
 	for i := 0; i < len(l.items); i++ {
@@ -755,12 +760,12 @@ func (l *List) transform(tr Transformation) {
 				l.currentItem = len(l.items) - 1
 			} else {
 				l.currentItem = 0
-				l.offset = 0
+				l.itemOffset = 0
 			}
 		} else if l.currentItem >= len(l.items) {
 			if l.wrapAround {
 				l.currentItem = 0
-				l.offset = 0
+				l.itemOffset = 0
 			} else {
 				l.currentItem = len(l.items) - 1
 			}
@@ -789,30 +794,62 @@ func (l *List) updateOffset() {
 		h /= 2
 	}
 
-	if l.currentItem < l.offset {
-		l.offset = l.currentItem
+	if l.currentItem < l.itemOffset {
+		l.itemOffset = l.currentItem
 	} else if l.showSecondaryText {
-		if 2*(l.currentItem-l.offset) >= h-1 {
-			l.offset = (2*l.currentItem + 3 - h) / 2
+		if 2*(l.currentItem-l.itemOffset) >= h-1 {
+			l.itemOffset = (2*l.currentItem + 3 - h) / 2
 		}
 	} else {
-		if l.currentItem-l.offset >= h {
-			l.offset = l.currentItem + 1 - h
+		if l.currentItem-l.itemOffset >= h {
+			l.itemOffset = l.currentItem + 1 - h
 		}
 	}
 
 	if l.showSecondaryText {
-		if l.offset > len(l.items)-(l.height/2) {
-			l.offset = len(l.items) - l.height/2
+		if l.itemOffset > len(l.items)-(l.height/2) {
+			l.itemOffset = len(l.items) - l.height/2
 		}
 	} else {
-		if l.offset > len(l.items)-l.height {
-			l.offset = len(l.items) - l.height
+		if l.itemOffset > len(l.items)-l.height {
+			l.itemOffset = len(l.items) - l.height
 		}
 	}
 
-	if l.offset < 0 {
-		l.offset = 0
+	if l.itemOffset < 0 {
+		l.itemOffset = 0
+	}
+
+	// Maximum width of item text
+	maxWidth := 0
+	for _, option := range l.items {
+		strWidth := TaggedTextWidth(option.mainText)
+		secondaryWidth := TaggedTextWidth(option.secondaryText)
+		if secondaryWidth > strWidth {
+			strWidth = secondaryWidth
+		}
+		if option.shortcut != 0 {
+			strWidth += 4
+		}
+
+		if strWidth > maxWidth {
+			maxWidth = strWidth
+		}
+	}
+
+	// Additional width for scroll bar
+	addWidth := 0
+	if l.scrollBarVisibility == ScrollBarAlways ||
+		(l.scrollBarVisibility == ScrollBarAuto &&
+			((!l.showSecondaryText && len(l.items) > l.innerHeight) ||
+				(l.showSecondaryText && len(l.items) > l.innerHeight/2))) {
+		addWidth = 1
+	}
+
+	if l.columnOffset < 0 {
+		l.columnOffset = 0
+	} else if l.columnOffset > (maxWidth-l.innerWidth)+addWidth {
+		l.columnOffset = (maxWidth - l.innerWidth) + addWidth
 	}
 }
 
@@ -858,11 +895,11 @@ func (l *List) Draw(screen tcell.Screen) {
 		l.updateOffset()
 	}
 
-	scrollBarCursor := int(float64(len(l.items)) * (float64(l.offset) / float64(len(l.items)-height)))
+	scrollBarCursor := int(float64(len(l.items)) * (float64(l.itemOffset) / float64(len(l.items)-height)))
 
 	// Draw the list items.
 	for index, item := range l.items {
-		if index < l.offset {
+		if index < l.itemOffset {
 			continue
 		}
 
@@ -870,12 +907,25 @@ func (l *List) Draw(screen tcell.Screen) {
 			break
 		}
 
-		if len(item.mainText) == 0 && len(item.secondaryText) == 0 && item.shortcut == 0 { // Divider
-			Print(screen, []byte(string(tcell.RuneLTee)), (x-5)-l.paddingLeft, y, 1, AlignLeft, l.mainTextColor)
-			Print(screen, bytes.Repeat([]byte(string(tcell.RuneHLine)), width+4+l.paddingLeft+l.paddingRight), (x-4)-l.paddingLeft, y, width+4+l.paddingLeft+l.paddingRight, AlignLeft, l.mainTextColor)
-			Print(screen, []byte(string(tcell.RuneRTee)), (x-5)+width+5+l.paddingRight, y, 1, AlignLeft, l.mainTextColor)
+		mainText := item.mainText
+		secondaryText := item.secondaryText
+		if l.columnOffset > 0 {
+			if l.columnOffset < len(mainText) {
+				mainText = mainText[l.columnOffset:]
+			} else {
+				mainText = nil
+			}
+			if l.columnOffset < len(secondaryText) {
+				secondaryText = secondaryText[l.columnOffset:]
+			} else {
+				secondaryText = nil
+			}
+		}
 
-			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
+		if len(item.mainText) == 0 && len(item.secondaryText) == 0 && item.shortcut == 0 { // Divider
+			Print(screen, bytes.Repeat([]byte(string(tcell.RuneHLine)), width+l.paddingLeft+l.paddingRight), x-l.paddingLeft, y, width+l.paddingLeft+l.paddingRight, AlignLeft, l.mainTextColor)
+
+			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.itemOffset, l.hasFocus, l.scrollBarColor)
 			y++
 			continue
 		} else if !item.enabled { // Disabled item
@@ -885,9 +935,9 @@ func (l *List) Draw(screen tcell.Screen) {
 			}
 
 			// Main text.
-			Print(screen, item.mainText, x, y, width, AlignLeft, tcell.ColorGray.TrueColor())
+			Print(screen, mainText, x, y, width, AlignLeft, tcell.ColorGray.TrueColor())
 
-			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
+			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.itemOffset, l.hasFocus, l.scrollBarColor)
 			y++
 			continue
 		}
@@ -898,13 +948,13 @@ func (l *List) Draw(screen tcell.Screen) {
 		}
 
 		// Main text.
-		Print(screen, item.mainText, x, y, width, AlignLeft, l.mainTextColor)
+		Print(screen, mainText, x, y, width, AlignLeft, l.mainTextColor)
 
 		// Background color of selected text.
 		if index == l.currentItem && (!l.selectedFocusOnly || hasFocus) {
 			textWidth := width
 			if !l.highlightFullLine {
-				if w := TaggedTextWidth(item.mainText); w < textWidth {
+				if w := TaggedTextWidth(mainText); w < textWidth {
 					textWidth = w
 				}
 			}
@@ -920,7 +970,7 @@ func (l *List) Draw(screen tcell.Screen) {
 			}
 		}
 
-		RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
+		RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.itemOffset, l.hasFocus, l.scrollBarColor)
 
 		y++
 
@@ -930,9 +980,9 @@ func (l *List) Draw(screen tcell.Screen) {
 
 		// Secondary text.
 		if l.showSecondaryText {
-			Print(screen, item.secondaryText, x, y, width, AlignLeft, l.secondaryTextColor)
+			Print(screen, secondaryText, x, y, width, AlignLeft, l.secondaryTextColor)
 
-			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.offset, l.hasFocus, l.scrollBarColor)
+			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.itemOffset, l.hasFocus, l.scrollBarColor)
 
 			y++
 		}
@@ -1093,6 +1143,12 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 			l.transform(TransformPreviousItem)
 		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2, Keys.MoveNextField) {
 			l.transform(TransformNextItem)
+		} else if HitShortcut(event, Keys.MoveLeft, Keys.MoveLeft2) {
+			l.columnOffset--
+			l.updateOffset()
+		} else if HitShortcut(event, Keys.MoveRight, Keys.MoveRight2) {
+			l.columnOffset++
+			l.updateOffset()
 		} else if HitShortcut(event, Keys.MovePreviousPage) {
 			l.transform(TransformPreviousPage)
 		} else if HitShortcut(event, Keys.MoveNextPage) {
@@ -1121,7 +1177,7 @@ func (l *List) indexAtY(y int) int {
 	if l.showSecondaryText {
 		index /= 2
 	}
-	index += l.offset
+	index += l.itemOffset
 
 	if index >= len(l.items) {
 		return -1
@@ -1141,7 +1197,7 @@ func (l *List) indexAtPoint(x, y int) int {
 	if l.showSecondaryText {
 		index /= 2
 	}
-	index += l.offset
+	index += l.itemOffset
 
 	if index >= len(l.items) {
 		return -1
@@ -1249,17 +1305,17 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 				consumed = true
 			}
 		case MouseScrollUp:
-			if l.offset > 0 {
-				l.offset--
+			if l.itemOffset > 0 {
+				l.itemOffset--
 			}
 			consumed = true
 		case MouseScrollDown:
-			lines := len(l.items) - l.offset
+			lines := len(l.items) - l.itemOffset
 			if l.showSecondaryText {
 				lines *= 2
 			}
 			if _, _, _, height := l.GetInnerRect(); lines > height {
-				l.offset++
+				l.itemOffset++
 			}
 			consumed = true
 		}
