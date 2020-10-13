@@ -5,6 +5,7 @@ v1.5.1 (WIP)
 - Add TableCell.SetBytes, TableCell.GetBytes and TableCell.GetText
 - Fix List.Transform not calling handler set via SetChangedFunc
 - Fix WordWrap bounds out of range
+- Fix List dividers allowing selection
 - Allow modification of scroll bar render text
 - Allow scrolling List horizontally
 - Optimize TextView (writing is 90% faster, drawing is 50% faster)

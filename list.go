@@ -772,7 +772,7 @@ func (l *List) transform(tr Transformation) {
 		}
 
 		item := l.items[l.currentItem]
-		if item.enabled {
+		if item.enabled && (item.shortcut > 0 || len(item.mainText) > 0 || len(item.secondaryText) > 0) {
 			break
 		}
 
@@ -846,10 +846,11 @@ func (l *List) updateOffset() {
 		addWidth = 1
 	}
 
+	if l.columnOffset > (maxWidth-l.innerWidth)+addWidth {
+		l.columnOffset = (maxWidth - l.innerWidth) + addWidth
+	}
 	if l.columnOffset < 0 {
 		l.columnOffset = 0
-	} else if l.columnOffset > (maxWidth-l.innerWidth)+addWidth {
-		l.columnOffset = (maxWidth - l.innerWidth) + addWidth
 	}
 }
 
