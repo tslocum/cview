@@ -41,7 +41,7 @@ go get gitlab.com/tslocum/cview
 
 ## Hello World
 
-This basic example creates a box titled "Hello, World!" and displays it in your terminal:
+This basic example creates a TextView titled "Hello, World!" and displays it in your terminal:
 
 ```go
 package main

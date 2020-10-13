@@ -153,10 +153,7 @@ func (s *Slider) GetFieldHeight() int {
 
 // GetFieldWidth returns this primitive's field width.
 func (s *Slider) GetFieldWidth() int {
-	s.RLock()
-	defer s.RUnlock()
-
-	return 7
+	return 0
 }
 
 // SetIncrement sets the amount the slider is incremented by when modified via

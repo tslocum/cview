@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gdamore/tcell/v2"
-	runewidth "github.com/mattn/go-runewidth"
+	"github.com/mattn/go-runewidth"
 	"github.com/rivo/uniseg"
 )
 
@@ -490,6 +490,9 @@ func WordWrap(text string, width int) (lines []string) {
 		for index := escapePos; index >= 0; index-- {
 			if index < len(escapeIndices) && startIndex > escapeIndices[index][0] && startIndex < escapeIndices[index][1]-1 {
 				pos := escapeIndices[index][1] - 2 - startIndex
+				if pos < 0 || pos > len(substr) {
+					return substr
+				}
 				return substr[:pos] + substr[pos+1:]
 			}
 		}
