@@ -212,6 +212,10 @@ func (c *TableCell) GetLastPosition() (x, y, width int) {
 // Table cell is defined via SetCell() by the TableCell type. They can be added
 // dynamically to the table and changed any time.
 //
+// Each row of the table must have the same number of columns when it is drawn
+// or navigated. This isn't strictly enforced, however you may encounter issues
+// when navigating a table with rows of varied column sizes.
+//
 // The most compact display of a table is without borders. Each row will then
 // occupy one row on screen and columns are separated by the rune defined via
 // SetSeparator() (a space character by default).

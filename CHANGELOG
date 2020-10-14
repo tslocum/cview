@@ -8,6 +8,7 @@ v1.5.1 (WIP)
 - Fix List dividers allowing selection
 - Allow modification of scroll bar render text
 - Allow scrolling List horizontally
+- Clarify that Table rows must each have the same number of columns
 - Make printWithStyle public and rename as PrintStyle
 - Optimize TextView (writing is 90% faster, drawing is 50% faster)
 - Remove return values from methods which return their primitive (breaks chaining)
