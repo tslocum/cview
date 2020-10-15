@@ -72,9 +72,14 @@ This greatly improves buffer efficiency. [TextView.Write](https://docs.rocketnin
 is 90% faster and [TextView.Draw](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#TextView.Draw)
 is 50% faster.    
 
+## `Pages` has been renamed as `Panels`
+
+This is in preparation for supporting tabbed panels.
+
 ## `Application.ForceDraw` has been removed
 
-`Application.Draw` may be called anywhere as it is thread-safe.
+Because cview is [thread-safe](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#hdr-Concurrency),
+forcing an application draw is no longer possible, nor required.
 
 # Merged pull requests
 
