@@ -6,6 +6,11 @@
 This package is a fork of [tview](https://github.com/rivo/tview).
 See [FORK.md](https://gitlab.com/tslocum/cview/blob/master/FORK.md) for more information.
 
+**Warning:** Breaking changes may be added to cview without bumping its major
+version. The largest changes have been made. Smaller breaking changes may
+continue to be made where backwards compatibility is not possible. Changes are
+listed in [FORK.md](https://gitlab.com/tslocum/cview/blob/master/FORK.md).
+
 ## Demo
 
 `ssh cview.rocketnine.space -p 20000`

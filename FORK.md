@@ -79,7 +79,8 @@ This is in preparation for supporting tabbed panels.
 ## `Application.ForceDraw` has been removed
 
 Because cview is [thread-safe](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#hdr-Concurrency),
-forcing an application draw is no longer possible, nor required.
+application draws must be queued. Call `Application.QueueUpdateDraw` to queue
+an update that requires the application to be drawn when completed.
 
 # Merged pull requests
 
