@@ -33,7 +33,7 @@ The following widgets are available:
   InputField - Single-line text entry field.
   List - A navigable text list with optional keyboard shortcuts.
   Modal - A centered window with a text message and one or more buttons.
-  Pages - A page based layout manager.
+  Panels - A panel based layout manager.
   ProgressBar - Indicates the progress of an operation.
   Table - A scrollable display of tabular data. Table cells, rows, or columns
     may also be highlighted.
@@ -107,8 +107,8 @@ square brackets. Examples:
 
 A color tag changes the color of the characters following that color tag. This
 applies to almost everything from box titles, list text, form item labels, to
-table cells. In a TextView, this functionality has to be switched on explicitly.
-See the TextView documentation for more information.
+table cells. In a TextView, this functionality must be explicitly enabled. See
+the TextView documentation for more information.
 
 Color tags may contain not just the foreground (text) color but also the
 background color and additional flags. In fact, the full definition of a color

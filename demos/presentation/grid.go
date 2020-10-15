@@ -8,7 +8,7 @@ import (
 // Grid demonstrates the grid layout.
 func Grid(nextSlide func()) (title string, content cview.Primitive) {
 	modalShown := false
-	pages := cview.NewPages()
+	panels := cview.NewPanels()
 
 	newPrimitive := func(text string) cview.Primitive {
 		tv := cview.NewTextView()
@@ -19,7 +19,7 @@ func Grid(nextSlide func()) (title string, content cview.Primitive) {
 				nextSlide()
 				modalShown = false
 			} else {
-				pages.ShowPage("modal")
+				panels.Show("modal")
 				modalShown = true
 			}
 		})
@@ -51,11 +51,11 @@ func Grid(nextSlide func()) (title string, content cview.Primitive) {
 	modal.SetText("Resize the window to see how the grid layout adapts")
 	modal.AddButtons([]string{"Ok"})
 	modal.SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-		pages.HidePage("modal")
+		panels.Hide("modal")
 	})
 
-	pages.AddPage("grid", grid, true, true)
-	pages.AddPage("modal", modal, false, false)
+	panels.Add("grid", grid, true, true)
+	panels.Add("modal", modal, false, false)
 
-	return "Grid", pages
+	return "Grid", panels
 }

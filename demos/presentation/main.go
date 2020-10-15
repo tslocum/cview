@@ -64,7 +64,7 @@ func main() {
 		End,
 	}
 
-	pages := cview.NewPages()
+	panels := cview.NewPanels()
 
 	// The bottom row has some info on where we are.
 	info := cview.NewTextView()
@@ -72,7 +72,7 @@ func main() {
 	info.SetRegions(true)
 	info.SetWrap(false)
 	info.SetHighlightedFunc(func(added, removed, remaining []string) {
-		pages.SwitchToPage(added[0])
+		panels.SwitchTo(added[0])
 	})
 
 	// Create the pages for all slides.
@@ -95,7 +95,7 @@ func main() {
 		slideRegions = append(slideRegions, cursor)
 
 		title, primitive := slide(nextSlide)
-		pages.AddPage(strconv.Itoa(index), primitive, true, index == 0)
+		panels.Add(strconv.Itoa(index), primitive, true, index == 0)
 		fmt.Fprintf(info, `["%d"][darkcyan] %s [white][""]|`, index, title)
 
 		cursor += len(title) + 4
@@ -105,7 +105,7 @@ func main() {
 	// Create the main layout.
 	layout := cview.NewFlex()
 	layout.SetDirection(cview.FlexRow)
-	layout.AddItem(pages, 0, 1, true)
+	layout.AddItem(panels, 0, 1, true)
 	layout.AddItem(info, 1, 1, false)
 
 	// Shortcuts to navigate the slides.

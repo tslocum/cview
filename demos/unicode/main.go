@@ -9,7 +9,7 @@ import (
 
 func main() {
 	app := cview.NewApplication()
-	pages := cview.NewPages()
+	panels := cview.NewPanels()
 
 	form := cview.NewForm()
 	form.AddDropDownSimple("称谓", 0, nil, "先生", "女士", "博士", "老师", "师傅")
@@ -20,7 +20,7 @@ func main() {
 		_, option := form.GetFormItem(0).(*cview.DropDown).GetCurrentOption()
 		userName := form.GetFormItem(1).(*cview.InputField).GetText()
 
-		alert(pages, "alert-dialog", fmt.Sprintf("保存成功，%s %s！", userName, option.GetText()))
+		alert(panels, "alert-dialog", fmt.Sprintf("保存成功，%s %s！", userName, option.GetText()))
 	})
 	form.AddButton("退出", func() {
 		app.Stop()
@@ -28,23 +28,23 @@ func main() {
 	form.SetBorder(true)
 	form.SetTitle("输入一些内容")
 	form.SetTitleAlign(cview.AlignLeft)
-	pages.AddPage("base", form, true, true)
+	panels.Add("base", form, true, true)
 
-	app.SetRoot(pages, true)
+	app.SetRoot(panels, true)
 	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }
 
 // alert shows a confirmation dialog.
-func alert(pages *cview.Pages, id string, message string) {
+func alert(panels *cview.Panels, id string, message string) {
 	modal := cview.NewModal()
 	modal.SetText(message)
 	modal.AddButtons([]string{"确定"})
 	modal.SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-		pages.HidePage(id)
-		pages.RemovePage(id)
+		panels.Hide(id)
+		panels.Remove(id)
 	})
 
-	pages.AddPage(id, modal, false, true)
+	panels.Add(id, modal, false, true)
 }

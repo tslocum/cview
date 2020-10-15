@@ -15,7 +15,7 @@ func demoBox(title string) *cview.Box {
 // Flex demonstrates flexbox layout.
 func Flex(nextSlide func()) (title string, content cview.Primitive) {
 	modalShown := false
-	pages := cview.NewPages()
+	panels := cview.NewPanels()
 
 	textView := cview.NewTextView()
 	textView.SetBorder(true)
@@ -25,7 +25,7 @@ func Flex(nextSlide func()) (title string, content cview.Primitive) {
 			nextSlide()
 			modalShown = false
 		} else {
-			pages.ShowPage("modal")
+			panels.Show("modal")
 			modalShown = true
 		}
 	})
@@ -45,10 +45,10 @@ func Flex(nextSlide func()) (title string, content cview.Primitive) {
 	modal.SetText("Resize the window to see the effect of the flexbox parameters")
 	modal.AddButtons([]string{"Ok"})
 	modal.SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-		pages.HidePage("modal")
+		panels.Hide("modal")
 	})
 
-	pages.AddPage("flex", flex, true, true)
-	pages.AddPage("modal", modal, false, false)
-	return "Flex", pages
+	panels.Add("flex", flex, true, true)
+	panels.Add("modal", modal, false, false)
+	return "Flex", panels
 }
