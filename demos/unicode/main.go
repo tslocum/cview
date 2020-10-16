@@ -28,7 +28,7 @@ func main() {
 	form.SetBorder(true)
 	form.SetTitle("输入一些内容")
 	form.SetTitleAlign(cview.AlignLeft)
-	panels.Add("base", form, true, true)
+	panels.AddPanel("base", form, true, true)
 
 	app.SetRoot(panels, true)
 	if err := app.Run(); err != nil {
@@ -42,9 +42,9 @@ func alert(panels *cview.Panels, id string, message string) {
 	modal.SetText(message)
 	modal.AddButtons([]string{"确定"})
 	modal.SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-		panels.Hide(id)
-		panels.Remove(id)
+		panels.HidePanel(id)
+		panels.RemovePanel(id)
 	})
 
-	panels.Add(id, modal, false, true)
+	panels.AddPanel(id, modal, false, true)
 }

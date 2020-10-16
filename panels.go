@@ -31,9 +31,6 @@ type Panels struct {
 	// panels changes.
 	changed func()
 
-	// TODO enable tabs
-	tabs *TextView
-
 	sync.RWMutex
 }
 
@@ -63,7 +60,7 @@ func (p *Panels) GetPanelCount() int {
 	return len(p.panels)
 }
 
-// Add adds a new panel with the given name and primitive. If there was
+// AddPanel adds a new panel with the given name and primitive. If there was
 // previously a panel with the same name, it is overwritten. Leaving the name
 // empty may cause conflicts in other functions so always specify a non-empty
 // name.
@@ -72,7 +69,7 @@ func (p *Panels) GetPanelCount() int {
 // was changed in one of the other functions). If "resize" is set to true, the
 // primitive will be set to the size available to the Panels primitive whenever
 // the panels are drawn.
-func (p *Panels) Add(name string, item Primitive, resize, visible bool) {
+func (p *Panels) AddPanel(name string, item Primitive, resize, visible bool) {
 	hasFocus := p.HasFocus()
 
 	p.Lock()
@@ -97,15 +94,9 @@ func (p *Panels) Add(name string, item Primitive, resize, visible bool) {
 	}
 }
 
-// AddAndSwitchTo calls Add(), then SwitchTo() on the newly added panel.
-func (p *Panels) AddAndSwitchTo(name string, item Primitive, resize bool) {
-	p.Add(name, item, resize, true)
-	p.SwitchTo(name)
-}
-
-// Remove removes the panel with the given name. If that panel was the only
+// RemovePanel removes the panel with the given name. If that panel was the only
 // visible panel, visibility is assigned to the last panel.
-func (p *Panels) Remove(name string) {
+func (p *Panels) RemovePanel(name string) {
 	hasFocus := p.HasFocus()
 
 	p.Lock()
@@ -142,8 +133,8 @@ func (p *Panels) Remove(name string) {
 	}
 }
 
-// Has returns true if a panel with the given name exists in this object.
-func (p *Panels) Has(name string) bool {
+// HasPanel returns true if a panel with the given name exists in this object.
+func (p *Panels) HasPanel(name string) bool {
 	p.RLock()
 	defer p.RUnlock()
 
@@ -155,9 +146,9 @@ func (p *Panels) Has(name string) bool {
 	return false
 }
 
-// Show sets a panel's visibility to "true" (in addition to any other panels
+// ShowPanel sets a panel's visibility to "true" (in addition to any other panels
 // which are already visible).
-func (p *Panels) Show(name string) {
+func (p *Panels) ShowPanel(name string) {
 	hasFocus := p.HasFocus()
 
 	p.Lock()
@@ -181,8 +172,8 @@ func (p *Panels) Show(name string) {
 	}
 }
 
-// Hide sets a panel's visibility to "false".
-func (p *Panels) Hide(name string) {
+// HidePanel sets a panel's visibility to "false".
+func (p *Panels) HidePanel(name string) {
 	hasFocus := p.HasFocus()
 
 	p.Lock()
@@ -206,9 +197,9 @@ func (p *Panels) Hide(name string) {
 	}
 }
 
-// SwitchTo sets a panel's visibility to "true" and all other panels'
+// SetCurrentPanel sets a panel's visibility to "true" and all other panels'
 // visibility to "false".
-func (p *Panels) SwitchTo(name string) {
+func (p *Panels) SetCurrentPanel(name string) {
 	hasFocus := p.HasFocus()
 
 	p.Lock()
@@ -380,4 +371,65 @@ func (p *Panels) MouseHandler() func(action MouseAction, event *tcell.EventMouse
 
 		return
 	})
+}
+
+// Support backwards compatibility with Pages.
+type page = panel
+
+// Pages is a wrapper around Panels. It is provided for backwards compatibility.
+// Application developers should use Panels instead.
+type Pages struct {
+	*Panels
+}
+
+// NewPages returns a new Panels object.
+func NewPages() *Pages {
+	return &Pages{NewPanels()}
+}
+
+// GetPageCount returns the number of panels currently stored in this object.
+func (p *Pages) GetPageCount() int {
+	return p.GetPanelCount()
+}
+
+// AddPage adds a new panel with the given name and primitive.
+func (p *Pages) AddPage(name string, item Primitive, resize, visible bool) {
+	p.AddPanel(name, item, resize, visible)
+}
+
+// AddAndSwitchToPage calls Add(), then SwitchTo() on that newly added panel.
+func (p *Pages) AddAndSwitchToPage(name string, item Primitive, resize bool) {
+	p.AddPanel(name, item, resize, true)
+	p.SetCurrentPanel(name)
+}
+
+// RemovePage removes the panel with the given name.
+func (p *Pages) RemovePage(name string) {
+	p.RemovePanel(name)
+}
+
+// HasPage returns true if a panel with the given name exists in this object.
+func (p *Pages) HasPage(name string) bool {
+	return p.HasPanel(name)
+}
+
+// ShowPage sets a panel's visibility to "true".
+func (p *Pages) ShowPage(name string) {
+	p.ShowPanel(name)
+}
+
+// HidePage sets a panel's visibility to "false".
+func (p *Pages) HidePage(name string) {
+	p.HidePanel(name)
+}
+
+// SwitchToPage sets a panel's visibility to "true" and all other panels'
+// visibility to "false".
+func (p *Pages) SwitchToPage(name string) {
+	p.SetCurrentPanel(name)
+}
+
+// GetFrontPage returns the front-most visible panel.
+func (p *Pages) GetFrontPage() (name string, item Primitive) {
+	return p.GetFrontPanel()
 }

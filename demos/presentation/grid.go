@@ -19,7 +19,7 @@ func Grid(nextSlide func()) (title string, content cview.Primitive) {
 				nextSlide()
 				modalShown = false
 			} else {
-				panels.Show("modal")
+				panels.ShowPanel("modal")
 				modalShown = true
 			}
 		})
@@ -51,11 +51,11 @@ func Grid(nextSlide func()) (title string, content cview.Primitive) {
 	modal.SetText("Resize the window to see how the grid layout adapts")
 	modal.AddButtons([]string{"Ok"})
 	modal.SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-		panels.Hide("modal")
+		panels.HidePanel("modal")
 	})
 
-	panels.Add("grid", grid, true, true)
-	panels.Add("modal", modal, false, false)
+	panels.AddPanel("grid", grid, true, true)
+	panels.AddPanel("modal", modal, false, false)
 
 	return "Grid", panels
 }

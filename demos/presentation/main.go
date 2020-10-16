@@ -64,29 +64,18 @@ func main() {
 		End,
 	}
 
-	panels := cview.NewPanels()
-
-	// The bottom row has some info on where we are.
-	info := cview.NewTextView()
-	info.SetDynamicColors(true)
-	info.SetRegions(true)
-	info.SetWrap(false)
-	info.SetHighlightedFunc(func(added, removed, remaining []string) {
-		panels.SwitchTo(added[0])
-	})
+	panels := cview.NewTabbedPanels()
 
 	// Create the pages for all slides.
 	previousSlide := func() {
-		slide, _ := strconv.Atoi(info.GetHighlights()[0])
+		slide, _ := strconv.Atoi(panels.GetCurrentTab())
 		slide = (slide - 1 + len(slides)) % len(slides)
-		info.Highlight(strconv.Itoa(slide))
-		info.ScrollToHighlight()
+		panels.SetCurrentTab(strconv.Itoa(slide))
 	}
 	nextSlide := func() {
-		slide, _ := strconv.Atoi(info.GetHighlights()[0])
+		slide, _ := strconv.Atoi(panels.GetCurrentTab())
 		slide = (slide + 1) % len(slides)
-		info.Highlight(strconv.Itoa(slide))
-		info.ScrollToHighlight()
+		panels.SetCurrentTab(strconv.Itoa(slide))
 	}
 
 	cursor := 0
@@ -95,18 +84,11 @@ func main() {
 		slideRegions = append(slideRegions, cursor)
 
 		title, primitive := slide(nextSlide)
-		panels.Add(strconv.Itoa(index), primitive, true, index == 0)
-		fmt.Fprintf(info, `["%d"][darkcyan] %s [white][""]|`, index, title)
+		panels.AddTab(strconv.Itoa(index), title, primitive)
 
 		cursor += len(title) + 4
 	}
-	info.Highlight("0")
-
-	// Create the main layout.
-	layout := cview.NewFlex()
-	layout.SetDirection(cview.FlexRow)
-	layout.AddItem(panels, 0, 1, true)
-	layout.AddItem(info, 1, 1, false)
+	panels.SetCurrentTab("0")
 
 	// Shortcuts to navigate the slides.
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
@@ -119,7 +101,7 @@ func main() {
 	})
 
 	// Start the application.
-	app.SetRoot(layout, true)
+	app.SetRoot(panels, true)
 	if err := app.Run(); err != nil {
 		panic(err)
 	}

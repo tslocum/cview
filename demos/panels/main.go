@@ -21,13 +21,13 @@ func main() {
 			modal.AddButtons([]string{"Next", "Quit"})
 			modal.SetDoneFunc(func(buttonIndex int, buttonLabel string) {
 				if buttonIndex == 0 {
-					panels.SwitchTo(fmt.Sprintf("panel-%d", (panel+1)%panelCount))
+					panels.SetCurrentPanel(fmt.Sprintf("panel-%d", (panel+1)%panelCount))
 				} else {
 					app.Stop()
 				}
 			})
 
-			panels.Add(fmt.Sprintf("panel-%d", panel), modal, false, panel == 0)
+			panels.AddPanel(fmt.Sprintf("panel-%d", panel), modal, false, panel == 0)
 		}(panel)
 	}
 
