@@ -72,7 +72,13 @@ file.
 
 cbind: https://gitlab.com/tslocum/cbind
 
-cbind example: https://docs.rocketnine.space/gitlab.com/tslocum/cbind/#example_NewConfiguration
+Bracketed Paste Mode
+
+Bracketed paste mode is enabled by default. It may be disabled by calling
+Application.EnableBracketedPaste before Application.Run. The following demo
+shows how to handle paste events and process pasted text.
+
+tcell bracketed paste demo: https://github.com/gdamore/tcell/blob/master/_demos/mouse.go
 
 Mouse Support
 

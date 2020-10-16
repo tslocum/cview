@@ -16,6 +16,7 @@ v1.5.1 (WIP)
 - Remove return values from methods which return their primitive (breaks chaining)
 - Remove Application.ForceDraw (Application.Draw may be called anywhere)
 - Rename Pages as Panels
+- Support bracketed paste mode via tcell
 
 v1.5.0 (2020-10-03)
 - Add scroll bar to TextView

@@ -46,6 +46,9 @@ type Application struct {
 	// Whether or not the application resizes the root primitive.
 	rootFullscreen bool
 
+	// Whether or not to enable bracketed paste mode.
+	enableBracketedPaste bool
+
 	// Whether or not to enable mouse events.
 	enableMouse bool
 
@@ -115,9 +118,10 @@ type Application struct {
 // NewApplication creates and returns a new application.
 func NewApplication() *Application {
 	return &Application{
-		events:            make(chan tcell.Event, queueSize),
-		updates:           make(chan func(), queueSize),
-		screenReplacement: make(chan tcell.Screen, 1),
+		enableBracketedPaste: true,
+		events:               make(chan tcell.Event, queueSize),
+		updates:              make(chan func(), queueSize),
+		screenReplacement:    make(chan tcell.Screen, 1),
 	}
 }
 
@@ -211,6 +215,20 @@ func (a *Application) GetScreenSize() (width, height int) {
 	return a.width, a.height
 }
 
+// EnableBracketedPaste enables bracketed paste mode, which is enabled by default.
+func (a *Application) EnableBracketedPaste(enable bool) {
+	a.Lock()
+	defer a.Unlock()
+	if enable != a.enableBracketedPaste && a.screen != nil {
+		if enable {
+			a.screen.EnablePaste()
+		} else {
+			a.screen.DisablePaste()
+		}
+	}
+	a.enableBracketedPaste = enable
+}
+
 // EnableMouse enables mouse events.
 func (a *Application) EnableMouse(enable bool) {
 	a.Lock()
@@ -223,7 +241,6 @@ func (a *Application) EnableMouse(enable bool) {
 		}
 	}
 	a.enableMouse = enable
-
 }
 
 // Run starts the application and thus the event loop. This function returns
@@ -242,6 +259,9 @@ func (a *Application) Run() error {
 		if err = a.screen.Init(); err != nil {
 			a.Unlock()
 			return err
+		}
+		if a.enableBracketedPaste {
+			a.screen.EnablePaste()
 		}
 		if a.enableMouse {
 			a.screen.EnableMouse()
@@ -301,6 +321,9 @@ func (a *Application) Run() error {
 			// Initialize and draw this screen.
 			if err := screen.Init(); err != nil {
 				panic(err)
+			}
+			if a.enableBracketedPaste {
+				screen.EnablePaste()
 			}
 			if a.enableMouse {
 				screen.EnableMouse()
