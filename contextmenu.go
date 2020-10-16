@@ -67,7 +67,7 @@ func (c *ContextMenu) AddContextItem(text string, shortcut rune, selected func(i
 	if text == "" && shortcut == 0 {
 		c.list.Lock()
 		index := len(c.list.items) - 1
-		c.list.items[index].enabled = false
+		c.list.items[index].disabled = true
 		c.list.Unlock()
 	}
 }
@@ -137,7 +137,7 @@ func (c *ContextMenu) show(item int, x int, y int, setFocus func(Primitive)) {
 
 	c.list.Lock()
 	for i, item := range c.list.items {
-		if item.enabled {
+		if !item.disabled {
 			c.list.currentItem = i
 			break
 		}

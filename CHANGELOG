@@ -1,4 +1,5 @@
 v1.5.1 (WIP)
+- Add FocusManager
 - Add Slider
 - Add TabbedPanels
 - Add Application.GetScreen and Application.GetScreenSize

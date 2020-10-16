@@ -11,7 +11,7 @@ import (
 
 // ListItem represents an item in a List.
 type ListItem struct {
-	enabled       bool        // Whether or not the list item is selectable.
+	disabled      bool        // Whether or not the list item is selectable.
 	mainText      []byte      // The main text of the list item.
 	secondaryText []byte      // A secondary text to be shown underneath the main text.
 	shortcut      rune        // The key to select the list item directly, 0 if there is no shortcut.
@@ -25,7 +25,6 @@ type ListItem struct {
 func NewListItem(mainText string) *ListItem {
 	return &ListItem{
 		mainText: []byte(mainText),
-		enabled:  true,
 	}
 }
 
@@ -550,8 +549,6 @@ func (l *List) AddItem(item *ListItem) {
 func (l *List) InsertItem(index int, item *ListItem) {
 	l.Lock()
 
-	item.enabled = true
-
 	// Shift index to range.
 	if index < 0 {
 		index = len(l.items) + index + 1
@@ -627,7 +624,7 @@ func (l *List) SetItemEnabled(index int, enabled bool) {
 	defer l.Unlock()
 
 	item := l.items[index]
-	item.enabled = enabled
+	item.disabled = !enabled
 }
 
 // FindItems searches the main and secondary texts for the given strings and
@@ -772,7 +769,7 @@ func (l *List) transform(tr Transformation) {
 		}
 
 		item := l.items[l.currentItem]
-		if item.enabled && (item.shortcut > 0 || len(item.mainText) > 0 || len(item.secondaryText) > 0) {
+		if !item.disabled && (item.shortcut > 0 || len(item.mainText) > 0 || len(item.secondaryText) > 0) {
 			break
 		}
 
@@ -929,7 +926,7 @@ func (l *List) Draw(screen tcell.Screen) {
 			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.itemOffset, l.hasFocus, l.scrollBarColor)
 			y++
 			continue
-		} else if !item.enabled { // Disabled item
+		} else if item.disabled {
 			// Shortcuts.
 			if showShortcuts && item.shortcut != 0 {
 				Print(screen, []byte(fmt.Sprintf("(%c)", item.shortcut)), x-5, y, 4, AlignRight, tcell.ColorDarkSlateGray.TrueColor())
@@ -1086,7 +1083,7 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 		} else if HitShortcut(event, Keys.Select, Keys.Select2) {
 			if l.currentItem >= 0 && l.currentItem < len(l.items) {
 				item := l.items[l.currentItem]
-				if item.enabled {
+				if !item.disabled {
 					if item.selected != nil {
 						l.Unlock()
 						item.selected()
@@ -1111,7 +1108,7 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 			if ch != ' ' {
 				// It's not a space bar. Is it a shortcut?
 				for index, item := range l.items {
-					if item.enabled && item.shortcut == ch {
+					if !item.disabled && item.shortcut == ch {
 						// We have a shortcut.
 						l.currentItem = index
 
@@ -1241,7 +1238,7 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 			index := l.indexAtPoint(event.Position())
 			if index != -1 {
 				item := l.items[index]
-				if item.enabled {
+				if !item.disabled {
 					l.currentItem = index
 					if item.selected != nil {
 						l.Unlock()
@@ -1279,7 +1276,7 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 			index := l.indexAtPoint(event.Position())
 			if index != -1 {
 				item := l.items[index]
-				if item.enabled {
+				if !item.disabled {
 					l.currentItem = index
 					if index != l.currentItem && l.changed != nil {
 						l.Unlock()
@@ -1298,7 +1295,7 @@ func (l *List) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 				index := l.indexAtY(y)
 				if index >= 0 {
 					item := l.items[index]
-					if item.enabled {
+					if !item.disabled {
 						l.currentItem = index
 					}
 				}

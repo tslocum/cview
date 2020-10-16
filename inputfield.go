@@ -463,7 +463,6 @@ func (i *InputField) Autocomplete() {
 	currentEntry := -1
 	i.autocompleteList.Clear()
 	for index, entry := range entries {
-		entry.enabled = true
 		i.autocompleteList.AddItem(entry)
 		if currentEntry < 0 && entry.GetMainText() == string(i.text) {
 			currentEntry = index
