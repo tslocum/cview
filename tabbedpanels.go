@@ -12,11 +12,20 @@ import (
 // may be displayed at the top or bottom of the container.
 type TabbedPanels struct {
 	*Flex
-	panels *Panels
-	tabs   *TextView
+	Switcher *TextView
+	panels   *Panels
 
 	tabLabels  map[string]string
 	currentTab string
+
+	tabTextColor              tcell.Color
+	tabTextColorFocused       tcell.Color
+	tabBackgroundColor        tcell.Color
+	tabBackgroundColorFocused tcell.Color
+
+	tabDividerStart string
+	tabDividerMid   string
+	tabDividerEnd   string
 
 	bottomTabSwitcher bool
 
@@ -30,17 +39,24 @@ type TabbedPanels struct {
 // NewTabbedPanels returns a new TabbedPanels object.
 func NewTabbedPanels() *TabbedPanels {
 	t := &TabbedPanels{
-		Flex:      NewFlex(),
-		panels:    NewPanels(),
-		tabs:      NewTextView(),
-		tabLabels: make(map[string]string),
+		Flex:                      NewFlex(),
+		Switcher:                  NewTextView(),
+		panels:                    NewPanels(),
+		tabTextColor:              Styles.PrimaryTextColor,
+		tabTextColorFocused:       Styles.InverseTextColor,
+		tabBackgroundColor:        ColorUnset,
+		tabBackgroundColorFocused: Styles.PrimaryTextColor,
+		tabDividerMid:             string(BoxDrawingsDoubleVertical),
+		tabDividerEnd:             string(BoxDrawingsLightVertical),
+		tabLabels:                 make(map[string]string),
 	}
 
-	t.tabs.SetDynamicColors(true)
-	t.tabs.SetRegions(true)
-	t.tabs.SetWrap(true)
-	t.tabs.SetWordWrap(true)
-	t.tabs.SetHighlightedFunc(func(added, removed, remaining []string) {
+	s := t.Switcher
+	s.SetDynamicColors(true)
+	s.SetRegions(true)
+	s.SetWrap(true)
+	s.SetWordWrap(true)
+	s.SetHighlightedFunc(func(added, removed, remaining []string) {
 		t.SetCurrentTab(added[0])
 		if t.setFocus != nil {
 			t.setFocus(t.panels)
@@ -49,7 +65,7 @@ func NewTabbedPanels() *TabbedPanels {
 
 	f := t.Flex
 	f.SetDirection(FlexRow)
-	f.AddItem(t.tabs, 1, 1, false)
+	f.AddItem(t.Switcher, 1, 1, false)
 	f.AddItem(t.panels, 0, 1, true)
 
 	return t
@@ -89,7 +105,7 @@ func (t *TabbedPanels) SetCurrentTab(name string) {
 
 	t.Unlock()
 
-	t.tabs.Highlight(t.currentTab)
+	t.Switcher.Highlight(t.currentTab)
 }
 
 // GetCurrentTab returns the currently visible tab.
@@ -112,6 +128,42 @@ func (t *TabbedPanels) SetTabLabel(name, label string) {
 	t.updateTabLabels()
 }
 
+// SetTabTextColor sets the color of the tab text.
+func (t *TabbedPanels) SetTabTextColor(color tcell.Color) {
+	t.Lock()
+	defer t.Unlock()
+	t.tabTextColor = color
+}
+
+// SetTabTextColorFocused sets the color of the tab text when the tab is in focus.
+func (t *TabbedPanels) SetTabTextColorFocused(color tcell.Color) {
+	t.Lock()
+	defer t.Unlock()
+	t.tabTextColorFocused = color
+}
+
+// SetTabBackgroundColor sets the background color of the tab.
+func (t *TabbedPanels) SetTabBackgroundColor(color tcell.Color) {
+	t.Lock()
+	defer t.Unlock()
+	t.tabBackgroundColor = color
+}
+
+// SetTabBackgroundColorFocused sets the background color of the tab when the
+// tab is in focus.
+func (t *TabbedPanels) SetTabBackgroundColorFocused(color tcell.Color) {
+	t.Lock()
+	defer t.Unlock()
+	t.tabBackgroundColorFocused = color
+}
+
+// SetTabSwitcherDivider sets the tab switcher divider text. Color tags are supported.
+func (t *TabbedPanels) SetTabSwitcherDivider(start, mid, end string) {
+	t.Lock()
+	defer t.Unlock()
+	t.tabDividerStart, t.tabDividerMid, t.tabDividerEnd = start, mid, end
+}
+
 // SetTabSwitcherPosition sets the position of the tab switcher.
 func (t *TabbedPanels) SetTabSwitcherPosition(bottom bool) {
 	t.Lock()
@@ -125,12 +177,12 @@ func (t *TabbedPanels) SetTabSwitcherPosition(bottom bool) {
 
 	f := t.Flex
 	f.RemoveItem(t.panels)
-	f.RemoveItem(t.tabs)
+	f.RemoveItem(t.Switcher)
 	if t.bottomTabSwitcher {
 		f.AddItem(t.panels, 0, 1, true)
-		f.AddItem(t.tabs, 1, 1, false)
+		f.AddItem(t.Switcher, 1, 1, false)
 	} else {
-		f.AddItem(t.tabs, 1, 1, false)
+		f.AddItem(t.Switcher, 1, 1, false)
 		f.AddItem(t.panels, 0, 1, true)
 	}
 
@@ -138,17 +190,37 @@ func (t *TabbedPanels) SetTabSwitcherPosition(bottom bool) {
 }
 
 func (t *TabbedPanels) updateTabLabels() {
-	var b bytes.Buffer
-	for _, panel := range t.panels.panels {
-		b.WriteString(fmt.Sprintf(`["%s"][darkcyan] %s [white][""]|`, panel.Name, t.tabLabels[panel.Name]))
+	if len(t.panels.panels) == 0 {
+		t.Switcher.SetText("")
+		t.Flex.ResizeItem(t.Switcher, 0, 1)
+		return
 	}
-	t.tabs.SetText(b.String())
 
-	reqLines := len(WordWrap(t.tabs.GetText(true), t.width))
+	var b bytes.Buffer
+	b.WriteString(t.tabDividerStart)
+	l := len(t.panels.panels)
+	for i, panel := range t.panels.panels {
+		textColor := t.tabTextColor
+		backgroundColor := t.tabBackgroundColor
+		if panel.Name == t.currentTab {
+			textColor = t.tabTextColorFocused
+			backgroundColor = t.tabBackgroundColorFocused
+		}
+		b.WriteString(fmt.Sprintf(`["%s"][%s:%s] %s [-:-][""]`, panel.Name, ColorHex(textColor), ColorHex(backgroundColor), t.tabLabels[panel.Name]))
+
+		if i == l-1 {
+			b.WriteString(t.tabDividerEnd)
+		} else {
+			b.WriteString(t.tabDividerMid)
+		}
+	}
+	t.Switcher.SetText(b.String())
+
+	reqLines := len(WordWrap(t.Switcher.GetText(true), t.width))
 	if reqLines < 1 {
 		reqLines = 1
 	}
-	t.Flex.ResizeItem(t.tabs, reqLines, 1)
+	t.Flex.ResizeItem(t.Switcher, reqLines, 1)
 }
 
 func (t *TabbedPanels) updateVisibleTabs() {
@@ -227,11 +299,11 @@ func (t *TabbedPanels) MouseHandler() func(action MouseAction, event *tcell.Even
 			return false, nil
 		}
 
-		if t.tabs.InRect(x, y) {
+		if t.Switcher.InRect(x, y) {
 			if t.setFocus != nil {
 				defer t.setFocus(t.panels)
 			}
-			defer t.tabs.MouseHandler()(action, event, setFocus)
+			defer t.Switcher.MouseHandler()(action, event, setFocus)
 			return true, nil
 		}
 

@@ -1,6 +1,7 @@
 package cview
 
 import (
+	"fmt"
 	"math"
 	"regexp"
 	"sort"
@@ -94,6 +95,16 @@ func init() {
 			return len([]rune(text)) <= maxLength
 		}
 	}
+}
+
+// ColorHex returns the hexadecimal value of a color as a string, prefixed with #.
+// If the color is invalid, a blank string is returned.
+func ColorHex(c tcell.Color) string {
+	if !c.Valid() {
+		return ""
+	}
+	r, g, b := c.RGB()
+	return fmt.Sprintf("#%02x%02x%02x", r, g, b)
 }
 
 // styleFromTag takes the given style, defined by a foreground color (fgColor),
