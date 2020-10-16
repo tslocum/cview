@@ -9,6 +9,13 @@ import (
 	"gitlab.com/tslocum/cview"
 )
 
+func wrap(f func()) func(ev *tcell.EventKey) *tcell.EventKey {
+	return func(ev *tcell.EventKey) *tcell.EventKey {
+		f()
+		return nil
+	}
+}
+
 func main() {
 	app := cview.NewApplication()
 	app.EnableMouse(true)
@@ -39,40 +46,17 @@ func main() {
 
 	inputHandler := cbind.NewConfiguration()
 	for _, key := range cview.Keys.MovePreviousField {
-		mod, key, ch, err := cbind.Decode(key)
+		err := inputHandler.Set(key, wrap(focusManager.FocusPrevious))
 		if err != nil {
 			log.Fatal(err)
-		}
-		if key == tcell.KeyRune {
-			inputHandler.SetRune(mod, ch, func(ev *tcell.EventKey) *tcell.EventKey {
-				focusManager.FocusPrevious()
-				return nil
-			})
-		} else {
-			inputHandler.SetKey(mod, key, func(ev *tcell.EventKey) *tcell.EventKey {
-				focusManager.FocusPrevious()
-				return nil
-			})
 		}
 	}
 	for _, key := range cview.Keys.MoveNextField {
-		mod, key, ch, err := cbind.Decode(key)
+		err := inputHandler.Set(key, wrap(focusManager.FocusNext))
 		if err != nil {
 			log.Fatal(err)
 		}
-		if key == tcell.KeyRune {
-			inputHandler.SetRune(mod, ch, func(ev *tcell.EventKey) *tcell.EventKey {
-				focusManager.FocusNext()
-				return nil
-			})
-		} else {
-			inputHandler.SetKey(mod, key, func(ev *tcell.EventKey) *tcell.EventKey {
-				focusManager.FocusNext()
-				return nil
-			})
-		}
 	}
-
 	app.SetInputCapture(inputHandler.Capture)
 
 	app.SetRoot(grid, true)
