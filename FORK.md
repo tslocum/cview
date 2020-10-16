@@ -74,7 +74,7 @@ is 50% faster.
 
 ## `Pages` has been renamed as `Panels`
 
-This is in preparation for supporting tabbed panels.
+This is for consistency with `TabbedPanels`, which is built on top of `Panels`.
 
 ## `Application.ForceDraw` has been removed
 
