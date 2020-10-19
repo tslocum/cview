@@ -16,6 +16,7 @@ type Window struct {
 	x, y          int
 	width, height int
 	fullscreen    bool
+	visible       bool
 
 	dragX, dragY   int
 	dragWX, dragWY int
@@ -32,7 +33,23 @@ func NewWindow(primitive Primitive) *Window {
 		dragWY:    -1,
 	}
 	w.Box.focus = w
+	w.visible = true
 	return w
+}
+
+// IsVisible returns true if the window is visible
+func (w *Window) IsVisible() bool {
+	return w.visible
+}
+
+// Show the window.
+func (w *Window) Show() {
+	w.visible = true
+}
+
+// Hide the window.
+func (w *Window) Hide() {
+	w.visible = false
 }
 
 // SetPosition sets the position of the window.
