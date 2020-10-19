@@ -9,7 +9,7 @@ import (
 )
 
 // TabbedPanels is a tabbed container for other primitives. The tab switcher
-// may be displayed at the top or bottom of the container.
+// may be positioned vertically or horizontally, before or after the content.
 type TabbedPanels struct {
 	*Flex
 	Switcher *TextView
@@ -23,11 +23,12 @@ type TabbedPanels struct {
 	tabBackgroundColor        tcell.Color
 	tabBackgroundColorFocused tcell.Color
 
-	tabDividerStart string
-	tabDividerMid   string
-	tabDividerEnd   string
+	dividerStart string
+	dividerMid   string
+	dividerEnd   string
 
-	bottomTabSwitcher bool
+	switcherVertical     bool
+	switcherAfterContent bool
 
 	width, lastWidth int
 
@@ -46,8 +47,8 @@ func NewTabbedPanels() *TabbedPanels {
 		tabTextColorFocused:       Styles.InverseTextColor,
 		tabBackgroundColor:        ColorUnset,
 		tabBackgroundColorFocused: Styles.PrimaryTextColor,
-		tabDividerMid:             string(BoxDrawingsDoubleVertical),
-		tabDividerEnd:             string(BoxDrawingsLightVertical),
+		dividerMid:                string(BoxDrawingsDoubleVertical),
+		dividerEnd:                string(BoxDrawingsLightVertical),
 		tabLabels:                 make(map[string]string),
 	}
 
@@ -63,10 +64,7 @@ func NewTabbedPanels() *TabbedPanels {
 		}
 	})
 
-	f := t.Flex
-	f.SetDirection(FlexRow)
-	f.AddItem(t.Switcher, 1, 1, false)
-	f.AddItem(t.panels, 0, 1, true)
+	t.rebuild()
 
 	return t
 }
@@ -161,24 +159,45 @@ func (t *TabbedPanels) SetTabBackgroundColorFocused(color tcell.Color) {
 func (t *TabbedPanels) SetTabSwitcherDivider(start, mid, end string) {
 	t.Lock()
 	defer t.Unlock()
-	t.tabDividerStart, t.tabDividerMid, t.tabDividerEnd = start, mid, end
+	t.dividerStart, t.dividerMid, t.dividerEnd = start, mid, end
 }
 
-// SetTabSwitcherPosition sets the position of the tab switcher.
-func (t *TabbedPanels) SetTabSwitcherPosition(bottom bool) {
+// SetTabSwitcherVertical sets the orientation of the tab switcher.
+func (t *TabbedPanels) SetTabSwitcherVertical(vertical bool) {
 	t.Lock()
 	defer t.Unlock()
 
-	if t.bottomTabSwitcher == bottom {
+	if t.switcherVertical == vertical {
 		return
 	}
 
-	t.bottomTabSwitcher = bottom
+	t.switcherVertical = vertical
+	t.rebuild()
+}
 
+// SetTabSwitcherAfterContent sets whether the tab switcher is positioned after content.
+func (t *TabbedPanels) SetTabSwitcherAfterContent(after bool) {
+	t.Lock()
+	defer t.Unlock()
+
+	if t.switcherAfterContent == after {
+		return
+	}
+
+	t.switcherAfterContent = after
+	t.rebuild()
+}
+
+func (t *TabbedPanels) rebuild() {
 	f := t.Flex
+	if t.switcherVertical {
+		f.SetDirection(FlexColumn)
+	} else {
+		f.SetDirection(FlexRow)
+	}
 	f.RemoveItem(t.panels)
 	f.RemoveItem(t.Switcher)
-	if t.bottomTabSwitcher {
+	if t.switcherAfterContent {
 		f.AddItem(t.panels, 0, 1, true)
 		f.AddItem(t.Switcher, 1, 1, false)
 	} else {
@@ -196,29 +215,64 @@ func (t *TabbedPanels) updateTabLabels() {
 		return
 	}
 
+	maxWidth := 0
+	for _, panel := range t.panels.panels {
+		label := t.tabLabels[panel.Name]
+		if len(label) > maxWidth {
+			maxWidth = len(label)
+		}
+	}
+
 	var b bytes.Buffer
-	b.WriteString(t.tabDividerStart)
+	if !t.switcherVertical {
+		b.WriteString(t.dividerStart)
+	}
 	l := len(t.panels.panels)
+	spacer := []byte(" ")
 	for i, panel := range t.panels.panels {
+		if i > 0 && t.switcherVertical {
+			b.WriteRune('\n')
+		}
+
+		if t.switcherVertical && t.switcherAfterContent {
+			b.WriteString(t.dividerMid)
+			b.WriteRune(' ')
+		}
+
 		textColor := t.tabTextColor
 		backgroundColor := t.tabBackgroundColor
 		if panel.Name == t.currentTab {
 			textColor = t.tabTextColorFocused
 			backgroundColor = t.tabBackgroundColorFocused
 		}
-		b.WriteString(fmt.Sprintf(`["%s"][%s:%s] %s [-:-][""]`, panel.Name, ColorHex(textColor), ColorHex(backgroundColor), t.tabLabels[panel.Name]))
 
-		if i == l-1 {
-			b.WriteString(t.tabDividerEnd)
-		} else {
-			b.WriteString(t.tabDividerMid)
+		label := t.tabLabels[panel.Name]
+		if !t.switcherVertical {
+			label = " " + label
+		}
+
+		if t.switcherVertical {
+			spacer = bytes.Repeat([]byte(" "), maxWidth-len(label)+1)
+		}
+
+		b.WriteString(fmt.Sprintf(`["%s"][%s:%s]%s%s[-:-][""]`, panel.Name, ColorHex(textColor), ColorHex(backgroundColor), label, spacer))
+
+		if i == l-1 && !t.switcherVertical {
+			b.WriteString(t.dividerEnd)
+		} else if !t.switcherAfterContent {
+			b.WriteString(t.dividerMid)
 		}
 	}
 	t.Switcher.SetText(b.String())
 
-	reqLines := len(WordWrap(t.Switcher.GetText(true), t.width))
-	if reqLines < 1 {
-		reqLines = 1
+	var reqLines int
+	if t.switcherVertical {
+		reqLines = maxWidth + 2
+	} else {
+		reqLines = len(WordWrap(t.Switcher.GetText(true), t.width))
+		if reqLines < 1 {
+			reqLines = 1
+		}
 	}
 	t.Flex.ResizeItem(t.Switcher, reqLines, 1)
 }

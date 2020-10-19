@@ -42,6 +42,11 @@ tview [is not thread-safe](https://godoc.org/github.com/rivo/tview#hdr-Concurren
 
 tview [blocks until the queued function returns](https://github.com/rivo/tview/blob/fe3052019536251fd145835dbaa225b33b7d3088/application.go#L510).
 
+## Setting a primitive's background color to `tcell.ColorDefault` does not result in transparency
+
+Call [Box.SetBackgroundTransparent](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Box.SetBackgroundTransparent)
+to enable background transparency.
+
 ## Double clicks are not handled by default
 
 All clicks are handled as single clicks until an interval is set with [Application.SetDoubleClickInterval](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Application.SetDoubleClickInterval).
@@ -53,18 +58,12 @@ to disable this behavior.
 
 ## Lists and Forms do not wrap around by default
 
-Call [List.SetWrapAround](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#List.SetWrapAround)
-to wrap around when navigating.
+Call `SetWrapAround` to wrap around when navigating.
 
 ## Tables do not wrap around when selecting a cell
 
 Attempting to move outside of the range of the table results in the selection
 remaining unchanged. 
-
-## Setting a primitive's background color to `tcell.ColorDefault` does not result in transparency
-
-Call [Box.SetBackgroundTransparent](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Box.SetBackgroundTransparent)
-to enable background transparency.
 
 ## TextViews store their text as []byte instead of string
 
