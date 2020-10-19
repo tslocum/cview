@@ -327,21 +327,7 @@ func (t *TextView) GetBytes(stripTags bool) []byte {
 	}
 
 	buffer := bytes.Join(t.buffer, []byte("\n"))
-	if t.regions {
-		buffer = regionPattern.ReplaceAll(buffer, nil)
-	}
-	if t.dynamicColors {
-		buffer = colorPattern.ReplaceAllFunc(buffer, func(match []byte) []byte {
-			if len(match) > 2 {
-				return nil
-			}
-			return match
-		})
-	}
-	if t.regions || t.dynamicColors {
-		buffer = escapePattern.ReplaceAll(buffer, []byte(`[$1$2]`))
-	}
-	return buffer
+	return StripTags(buffer, t.dynamicColors, t.regions)
 }
 
 // GetText returns the current text of this text view. If "stripTags" is set

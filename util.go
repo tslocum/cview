@@ -97,6 +97,32 @@ func init() {
 	}
 }
 
+// StripTags returns the provided text without color and/or region tags.
+func StripTags(text []byte, colors bool, regions bool) []byte {
+	if !colors && !regions {
+		stripped := make([]byte, len(text))
+		copy(stripped, text)
+		return stripped
+	}
+
+	var stripped []byte
+	src := text
+	if regions {
+		stripped = regionPattern.ReplaceAll(text, nil)
+		src = stripped
+	}
+	if colors {
+		stripped = colorPattern.ReplaceAllFunc(src, func(match []byte) []byte {
+			if len(match) > 2 {
+				return nil
+			}
+			return match
+		})
+	}
+
+	return escapePattern.ReplaceAll(stripped, []byte(`[$1$2]`))
+}
+
 // ColorHex returns the hexadecimal value of a color as a string, prefixed with #.
 // If the color is invalid, a blank string is returned.
 func ColorHex(c tcell.Color) string {
