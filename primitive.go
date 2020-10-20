@@ -16,6 +16,12 @@ type Primitive interface {
 	// SetRect sets a new position of the primitive.
 	SetRect(x, y, width, height int)
 
+	// GetVisible returns whether or not the primitive is visible.
+	GetVisible() bool
+
+	// GetVisible sets whether or not the primitive is visible.
+	SetVisible(visibility bool)
+
 	// InputHandler returns a handler which receives key events when it has focus.
 	// It is called by the Application class.
 	//

@@ -3,6 +3,7 @@ v1.5.1 (WIP)
 - Add Slider
 - Add TabbedPanels
 - Add Application.GetScreen and Application.GetScreenSize
+- Add SetVisible and GetVisible to all widgets
 - Add TextView.SetBytes and TextView.GetBytes
 - Add TableCell.SetBytes, TableCell.GetBytes and TableCell.GetText
 - Fix List.Transform not calling handler set via SetChangedFunc

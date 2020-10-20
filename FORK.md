@@ -42,6 +42,21 @@ tview [is not thread-safe](https://godoc.org/github.com/rivo/tview#hdr-Concurren
 
 tview [blocks until the queued function returns](https://github.com/rivo/tview/blob/fe3052019536251fd145835dbaa225b33b7d3088/application.go#L510).
 
+## `Primitive` has two additional fields, `SetVisible` and `GetVisible`
+
+Widgets embedding `Box` require the addition of the following at the beginning
+of their `Draw` routine to handle visibility changes.
+
+```go
+func (w *Widget) Draw(screen tcell.Screen) {
+	if !w.GetVisible() {
+		return
+	}
+
+	// ...
+}
+```
+
 ## Setting a primitive's background color to `tcell.ColorDefault` does not result in transparency
 
 Call [Box.SetBackgroundTransparent](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Box.SetBackgroundTransparent)

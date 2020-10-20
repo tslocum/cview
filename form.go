@@ -641,6 +641,10 @@ func (f *Form) getAttributes() *FormItemAttributes {
 
 // Draw draws this primitive onto the screen.
 func (f *Form) Draw(screen tcell.Screen) {
+	if !f.GetVisible() {
+		return
+	}
+
 	f.Box.Draw(screen)
 
 	f.Lock()

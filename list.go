@@ -853,6 +853,10 @@ func (l *List) updateOffset() {
 
 // Draw draws this primitive onto the screen.
 func (l *List) Draw(screen tcell.Screen) {
+	if !l.GetVisible() {
+		return
+	}
+
 	l.Box.Draw(screen)
 	hasFocus := l.GetFocusable().HasFocus()
 

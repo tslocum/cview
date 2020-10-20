@@ -90,6 +90,10 @@ func (f *Frame) SetBorders(top, bottom, header, footer, left, right int) {
 
 // Draw draws this primitive onto the screen.
 func (f *Frame) Draw(screen tcell.Screen) {
+	if !f.GetVisible() {
+		return
+	}
+
 	f.Box.Draw(screen)
 
 	f.Lock()

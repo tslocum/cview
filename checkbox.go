@@ -239,6 +239,10 @@ func (c *CheckBox) SetFinishedFunc(handler func(key tcell.Key)) {
 
 // Draw draws this primitive onto the screen.
 func (c *CheckBox) Draw(screen tcell.Screen) {
+	if !c.GetVisible() {
+		return
+	}
+
 	c.Box.Draw(screen)
 
 	c.Lock()

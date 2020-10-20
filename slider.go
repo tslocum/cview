@@ -198,6 +198,10 @@ func (s *Slider) SetFinishedFunc(handler func(key tcell.Key)) {
 
 // Draw draws this primitive onto the screen.
 func (s *Slider) Draw(screen tcell.Screen) {
+	if !s.GetVisible() {
+		return
+	}
+
 	s.Box.Draw(screen)
 	hasFocus := s.GetFocusable().HasFocus()
 

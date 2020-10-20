@@ -331,6 +331,10 @@ func (g *Grid) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 
 // Draw draws this primitive onto the screen.
 func (g *Grid) Draw(screen tcell.Screen) {
+	if !g.GetVisible() {
+		return
+	}
+
 	g.Box.Draw(screen)
 
 	g.Lock()

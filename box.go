@@ -16,6 +16,9 @@ type Box struct {
 	// The inner rect reserved for the box's content.
 	innerX, innerY, innerWidth, innerHeight int
 
+	// Whether or not the box is visible.
+	visible bool
+
 	// Border padding.
 	paddingTop, paddingBottom, paddingLeft, paddingRight int
 
@@ -79,6 +82,7 @@ func NewBox() *Box {
 		width:              15,
 		height:             10,
 		innerX:             -1, // Mark as uninitialized.
+		visible:            true,
 		backgroundColor:    Styles.PrimitiveBackgroundColor,
 		borderColor:        Styles.BorderColor,
 		titleColor:         Styles.TitleColor,
@@ -161,6 +165,22 @@ func (b *Box) SetRect(x, y, width, height int) {
 	b.width = width
 	b.height = height
 	b.innerX = -1 // Mark inner rect as uninitialized.
+}
+
+// SetVisible sets the flag indicating whether or not the box is visible.
+func (b *Box) SetVisible(v bool) {
+	b.l.Lock()
+	defer b.l.Unlock()
+
+	b.visible = v
+}
+
+// GetVisible returns a value indicating whether or not the box is visible.
+func (b *Box) GetVisible() bool {
+	b.l.RLock()
+	defer b.l.RUnlock()
+
+	return b.visible
 }
 
 // SetDrawFunc sets a callback function which is invoked after the box primitive
@@ -397,6 +417,12 @@ func (b *Box) SetTitleAlign(align int) {
 // Draw draws this primitive onto the screen.
 func (b *Box) Draw(screen tcell.Screen) {
 	b.l.Lock()
+
+	// Don't draw anything if the box is hidden
+	if !b.visible {
+		b.l.Unlock()
+		return
+	}
 
 	// Don't draw anything if there is no space.
 	if b.width <= 0 || b.height <= 0 {

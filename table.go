@@ -804,6 +804,10 @@ func (t *Table) Sort(column int, descending bool) {
 
 // Draw draws this primitive onto the screen.
 func (t *Table) Draw(screen tcell.Screen) {
+	if !t.GetVisible() {
+		return
+	}
+
 	t.Box.Draw(screen)
 
 	t.Lock()
