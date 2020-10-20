@@ -24,12 +24,10 @@ func Window(nextSlide func()) (title string, content cview.Primitive) {
 	loremIpsum.SetText(loremIpsumText)
 
 	w1 := cview.NewWindow(list)
-	w1.SetPosition(2, 2)
-	w1.SetSize(10, 7)
+	w1.SetRect(2, 2, 10, 7)
 
 	w2 := cview.NewWindow(loremIpsum)
-	w2.SetPosition(7, 4)
-	w2.SetSize(12, 12)
+	w2.SetRect(7, 4, 12, 12)
 
 	w1.SetTitle("List")
 	w2.SetTitle("Lorem Ipsum")

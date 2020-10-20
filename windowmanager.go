@@ -27,6 +27,10 @@ func (wm *WindowManager) Add(w ...*Window) {
 	wm.Lock()
 	defer wm.Unlock()
 
+	for _, window := range w {
+		window.SetBorder(true)
+	}
+
 	wm.windows = append(wm.windows, w...)
 }
 
@@ -81,11 +85,10 @@ func (wm *WindowManager) Draw(screen tcell.Screen) {
 			continue
 		}
 
-		w.SetBorder(false)
-		w.SetRect(x, y+1, width, height-1)
-		w.Draw(screen)
-
 		hasFullScreen = true
+		w.SetRect(x-1, y, width+2, height+1)
+
+		w.Draw(screen)
 	}
 	if hasFullScreen {
 		return
@@ -95,8 +98,27 @@ func (wm *WindowManager) Draw(screen tcell.Screen) {
 		if !w.GetVisible() {
 			continue
 		}
-		w.SetBorder(true)
-		w.SetRect(x+w.x, x+w.y, w.width, w.height)
+
+		// Reposition out of bounds windows
+		margin := 3
+		wx, wy, ww, wh := w.GetRect()
+		ox, oy := wx, wy
+		if wx > x+width-margin {
+			wx = x + width - margin
+		}
+		if wx+ww < x+margin {
+			wx = x - ww + margin
+		}
+		if wy > y+height-margin {
+			wy = y + height - margin
+		}
+		if wy < y {
+			wy = y // No top margin
+		}
+		if wx != ox || wy != oy {
+			w.SetRect(wx, wy, ww, wh)
+		}
+
 		w.Draw(screen)
 	}
 }

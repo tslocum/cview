@@ -13,9 +13,10 @@ type Window struct {
 
 	primitive Primitive
 
-	x, y          int
-	width, height int
-	fullscreen    bool
+	fullscreen bool
+
+	normalX, normalY int
+	normalW, normalH int
 
 	dragX, dragY   int
 	dragWX, dragWY int
@@ -35,29 +36,22 @@ func NewWindow(primitive Primitive) *Window {
 	return w
 }
 
-// SetPosition sets the position of the window.
-func (w *Window) SetPosition(x, y int) {
-	w.Lock()
-	defer w.Unlock()
-
-	w.x, w.y = x, y
-}
-
-// SetSize sets the size of the window.
-func (w *Window) SetSize(width, height int) {
-	w.Lock()
-	defer w.Unlock()
-
-	w.width, w.height = width, height
-}
-
 // SetFullscreen sets the flag indicating whether or not the the window should
 // be drawn fullscreen.
 func (w *Window) SetFullscreen(fullscreen bool) {
 	w.Lock()
 	defer w.Unlock()
 
+	if w.fullscreen == fullscreen {
+		return
+	}
+
 	w.fullscreen = fullscreen
+	if w.fullscreen {
+		w.normalX, w.normalY, w.normalW, w.normalH = w.GetRect()
+	} else {
+		w.SetRect(w.normalX, w.normalY, w.normalW, w.normalH)
+	}
 }
 
 // Focus is called when this primitive receives focus.
