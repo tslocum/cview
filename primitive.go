@@ -19,8 +19,8 @@ type Primitive interface {
 	// GetVisible returns whether or not the primitive is visible.
 	GetVisible() bool
 
-	// GetVisible sets whether or not the primitive is visible.
-	SetVisible(visibility bool)
+	// SetVisible sets whether or not the primitive is visible.
+	SetVisible(v bool)
 
 	// InputHandler returns a handler which receives key events when it has focus.
 	// It is called by the Application class.

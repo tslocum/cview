@@ -676,6 +676,10 @@ func (f *Form) Draw(screen tcell.Screen) {
 	positions := make([]struct{ x, y, width, height int }, len(f.items)+len(f.buttons))
 	var focusedPosition struct{ x, y, width, height int }
 	for index, item := range f.items {
+		if !item.GetVisible() {
+			continue
+		}
+
 		// Calculate the space needed.
 		labelWidth := TaggedStringWidth(item.GetLabel())
 		var itemWidth int
@@ -750,6 +754,10 @@ func (f *Form) Draw(screen tcell.Screen) {
 
 	// Calculate positions of buttons.
 	for index, button := range f.buttons {
+		if !button.GetVisible() {
+			continue
+		}
+
 		space := rightLimit - x
 		buttonWidth := buttonWidths[index]
 		if f.horizontal {
@@ -795,6 +803,10 @@ func (f *Form) Draw(screen tcell.Screen) {
 
 	// Draw items.
 	for index, item := range f.items {
+		if !item.GetVisible() {
+			continue
+		}
+
 		// Set position.
 		y := positions[index].y - offset
 		height := positions[index].height
@@ -815,6 +827,9 @@ func (f *Form) Draw(screen tcell.Screen) {
 
 	// Draw buttons.
 	for index, button := range f.buttons {
+		if !button.GetVisible() {
+			continue
+		}
 
 		// Set position.
 		buttonIndex := index + len(f.items)
@@ -832,6 +847,45 @@ func (f *Form) Draw(screen tcell.Screen) {
 	}
 }
 
+func (f *Form) updateFocusedElement(decreasing bool) {
+	li := len(f.items)
+	l := len(f.items) + len(f.buttons)
+	for i := 0; i < l; i++ {
+		if f.focusedElement < 0 {
+			if f.wrapAround {
+				f.focusedElement = l - 1
+			} else {
+				f.focusedElement = 0
+			}
+		} else if f.focusedElement >= l {
+			if f.wrapAround {
+				f.focusedElement = 0
+			} else {
+				f.focusedElement = l - 1
+			}
+		}
+
+		if f.focusedElement < li {
+			item := f.items[f.focusedElement]
+			if item.GetVisible() {
+				break
+			}
+		} else {
+			button := f.buttons[f.focusedElement-li]
+			if button.GetVisible() {
+				break
+			}
+		}
+
+		if decreasing {
+			f.focusedElement--
+		} else {
+			f.focusedElement++
+		}
+	}
+
+}
+
 func (f *Form) formItemInputHandler(delegate func(p Primitive)) func(key tcell.Key) {
 	return func(key tcell.Key) {
 		f.Lock()
@@ -839,21 +893,13 @@ func (f *Form) formItemInputHandler(delegate func(p Primitive)) func(key tcell.K
 		switch key {
 		case tcell.KeyTab, tcell.KeyEnter:
 			f.focusedElement++
-			if !f.wrapAround && f.focusedElement >= len(f.items)+len(f.buttons) {
-				f.focusedElement = (len(f.items) + len(f.buttons)) - 1
-			}
+			f.updateFocusedElement(false)
 			f.Unlock()
 			f.Focus(delegate)
 			f.Lock()
 		case tcell.KeyBacktab:
 			f.focusedElement--
-			if f.focusedElement < 0 {
-				if f.wrapAround {
-					f.focusedElement = len(f.items) + len(f.buttons) - 1
-				} else {
-					f.focusedElement = 0
-				}
-			}
+			f.updateFocusedElement(true)
 			f.Unlock()
 			f.Focus(delegate)
 			f.Lock()
@@ -864,6 +910,7 @@ func (f *Form) formItemInputHandler(delegate func(p Primitive)) func(key tcell.K
 				f.Lock()
 			} else {
 				f.focusedElement = 0
+				f.updateFocusedElement(true)
 				f.Unlock()
 				f.Focus(delegate)
 				f.Lock()
@@ -927,12 +974,12 @@ func (f *Form) HasFocus() bool {
 // has focus.
 func (f *Form) focusIndex() int {
 	for index, item := range f.items {
-		if item.GetFocusable().HasFocus() {
+		if item.GetVisible() && item.GetFocusable().HasFocus() {
 			return index
 		}
 	}
 	for index, button := range f.buttons {
-		if button.focus.HasFocus() {
+		if button.GetVisible() && button.focus.HasFocus() {
 			return len(f.items) + index
 		}
 	}
