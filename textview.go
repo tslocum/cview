@@ -105,9 +105,15 @@ type TextView struct {
 	// The last bytes that have been received but are not part of the buffer yet.
 	recentBytes []byte
 
+	// The last width and height of the text view.
+	lastWidth, lastHeight int
+
 	// The processed line index. This is nil if the buffer has changed and needs
 	// to be re-indexed.
 	index []*textViewIndex
+
+	// The width of the text view buffer index.
+	indexWidth int
 
 	// If set to true, the buffer will be reindexed each time it is modified.
 	reindex bool
@@ -129,9 +135,6 @@ type TextView struct {
 
 	// A set of region IDs that are currently highlighted.
 	highlights map[string]struct{}
-
-	// The last width for which the current table is drawn.
-	lastWidth int
 
 	// The screen width of the longest line in the index (not the buffer).
 	longestLine int
@@ -782,10 +785,11 @@ func (t *TextView) SetReindexBuffer(reindex bool) {
 // into the buffer from which on we will print text. It will also contain the
 // color with which the line starts.
 func (t *TextView) reindexBuffer(width int) {
-	if t.index != nil {
+	if t.index != nil && (!t.wrap || width == t.indexWidth) {
 		return // Nothing has changed. We can still use the current index.
 	}
 	t.index = nil
+	t.indexWidth = width
 	t.fromHighlight, t.toHighlight, t.posHighlight = -1, -1, -1
 
 	// If there's no space, there's no index.
@@ -970,23 +974,16 @@ func (t *TextView) Draw(screen tcell.Screen) {
 	}
 	t.pageSize = height
 
-	t.reindexBuffer(width)
+	if t.index == nil || width != t.lastWidth || height != t.lastHeight {
+		t.reindexBuffer(width)
+	}
+	t.lastWidth, t.lastHeight = width, height
+
 	showVerticalScrollBar := t.scrollBarVisibility == ScrollBarAlways || (t.scrollBarVisibility == ScrollBarAuto && len(t.index) > height)
 	if showVerticalScrollBar {
 		width-- // Subtract space for scroll bar.
-		if t.wrap {
-			t.index = nil
-		}
 	}
 
-	// If the width has changed, we need to reindex.
-	if width != t.lastWidth && t.wrap {
-		t.index = nil
-	}
-
-	t.lastWidth = width
-
-	// Re-index.
 	t.reindexBuffer(width)
 	if t.regions {
 		t.regionInfos = nil
