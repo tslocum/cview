@@ -180,8 +180,7 @@ Scroll Bars
 
 Scroll bars are supported by the following widgets: List, Table, TextView and
 TreeView. Each widget will display scroll bars automatically when there are
-additional items offscreen, except TextView. See Widget.SetScrollBarColor and
-Widget.SetScrollBarVisibility.
+additional items offscreen. See SetScrollBarColor and SetScrollBarVisibility.
 
 Hello World
 

@@ -161,5 +161,5 @@ func TreeView(nextSlide func()) (title string, content cview.Primitive) {
 	flex.AddItem(tree, 0, 1, true)
 	flex.AddItem(treeCode, codeWidth, 1, false)
 
-	return "Tree", flex
+	return "TreeView", flex
 }

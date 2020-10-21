@@ -33,7 +33,6 @@ const textView1 = `[green]func[white] [yellow]main[white]() {
 func TextView1(nextSlide func()) (title string, content cview.Primitive) {
 	textView := cview.NewTextView()
 	textView.SetTextColor(tcell.ColorYellow.TrueColor())
-	textView.SetScrollable(false)
 	textView.SetDoneFunc(func(key tcell.Key) {
 		nextSlide()
 	})
@@ -52,7 +51,7 @@ func TextView1(nextSlide func()) (title string, content cview.Primitive) {
 			}
 
 			fmt.Fprintf(textView, "%d ", n)
-			time.Sleep(200 * time.Millisecond)
+			time.Sleep(75 * time.Millisecond)
 		}
 	}()
 	textView.SetBorder(true)
@@ -153,6 +152,7 @@ func TextView2(nextSlide func()) (title string, content cview.Primitive) {
 	fmt.Fprint(textView, textView2)
 	textView.SetBorder(true)
 	textView.SetTitle("TextView output")
+	textView.SetScrollBarVisibility(cview.ScrollBarAuto)
 
 	flex := cview.NewFlex()
 	flex.AddItem(textView, 0, 1, true)

@@ -206,15 +206,16 @@ type TextView struct {
 // NewTextView returns a new text view.
 func NewTextView() *TextView {
 	return &TextView{
-		Box:            NewBox(),
-		highlights:     make(map[string]struct{}),
-		lineOffset:     -1,
-		reindex:        true,
-		scrollable:     true,
-		align:          AlignLeft,
-		wrap:           true,
-		textColor:      Styles.PrimaryTextColor,
-		scrollBarColor: Styles.ScrollBarColor,
+		Box:                 NewBox(),
+		highlights:          make(map[string]struct{}),
+		lineOffset:          -1,
+		reindex:             true,
+		scrollable:          true,
+		scrollBarVisibility: ScrollBarAuto,
+		scrollBarColor:      Styles.ScrollBarColor,
+		align:               AlignLeft,
+		wrap:                true,
+		textColor:           Styles.PrimaryTextColor,
 	}
 }
 
@@ -964,10 +965,13 @@ func (t *TextView) Draw(screen tcell.Screen) {
 
 	// Get the available size.
 	x, y, width, height := t.GetInnerRect()
+	if height == 0 {
+		return
+	}
 	t.pageSize = height
 
 	t.reindexBuffer(width)
-	showVerticalScrollBar := t.scrollBarVisibility == ScrollBarAlways || (t.scrollBarVisibility == ScrollBarAuto && len(t.index) >= height)
+	showVerticalScrollBar := t.scrollBarVisibility == ScrollBarAlways || (t.scrollBarVisibility == ScrollBarAuto && len(t.index) > height)
 	if showVerticalScrollBar {
 		width-- // Subtract space for scroll bar.
 		if t.wrap {
@@ -1285,12 +1289,16 @@ func (t *TextView) MouseHandler() func(action MouseAction, event *tcell.EventMou
 			consumed = true
 			setFocus(t)
 		case MouseScrollUp:
-			t.trackEnd = false
-			t.lineOffset--
-			consumed = true
+			if t.scrollable {
+				t.trackEnd = false
+				t.lineOffset--
+				consumed = true
+			}
 		case MouseScrollDown:
-			t.lineOffset++
-			consumed = true
+			if t.scrollable {
+				t.lineOffset++
+				consumed = true
+			}
 		}
 
 		return

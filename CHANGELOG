@@ -12,6 +12,7 @@ v1.5.1 (WIP)
 - Allow modification of scroll bar render text
 - Allow scrolling List horizontally
 - Clarify that Table rows must each have the same number of columns
+- Display TextView scroll bar automatically by default
 - Generalize tag stripping as StripTags
 - Make printWithStyle public and rename as PrintStyle
 - Optimize TextView (writing is 90% faster, drawing is 50% faster)
