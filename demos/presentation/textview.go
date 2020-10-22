@@ -56,6 +56,7 @@ func TextView1(nextSlide func()) (title string, content cview.Primitive) {
 	}()
 	textView.SetBorder(true)
 	textView.SetTitle("TextView implements io.Writer")
+	textView.ScrollToEnd()
 	return "TextView 1", Code(textView, 36, 13, textView1)
 }
 
