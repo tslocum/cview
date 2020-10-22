@@ -131,13 +131,12 @@ func (wm *WindowManager) MouseHandler() func(action MouseAction, event *tcell.Ev
 		}
 
 		if action == MouseMove {
-			x, y, _, _ := wm.GetInnerRect()
 			mouseX, mouseY := event.Position()
 
 			for _, w := range wm.windows {
 				if w.dragWX != -1 || w.dragWY != -1 {
-					offsetX := w.x - (mouseX - x)
-					offsetY := w.y - (mouseY - y)
+					offsetX := w.x - mouseX
+					offsetY := w.y - mouseY
 
 					w.x -= offsetX + w.dragWX
 					w.y -= offsetY + w.dragWY
@@ -147,14 +146,14 @@ func (wm *WindowManager) MouseHandler() func(action MouseAction, event *tcell.Ev
 
 				if w.dragX != 0 {
 					if w.dragX == -1 {
-						offsetX := w.x - (mouseX - x)
+						offsetX := w.x - mouseX
 
 						if w.width+offsetX >= Styles.WindowMinWidth {
 							w.x -= offsetX
 							w.width += offsetX
 						}
 					} else {
-						offsetX := mouseX - (x + w.x + w.width)
+						offsetX := mouseX - (w.x + w.width) + 1
 
 						if w.width+offsetX >= Styles.WindowMinWidth {
 							w.width += offsetX
@@ -166,13 +165,13 @@ func (wm *WindowManager) MouseHandler() func(action MouseAction, event *tcell.Ev
 
 				if w.dragY != 0 {
 					if w.dragY == -1 {
-						offsetY := mouseY - (y + w.y + w.height)
+						offsetY := mouseY - (w.y + w.height) + 1
 
 						if w.height+offsetY >= Styles.WindowMinHeight {
 							w.height += offsetY
 						}
 					} else {
-						offsetY := w.y - (mouseY - y)
+						offsetY := w.y - mouseY
 
 						if w.height+offsetY >= Styles.WindowMinHeight {
 							w.y -= offsetY
