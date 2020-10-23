@@ -2,6 +2,7 @@ v1.5.1 (WIP)
 - Add FocusManager
 - Add Slider
 - Add TabbedPanels
+- Add Application.Init
 - Add Application.GetScreen and Application.GetScreenSize
 - Add SetVisible and GetVisible to all widgets
 - Add TextView.SetBytes and TextView.GetBytes

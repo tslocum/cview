@@ -201,18 +201,54 @@ func (a *Application) SetScreen(screen tcell.Screen) {
 }
 
 // GetScreen returns the current tcell.Screen of the application. Lock the
-// application when manipulating the screen to prevent race conditions.
+// application when manipulating the screen to prevent race conditions. This
+// value is only available after calling Init or Run.
 func (a *Application) GetScreen() tcell.Screen {
 	a.RLock()
 	defer a.RUnlock()
 	return a.screen
 }
 
-// GetScreenSize returns the size of the application's screen.
+// GetScreenSize returns the size of the application's screen. These values are
+// only available after calling Init or Run.
 func (a *Application) GetScreenSize() (width, height int) {
 	a.RLock()
 	defer a.RUnlock()
 	return a.width, a.height
+}
+
+// Init initializes the application screen. Calling Init before running is not
+// required. Its primary use is to populate screen dimensions before running an
+// application.
+func (a *Application) Init() error {
+	a.Lock()
+	defer a.Unlock()
+	return a.init()
+}
+
+func (a *Application) init() error {
+	if a.screen != nil {
+		return nil
+	}
+
+	var err error
+	a.screen, err = tcell.NewScreen()
+	if err != nil {
+		a.Unlock()
+		return err
+	}
+	if err = a.screen.Init(); err != nil {
+		a.Unlock()
+		return err
+	}
+	a.width, a.height = a.screen.Size()
+	if a.enableBracketedPaste {
+		a.screen.EnablePaste()
+	}
+	if a.enableMouse {
+		a.screen.EnableMouse()
+	}
+	return nil
 }
 
 // EnableBracketedPaste enables bracketed paste mode, which is enabled by default.
@@ -246,26 +282,12 @@ func (a *Application) EnableMouse(enable bool) {
 // Run starts the application and thus the event loop. This function returns
 // when Stop() was called.
 func (a *Application) Run() error {
-	var err error
 	a.Lock()
 
-	// Make a screen if there is none yet.
-	if a.screen == nil {
-		a.screen, err = tcell.NewScreen()
-		if err != nil {
-			a.Unlock()
-			return err
-		}
-		if err = a.screen.Init(); err != nil {
-			a.Unlock()
-			return err
-		}
-		if a.enableBracketedPaste {
-			a.screen.EnablePaste()
-		}
-		if a.enableMouse {
-			a.screen.EnableMouse()
-		}
+	// Initialize screen
+	err := a.init()
+	if err != nil {
+		return err
 	}
 
 	// We catch panics to clean up because they mess up the terminal.
