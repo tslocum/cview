@@ -82,7 +82,7 @@ func (t *TabbedPanels) AddTab(name, label string, item Primitive) {
 }
 
 // RemoveTab removes a tab.
-func (t *TabbedPanels) RemoveTab(name, label string, item Primitive) {
+func (t *TabbedPanels) RemoveTab(name string) {
 	t.panels.RemovePanel(name)
 
 	t.updateAll()
