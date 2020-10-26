@@ -281,7 +281,7 @@ func Table(nextSlide func()) (title string, content cview.Primitive) {
 	code := cview.NewTextView()
 	code.SetWrap(false)
 	code.SetDynamicColors(true)
-	code.SetBorderPadding(1, 1, 2, 0)
+	code.SetPadding(1, 1, 2, 0)
 
 	list := cview.NewList()
 
@@ -343,7 +343,7 @@ func Table(nextSlide func()) (title string, content cview.Primitive) {
 	}
 
 	list.ShowSecondaryText(false)
-	list.SetBorderPadding(1, 1, 2, 2)
+	list.SetPadding(1, 1, 2, 2)
 
 	var demoTableText = []struct {
 		text     string

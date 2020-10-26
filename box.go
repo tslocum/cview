@@ -19,7 +19,7 @@ type Box struct {
 	// Whether or not the box is visible.
 	visible bool
 
-	// Border padding.
+	// Padding.
 	paddingTop, paddingBottom, paddingLeft, paddingRight int
 
 	// The border color when the box has focus.
@@ -94,15 +94,15 @@ func NewBox() *Box {
 	return b
 }
 
-// GetBorderPadding returns the size of the borders around the box content.
-func (b *Box) GetBorderPadding() (top, bottom, left, right int) {
+// GetPadding returns the size of the padding around the box content.
+func (b *Box) GetPadding() (top, bottom, left, right int) {
 	b.l.RLock()
 	defer b.l.RUnlock()
 	return b.paddingTop, b.paddingBottom, b.paddingLeft, b.paddingRight
 }
 
-// SetBorderPadding sets the size of the borders around the box content.
-func (b *Box) SetBorderPadding(top, bottom, left, right int) {
+// SetPadding sets the size of the padding around the box content.
+func (b *Box) SetPadding(top, bottom, left, right int) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
@@ -577,4 +577,18 @@ func (b *Box) GetFocusable() Focusable {
 	defer b.l.RUnlock()
 
 	return b.focus
+}
+
+// GetBorderPadding returns the size of the padding around the box content. It
+// is provided for backwards compatibility. Application developers should use
+// GetPadding instead.
+func (b *Box) GetBorderPadding() (top, bottom, left, right int) {
+	return b.GetPadding()
+}
+
+// SetBorderPadding sets the size of the padding around the box content. It
+// is provided for backwards compatibility. Application developers should use
+// SetPadding instead.
+func (b *Box) SetBorderPadding(top, bottom, left, right int) {
+	b.SetPadding(top, bottom, left, right)
 }

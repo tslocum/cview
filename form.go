@@ -145,7 +145,7 @@ type Form struct {
 // NewForm returns a new form.
 func NewForm() *Form {
 	box := NewBox()
-	box.SetBorderPadding(1, 1, 1, 1)
+	box.SetPadding(1, 1, 1, 1)
 
 	f := &Form{
 		Box:                          box,

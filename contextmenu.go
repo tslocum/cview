@@ -34,7 +34,7 @@ func (c *ContextMenu) initializeList() {
 	c.list.SetWrapAround(true)
 	c.list.ShowFocus(false)
 	c.list.SetBorder(true)
-	c.list.SetBorderPadding(
+	c.list.SetPadding(
 		Styles.ContextMenuPaddingTop,
 		Styles.ContextMenuPaddingBottom,
 		Styles.ContextMenuPaddingLeft,

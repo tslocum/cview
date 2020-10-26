@@ -16,7 +16,7 @@ func Code(p cview.Primitive, width, height int, code string) cview.Primitive {
 	codeView := cview.NewTextView()
 	codeView.SetWrap(false)
 	codeView.SetDynamicColors(true)
-	codeView.SetBorderPadding(1, 1, 2, 0)
+	codeView.SetPadding(1, 1, 2, 0)
 	fmt.Fprint(codeView, code)
 
 	f := cview.NewFlex()

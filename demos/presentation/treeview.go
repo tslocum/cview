@@ -155,7 +155,7 @@ func TreeView(nextSlide func()) (title string, content cview.Primitive) {
 	treeCode.SetWrap(false)
 	treeCode.SetDynamicColors(true)
 	treeCode.SetText(strings.Replace(treeAllCode, "$$$", treeBasicCode, -1))
-	treeCode.SetBorderPadding(1, 1, 2, 0)
+	treeCode.SetPadding(1, 1, 2, 0)
 
 	flex := cview.NewFlex()
 	flex.AddItem(tree, 0, 1, true)

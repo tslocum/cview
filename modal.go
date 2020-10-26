@@ -46,7 +46,7 @@ func NewModal() *Modal {
 	m.form.SetButtonBackgroundColor(Styles.PrimitiveBackgroundColor)
 	m.form.SetButtonTextColor(Styles.PrimaryTextColor)
 	m.form.SetBackgroundColor(Styles.ContrastBackgroundColor)
-	m.form.SetBorderPadding(0, 0, 0, 0)
+	m.form.SetPadding(0, 0, 0, 0)
 	m.form.SetCancelFunc(func() {
 		if m.done != nil {
 			m.done(-1, "")
@@ -57,7 +57,7 @@ func NewModal() *Modal {
 	m.frame.SetBorder(true)
 	m.frame.SetBorders(0, 0, 1, 0, 0, 0)
 	m.frame.SetBackgroundColor(Styles.ContrastBackgroundColor)
-	m.frame.SetBorderPadding(1, 1, 1, 1)
+	m.frame.SetPadding(1, 1, 1, 1)
 
 	m.focus = m
 	return m
