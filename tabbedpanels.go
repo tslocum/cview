@@ -88,6 +88,19 @@ func (t *TabbedPanels) RemoveTab(name string) {
 	t.updateAll()
 }
 
+// HasTab returns true if a tab with the given name exists in this object.
+func (t *TabbedPanels) HasTab(name string) bool {
+	t.RLock()
+	defer t.RUnlock()
+
+	for _, panel := range t.panels.panels {
+		if panel.Name == name {
+			return true
+		}
+	}
+	return false
+}
+
 // SetCurrentTab sets the currently visible tab.
 func (t *TabbedPanels) SetCurrentTab(name string) {
 	t.Lock()
