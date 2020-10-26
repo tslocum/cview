@@ -380,13 +380,18 @@ func (p *Panels) MouseHandler() func(action MouseAction, event *tcell.EventMouse
 // Support backwards compatibility with Pages.
 type page = panel
 
-// Pages is a wrapper around Panels. It is provided for backwards compatibility.
-// Application developers should use Panels instead.
+// Pages is a wrapper around Panels.
+//
+// Deprecated: This type is provided for backwards compatibility.
+// Developers should use Panels instead.
 type Pages struct {
 	*Panels
 }
 
 // NewPages returns a new Panels object.
+//
+// Deprecated: This function is provided for backwards compatibility.
+// Developers should use NewPanels instead.
 func NewPages() *Pages {
 	return &Pages{NewPanels()}
 }

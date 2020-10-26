@@ -579,16 +579,18 @@ func (b *Box) GetFocusable() Focusable {
 	return b.focus
 }
 
-// GetBorderPadding returns the size of the padding around the box content. It
-// is provided for backwards compatibility. Application developers should use
-// GetPadding instead.
+// GetBorderPadding returns the size of the padding around the box content.
+//
+// Deprecated: This function is provided for backwards compatibility.
+// Developers should use GetPadding instead.
 func (b *Box) GetBorderPadding() (top, bottom, left, right int) {
 	return b.GetPadding()
 }
 
-// SetBorderPadding sets the size of the padding around the box content. It
-// is provided for backwards compatibility. Application developers should use
-// SetPadding instead.
+// SetBorderPadding sets the size of the padding around the box content.
+//
+// Deprecated: This function is provided for backwards compatibility.
+// Developers should use SetPadding instead.
 func (b *Box) SetBorderPadding(top, bottom, left, right int) {
 	b.SetPadding(top, bottom, left, right)
 }
