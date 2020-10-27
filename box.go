@@ -13,14 +13,14 @@ type Box struct {
 	// The position of the rect.
 	x, y, width, height int
 
+	// Padding.
+	paddingTop, paddingBottom, paddingLeft, paddingRight int
+
 	// The inner rect reserved for the box's content.
 	innerX, innerY, innerWidth, innerHeight int
 
 	// Whether or not the box is visible.
 	visible bool
-
-	// Padding.
-	paddingTop, paddingBottom, paddingLeft, paddingRight int
 
 	// The border color when the box has focus.
 	borderColorFocused tcell.Color
@@ -81,7 +81,6 @@ func NewBox() *Box {
 	b := &Box{
 		width:              15,
 		height:             10,
-		innerX:             -1, // Mark as uninitialized.
 		visible:            true,
 		backgroundColor:    Styles.PrimitiveBackgroundColor,
 		borderColor:        Styles.BorderColor,
@@ -91,13 +90,43 @@ func NewBox() *Box {
 		showFocus:          true,
 	}
 	b.focus = b
+	b.updateInnerRect()
 	return b
+}
+
+func (b *Box) updateInnerRect() {
+	x, y, width, height := b.x, b.y, b.width, b.height
+
+	// Subtract border space
+	if b.border {
+		x++
+		y++
+		width -= 2
+		height -= 2
+	}
+
+	// Subtract padding
+	x, y, width, height =
+		x+b.paddingLeft,
+		y+b.paddingTop,
+		width-b.paddingLeft-b.paddingRight,
+		height-b.paddingTop-b.paddingBottom
+
+	if width < 0 {
+		width = 0
+	}
+	if height < 0 {
+		height = 0
+	}
+
+	b.innerX, b.innerY, b.innerWidth, b.innerHeight = x, y, width, height
 }
 
 // GetPadding returns the size of the padding around the box content.
 func (b *Box) GetPadding() (top, bottom, left, right int) {
 	b.l.RLock()
 	defer b.l.RUnlock()
+
 	return b.paddingTop, b.paddingBottom, b.paddingLeft, b.paddingRight
 }
 
@@ -107,6 +136,8 @@ func (b *Box) SetPadding(top, bottom, left, right int) {
 	defer b.l.Unlock()
 
 	b.paddingTop, b.paddingBottom, b.paddingLeft, b.paddingRight = top, bottom, left, right
+
+	b.updateInnerRect()
 }
 
 // GetRect returns the current position of the rectangle, x, y, width, and
@@ -123,32 +154,9 @@ func (b *Box) GetRect() (int, int, int, int) {
 // will clamp to 0 and thus never be negative.
 func (b *Box) GetInnerRect() (int, int, int, int) {
 	b.l.RLock()
-	if b.innerX >= 0 {
-		defer b.l.RUnlock()
-		return b.innerX, b.innerY, b.innerWidth, b.innerHeight
-	}
-	b.l.RUnlock()
+	defer b.l.RUnlock()
 
-	x, y, width, height := b.GetRect()
-	b.l.RLock()
-	if b.border {
-		x++
-		y++
-		width -= 2
-		height -= 2
-	}
-	x, y, width, height = x+b.paddingLeft,
-		y+b.paddingTop,
-		width-b.paddingLeft-b.paddingRight,
-		height-b.paddingTop-b.paddingBottom
-	if width < 0 {
-		width = 0
-	}
-	if height < 0 {
-		height = 0
-	}
-	b.l.RUnlock()
-	return x, y, width, height
+	return b.innerX, b.innerY, b.innerWidth, b.innerHeight
 }
 
 // SetRect sets a new position of the primitive. Note that this has no effect
@@ -160,11 +168,9 @@ func (b *Box) SetRect(x, y, width, height int) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
-	b.x = x
-	b.y = y
-	b.width = width
-	b.height = height
-	b.innerX = -1 // Mark inner rect as uninitialized.
+	b.x, b.y, b.width, b.height = x, y, width, height
+
+	b.updateInnerRect()
 }
 
 // SetVisible sets the flag indicating whether or not the box is visible.
@@ -353,6 +359,8 @@ func (b *Box) SetBorder(show bool) {
 	defer b.l.Unlock()
 
 	b.border = show
+
+	b.updateInnerRect()
 }
 
 // SetBorderColor sets the box's border color.
@@ -417,16 +425,15 @@ func (b *Box) SetTitleAlign(align int) {
 // Draw draws this primitive onto the screen.
 func (b *Box) Draw(screen tcell.Screen) {
 	b.l.Lock()
+	defer b.l.Unlock()
 
 	// Don't draw anything if the box is hidden
 	if !b.visible {
-		b.l.Unlock()
 		return
 	}
 
 	// Don't draw anything if there is no space.
 	if b.width <= 0 || b.height <= 0 {
-		b.l.Unlock()
 		return
 	}
 
@@ -499,43 +506,8 @@ func (b *Box) Draw(screen tcell.Screen) {
 
 	// Call custom draw function.
 	if b.draw != nil {
-		b.l.Unlock()
-		newX, newY, newWidth, newHeight := b.draw(screen, b.x, b.y, b.width, b.height)
-		b.l.Lock()
-		b.innerX, b.innerY, b.innerWidth, b.innerHeight = newX, newY, newWidth, newHeight
-	} else {
-		// Remember the inner rect.
-		b.innerX = -1
-		b.l.Unlock()
-		newX, newY, newWidth, newHeight := b.GetInnerRect()
-		b.l.Lock()
-		b.innerX, b.innerY, b.innerWidth, b.innerHeight = newX, newY, newWidth, newHeight
+		b.innerX, b.innerY, b.innerWidth, b.innerHeight = b.draw(screen, b.x, b.y, b.width, b.height)
 	}
-
-	// Clamp inner rect to screen.
-	width, height := screen.Size()
-	if b.innerX < 0 {
-		b.innerWidth += b.innerX
-		b.innerX = 0
-	}
-	if b.innerX+b.innerWidth >= width {
-		b.innerWidth = width - b.innerX
-	}
-	if b.innerY+b.innerHeight >= height {
-		b.innerHeight = height - b.innerY
-	}
-	if b.innerY < 0 {
-		b.innerHeight += b.innerY
-		b.innerY = 0
-	}
-	if b.innerWidth < 0 {
-		b.innerWidth = 0
-	}
-	if b.innerHeight < 0 {
-		b.innerHeight = 0
-	}
-
-	b.l.Unlock()
 }
 
 // ShowFocus sets the flag indicating whether or not the borders of this

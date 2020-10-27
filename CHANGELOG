@@ -17,6 +17,7 @@ v1.5.1 (WIP)
 - Generalize tag stripping as StripTags
 - Make printWithStyle public and rename as PrintStyle
 - Optimize TextView (writing is 90% faster, drawing is 50% faster)
+- Reduce Box inner rect calculations
 - Remove return values from methods which return their primitive (breaks chaining)
 - Remove Application.ForceDraw (Application.Draw may be called anywhere)
 - Rename SetBorderPadding and GetBorderPadding as SetPadding and GetPadding

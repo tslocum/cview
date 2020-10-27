@@ -141,6 +141,7 @@ func (wm *WindowManager) MouseHandler() func(action MouseAction, event *tcell.Ev
 					w.x -= offsetX + w.dragWX
 					w.y -= offsetY + w.dragWY
 
+					w.updateInnerRect()
 					consumed = true
 				}
 
@@ -160,6 +161,7 @@ func (wm *WindowManager) MouseHandler() func(action MouseAction, event *tcell.Ev
 						}
 					}
 
+					w.updateInnerRect()
 					consumed = true
 				}
 
@@ -179,6 +181,7 @@ func (wm *WindowManager) MouseHandler() func(action MouseAction, event *tcell.Ev
 						}
 					}
 
+					w.updateInnerRect()
 					consumed = true
 				}
 			}
