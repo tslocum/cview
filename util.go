@@ -506,6 +506,8 @@ func TaggedStringWidth(text string) int {
 // This function considers color tags to have no width.
 //
 // Text is always split at newline characters ('\n').
+//
+// Text must not be escaped.
 func WordWrap(text string, width int) (lines []string) {
 	colorTagIndices, _, _, _, escapeIndices, strippedText, _ := decomposeText([]byte(text), true, false)
 

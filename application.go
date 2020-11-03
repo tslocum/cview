@@ -327,7 +327,7 @@ func (a *Application) Run() error {
 				continue
 			}
 
-			// A screen was finalized (event is nil). Wait for a new scren.
+			// A screen was finalized (event is nil). Wait for a new screen.
 			screen = <-a.screenReplacement
 			if screen == nil {
 				// No new screen. We're done.
@@ -383,6 +383,7 @@ EventLoop:
 				// Ctrl-C closes the application.
 				if event.Key() == tcell.KeyCtrlC {
 					a.Stop()
+					continue
 				}
 
 				// Pass other key events to the currently focused primitive.
@@ -630,7 +631,7 @@ func (a *Application) draw() {
 	}
 
 	// Resize if requested.
-	if fullscreen && root != nil {
+	if fullscreen {
 		root.SetRect(0, 0, a.width, a.height)
 	}
 
