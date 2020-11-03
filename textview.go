@@ -169,6 +169,9 @@ type TextView struct {
 	// width are discarded.
 	wrap bool
 
+	// The maximum line width when wrapping (0 = use TextView width).
+	wrapWidth int
+
 	// If set to true and if wrap is also true, lines are split at spaces or
 	// after punctuation characters.
 	wordWrap bool
@@ -765,6 +768,15 @@ func (t *TextView) write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
+// SetWrapWidth set the maximum width of lines when wrapping is enabled.
+// When set to 0 the width of the TextView is used.
+func (t *TextView) SetWrapWidth(width int) {
+	t.Lock()
+	defer t.Unlock()
+
+	t.wrapWidth = width
+}
+
 // SetReindexBuffer set a flag controlling whether the buffer is reindexed when
 // it is modified. This improves the performance of TextViews whose contents
 // always have line-breaks in the same location. This must be called after the
@@ -795,6 +807,10 @@ func (t *TextView) reindexBuffer(width int) {
 	// If there's no space, there's no index.
 	if width < 1 {
 		return
+	}
+
+	if t.wrapWidth > 0 && t.wrapWidth < width {
+		width = t.wrapWidth
 	}
 
 	// Initial states.
