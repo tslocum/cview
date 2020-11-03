@@ -554,7 +554,7 @@ func WordWrap(text string, width int) (lines []string) {
 		}
 
 		// Is this a breakpoint?
-		if breakpointPos < len(breakpoints) && textPos+tagOffset == breakpoints[breakpointPos][0] {
+		if breakpointPos < len(breakpoints) && textPos+tagOffset == breakpoints[breakpointPos][0]+1 {
 			// Yes, it is. Set up breakpoint infos depending on its type.
 			lastBreakpoint = breakpoints[breakpointPos][0] + tagOffset
 			lastContinuation = breakpoints[breakpointPos][1] + tagOffset

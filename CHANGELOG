@@ -7,9 +7,10 @@ v1.5.1 (WIP)
 - Add SetVisible and GetVisible to all widgets
 - Add TextView.SetBytes, TextView.GetBytes and TextView.SetWrapWidth
 - Add TableCell.SetBytes, TableCell.GetBytes and TableCell.GetText
+- Fix List dividers allowing selection
 - Fix List.Transform not calling handler set via SetChangedFunc
 - Fix WordWrap bounds out of range
-- Fix List dividers allowing selection
+- Fix WordWrap dropping last character of closing tag
 - Allow modification of scroll bar render text
 - Allow scrolling List horizontally
 - Clarify that Table rows must each have the same number of columns
