@@ -28,11 +28,10 @@ maintainers and allowing code changes which may be outside of tview's scope.
 
 ## Primitive methods do not return the primitive they belong to
 
-When chaining multiple method calls on a primitive together, application
-developers might accidentally end the chain with a different return type than
-the first method call. This could result in unexpected return types. For
-example, ending a chain with `SetTitle` would result in a `Box` rather than the
-original primitive.
+When chaining multiple primitive method calls together, application developers
+might accidentally end the chain with a different return type than the first
+method call. This could result in unexpected return types. For example, ending
+a chain with `SetTitle` would result in a `Box` rather than the original primitive.
 
 ## cview is [thread-safe](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#hdr-Concurrency)
 

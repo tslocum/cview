@@ -1,3 +1,6 @@
+v1.5.2 (WIP)
+- Handle events before executing queued updates
+
 v1.5.1 (2020-11-05)
 - Add FocusManager
 - Add Slider

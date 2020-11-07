@@ -354,97 +354,109 @@ func (a *Application) Run() error {
 		}
 	}()
 
+	handle := func(event interface{}) {
+		a.RLock()
+		p := a.focus
+		inputCapture := a.inputCapture
+		screen := a.screen
+		a.RUnlock()
+
+		switch event := event.(type) {
+		case *tcell.EventKey:
+			// Intercept keys.
+			if inputCapture != nil {
+				event = inputCapture(event)
+				if event == nil {
+					a.draw()
+					return // Don't forward event.
+				}
+			}
+
+			// Ctrl-C closes the application.
+			if event.Key() == tcell.KeyCtrlC {
+				a.Stop()
+				return
+			}
+
+			// Pass other key events to the currently focused primitive.
+			if p != nil {
+				if handler := p.InputHandler(); handler != nil {
+					handler(event, func(p Primitive) {
+						a.SetFocus(p)
+					})
+					a.draw()
+				}
+			}
+		case *tcell.EventResize:
+			// Throttle resize events.
+			if time.Since(a.lastResize) < resizeEventThrottle {
+				// Stop timer
+				if a.throttleResize != nil && !a.throttleResize.Stop() {
+					select {
+					case <-a.throttleResize.C:
+					default:
+					}
+				}
+
+				event := event // Capture
+
+				// Start timer
+				a.throttleResize = time.AfterFunc(resizeEventThrottle, func() {
+					a.events <- event
+				})
+
+				return
+			}
+
+			a.lastResize = time.Now()
+
+			if screen == nil {
+				return
+			}
+
+			screen.Clear()
+			a.width, a.height = event.Size()
+
+			// Call afterResize handler if there is one.
+			if a.afterResize != nil {
+				a.afterResize(a.width, a.height)
+			}
+
+			a.draw()
+		case *tcell.EventMouse:
+			consumed, isMouseDownAction := a.fireMouseActions(event)
+			if consumed {
+				a.draw()
+			}
+			a.lastMouseButtons = event.Buttons()
+			if isMouseDownAction {
+				a.mouseDownX, a.mouseDownY = event.Position()
+			}
+		}
+	}
+
 	// Start event loop.
 EventLoop:
 	for {
+		// Handle events before executing updates
 		select {
 		case event := <-a.events:
 			if event == nil {
 				break EventLoop
 			}
+			handle(event)
+			continue
+		default:
+		}
 
-			a.RLock()
-			p := a.focus
-			inputCapture := a.inputCapture
-			screen := a.screen
-			a.RUnlock()
-
-			switch event := event.(type) {
-			case *tcell.EventKey:
-				// Intercept keys.
-				if inputCapture != nil {
-					event = inputCapture(event)
-					if event == nil {
-						a.draw()
-						continue // Don't forward event.
-					}
-				}
-
-				// Ctrl-C closes the application.
-				if event.Key() == tcell.KeyCtrlC {
-					a.Stop()
-					continue
-				}
-
-				// Pass other key events to the currently focused primitive.
-				if p != nil {
-					if handler := p.InputHandler(); handler != nil {
-						handler(event, func(p Primitive) {
-							a.SetFocus(p)
-						})
-						a.draw()
-					}
-				}
-			case *tcell.EventResize:
-				// Throttle resize events.
-				if time.Since(a.lastResize) < resizeEventThrottle {
-					// Stop timer
-					if a.throttleResize != nil && !a.throttleResize.Stop() {
-						select {
-						case <-a.throttleResize.C:
-						default:
-						}
-					}
-
-					event := event // Capture
-
-					// Start timer
-					a.throttleResize = time.AfterFunc(resizeEventThrottle, func() {
-						a.events <- event
-					})
-
-					continue
-				}
-
-				a.lastResize = time.Now()
-
-				if screen == nil {
-					continue
-				}
-
-				screen.Clear()
-				a.width, a.height = event.Size()
-
-				// Call afterResize handler if there is one.
-				if a.afterResize != nil {
-					a.afterResize(a.width, a.height)
-				}
-
-				a.draw()
-			case *tcell.EventMouse:
-				consumed, isMouseDownAction := a.fireMouseActions(event)
-				if consumed {
-					a.draw()
-				}
-				a.lastMouseButtons = event.Buttons()
-				if isMouseDownAction {
-					a.mouseDownX, a.mouseDownY = event.Position()
-				}
+		select {
+		case event := <-a.events:
+			if event == nil {
+				break EventLoop
 			}
-
-		// If we have updates, now is the time to execute them.
-		case updater := <-a.updates:
-			updater()
+			handle(event)
+		case update := <-a.updates:
+			update()
 		}
 	}
 
