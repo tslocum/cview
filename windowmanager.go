@@ -77,6 +77,8 @@ func (wm *WindowManager) Draw(screen tcell.Screen) {
 	wm.RLock()
 	defer wm.RUnlock()
 
+	wm.Box.Draw(screen)
+
 	x, y, width, height := wm.GetInnerRect()
 
 	var hasFullScreen bool
