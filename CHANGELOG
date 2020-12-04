@@ -1,5 +1,5 @@
-v1.5.2 (WIP)
-- Handle events before executing queued updates
+v1.5.2 (2020-12-04)
+- Handle input events before executing queued update functions
 - Fix WindowManager background not being drawn
 
 v1.5.1 (2020-11-05)
