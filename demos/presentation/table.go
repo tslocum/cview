@@ -250,6 +250,9 @@ const tableSelectCell = `[green]func[white] [yellow]main[white]() {
 // Table demonstrates the Table.
 func Table(nextSlide func()) (title string, content cview.Primitive) {
 	table := cview.NewTable()
+	table.SetSeparator('|')
+	table.SetCellBorders(true)
+	table.SetCellPadding(1, 4)
 	table.SetFixed(1, 1)
 	for row, line := range strings.Split(tableData, "\n") {
 		for column, cell := range strings.Split(line, "|") {

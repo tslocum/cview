@@ -2,6 +2,7 @@ package cview
 
 import (
 	"bytes"
+	"log"
 	"sort"
 	"sync"
 
@@ -263,13 +264,16 @@ type Table struct {
 	*Box
 
 	// Whether or not this table has borders around each cell.
-	borders bool
+	cellBorders bool
 
-	// The color of the borders or the separator.
-	bordersColor tcell.Color
+	// The color of the cell borders or the separator.
+	cellBorderColor tcell.Color
 
 	// If there are no borders, the column separator.
 	separator rune
+
+	// The size of the padding between each cell.
+	rowPadding, columnPadding int
 
 	// The cells of the table. Rows first, then columns.
 	cells [][]*TableCell
@@ -353,7 +357,7 @@ func NewTable() *Table {
 		Box:                 NewBox(),
 		scrollBarVisibility: ScrollBarAuto,
 		scrollBarColor:      Styles.ScrollBarColor,
-		bordersColor:        Styles.GraphicsColor,
+		cellBorderColor:     Styles.GraphicsColor,
 		separator:           ' ',
 		sortClicked:         true,
 		lastColumn:          -1,
@@ -367,23 +371,6 @@ func (t *Table) Clear() {
 
 	t.cells = nil
 	t.lastColumn = -1
-}
-
-// SetBorders sets whether or not each cell in the table is surrounded by a
-// border.
-func (t *Table) SetBorders(show bool) {
-	t.Lock()
-	defer t.Unlock()
-
-	t.borders = show
-}
-
-// SetBordersColor sets the color of the cell borders.
-func (t *Table) SetBordersColor(color tcell.Color) {
-	t.Lock()
-	defer t.Unlock()
-
-	t.bordersColor = color
 }
 
 // SetScrollBarVisibility specifies the display of the scroll bar.
@@ -428,6 +415,30 @@ func (t *Table) SetSeparator(separator rune) {
 	defer t.Unlock()
 
 	t.separator = separator
+}
+
+// SetCellBorders sets whether or not each cell is surrounded by a border.
+func (t *Table) SetCellBorders(show bool) {
+	t.Lock()
+	defer t.Unlock()
+
+	t.cellBorders = show
+}
+
+// SetCellBorderColor sets the color of the cell borders.
+func (t *Table) SetCellBorderColor(color tcell.Color) {
+	t.Lock()
+	defer t.Unlock()
+
+	t.cellBorderColor = color
+}
+
+// SetCellPadding sets the size of the padding between each cell.
+func (t *Table) SetCellPadding(row, column int) {
+	t.Lock()
+	defer t.Unlock()
+
+	t.rowPadding, t.columnPadding = row, column
 }
 
 // SetFixed sets the number of fixed rows and columns which are always visible
@@ -694,7 +705,7 @@ func (t *Table) cellAt(x, y int) (row, column int) {
 	rectX, rectY, _, _ := t.GetInnerRect()
 
 	// Determine row as seen on screen.
-	if t.borders {
+	if t.cellBorders {
 		row = (y - rectY - 1) / 2
 	} else {
 		row = y - rectY
@@ -714,7 +725,7 @@ func (t *Table) cellAt(x, y int) (row, column int) {
 	column = -1
 	if x >= rectX {
 		columnX := rectX
-		if t.borders {
+		if t.cellBorders {
 			columnX++
 		}
 		for index, width := range t.visibleColumnWidths {
@@ -815,7 +826,7 @@ func (t *Table) Draw(screen tcell.Screen) {
 
 	// What's our available screen space?
 	x, y, width, height := t.GetInnerRect()
-	if t.borders {
+	if t.cellBorders {
 		t.visibleRows = height / 2
 	} else {
 		t.visibleRows = height
@@ -861,9 +872,10 @@ func (t *Table) Draw(screen tcell.Screen) {
 			t.rowOffset = t.selectedRow - t.fixedRows
 			t.trackEnd = false
 		}
-		if t.borders {
-			if 2*(t.selectedRow+1-t.rowOffset) >= height {
-				t.rowOffset = t.selectedRow + 1 - height/2
+		if t.cellBorders {
+			if 2*(t.rowPadding+t.selectedRow+1-t.rowOffset) >= height {
+				log.Fatal("test")
+				t.rowOffset = t.selectedRow + 1
 				t.trackEnd = false
 			}
 		} else {
@@ -873,18 +885,18 @@ func (t *Table) Draw(screen tcell.Screen) {
 			}
 		}
 	}
-	if t.borders {
-		if 2*(len(t.cells)-t.rowOffset) < height {
+	if t.cellBorders {
+		if 2*(len(t.cells)-t.rowOffset)*t.rowPadding < height {
 			t.trackEnd = true
 		}
 	} else {
-		if len(t.cells)-t.rowOffset < height {
+		if 2*(t.rowPadding+len(t.cells)-t.rowOffset) < height {
 			t.trackEnd = true
 		}
 	}
 	if t.trackEnd {
-		if t.borders {
-			t.rowOffset = len(t.cells) - height/2
+		if t.cellBorders {
+			t.rowOffset = len(t.cells) + height/(2*(t.rowPadding+1))
 		} else {
 			t.rowOffset = len(t.cells) - height
 		}
@@ -912,10 +924,11 @@ func (t *Table) Draw(screen tcell.Screen) {
 		tableHeight, tableWidth        int
 	)
 	rowStep := 1
-	if t.borders {
+	if t.cellBorders {
 		rowStep = 2    // With borders, every table row takes two screen rows.
 		tableWidth = 1 // We start at the second character because of the left table border.
 	}
+	rowStep += t.rowPadding
 	if t.evaluateAllRows {
 		allRows = make([]int, len(t.cells))
 		for row := range t.cells {
@@ -1026,41 +1039,75 @@ ColumnLoop:
 	}
 
 	// Helper function which draws border runes.
-	borderStyle := tcell.StyleDefault.Background(t.backgroundColor).Foreground(t.bordersColor)
+	borderStyle := tcell.StyleDefault.Background(t.backgroundColor).Foreground(t.cellBorderColor)
 	drawBorder := func(colX, rowY int, ch rune) {
 		screen.SetContent(x+colX, y+rowY, ch, nil, borderStyle)
 	}
 
+	// TODO Center in padding amount
+	// TODO incorrect vertical scroll amount
+
 	// Draw the cells (and borders).
 	var columnX int
-	if !t.borders {
+	if !t.cellBorders {
 		columnX--
 	}
+	numRows := len(rows)
+	numCols := len(columns)
 	for columnIndex, column := range columns {
 		columnWidth := widths[columnIndex]
-		for rowY, row := range rows {
-			if t.borders {
+		for i, row := range rows {
+			rowY := i + (t.rowPadding * i * 2)
+			if t.cellBorders {
+				rowY = i*2 + (t.rowPadding * i * 2)
 				// Draw borders.
-				rowY *= 2
 				for pos := 0; pos < columnWidth && columnX+1+pos < width; pos++ {
 					drawBorder(columnX+pos+1, rowY, Borders.Horizontal)
 				}
+				if i == 0 && columnX+columnWidth+1 < width {
+					drawBorder(columnX+columnWidth+1, rowY, Borders.TopRight)
+				}
 				ch := Borders.Cross
 				if columnIndex == 0 {
-					if rowY == 0 {
+					if i == 0 {
 						ch = Borders.TopLeft
+					} else if i == numRows-1 {
+						ch = Borders.BottomLeft
 					} else {
 						ch = Borders.LeftT
 					}
 				} else if rowY == 0 {
 					ch = Borders.TopT
+				} else if i == numRows-1 {
+					if i == 0 {
+						ch = Borders.BottomLeft
+					} else {
+						ch = Borders.BottomT
+					}
 				}
 				drawBorder(columnX, rowY, ch)
 				rowY++
-				if rowY >= height {
+				if rowY+1 >= height {
 					break // No space for the text anymore.
 				}
-				drawBorder(columnX, rowY, Borders.Vertical)
+				rowY += t.rowPadding
+				for j := 0 - t.rowPadding; j < t.rowPadding+1; j++ {
+					if rowY+j >= height {
+						break
+					}
+					drawBorder(columnX, rowY+j, Borders.Vertical)
+					if columnIndex == numCols-1 && columnX+columnWidth+1 < width {
+						drawBorder(columnX+columnWidth+1, rowY+j, Borders.Vertical)
+					}
+				}
+				if columnIndex == numCols-1 && columnX+columnWidth+1 < width && rowY+t.rowPadding+1 <= height {
+					//log.Println(i)
+					if i == numRows-2 {
+						drawBorder(columnX+columnWidth+1, rowY+t.rowPadding+1, Borders.BottomRight)
+					} else {
+						drawBorder(columnX+columnWidth+1, rowY+t.rowPadding+1, Borders.RightT)
+					}
+				}
 			} else if columnIndex > 0 {
 				// Draw separator.
 				drawBorder(columnX, rowY, t.separator)
@@ -1085,37 +1132,7 @@ ColumnLoop:
 			}
 		}
 
-		// Draw bottom border.
-		if rowY := 2 * len(rows); t.borders && rowY < height {
-			for pos := 0; pos < columnWidth && columnX+1+pos < width; pos++ {
-				drawBorder(columnX+pos+1, rowY, Borders.Horizontal)
-			}
-			ch := Borders.BottomT
-			if columnIndex == 0 {
-				ch = Borders.BottomLeft
-			}
-			drawBorder(columnX, rowY, ch)
-		}
-
 		columnX += columnWidth + 1
-	}
-
-	// Draw right border.
-	if t.borders && len(t.cells) > 0 && columnX < width {
-		for rowY := range rows {
-			rowY *= 2
-			if rowY+1 < height {
-				drawBorder(columnX, rowY+1, Borders.Vertical)
-			}
-			ch := Borders.RightT
-			if rowY == 0 {
-				ch = Borders.TopRight
-			}
-			drawBorder(columnX, rowY, ch)
-		}
-		if rowY := 2 * len(rows); rowY < height {
-			drawBorder(columnX, rowY, Borders.BottomRight)
-		}
 	}
 
 	if showVerticalScrollBar {
@@ -1132,7 +1149,7 @@ ColumnLoop:
 		}
 
 		padTotalOffset := 1
-		if t.borders {
+		if t.cellBorders {
 			padTotalOffset = 2
 
 			scrollBarItems *= 2
@@ -1162,7 +1179,7 @@ ColumnLoop:
 				m, c, style, _ := screen.GetContent(fromX+bx, fromY+by)
 				fg, bg, a := style.Decompose()
 				if invert {
-					if fg == textColor || fg == t.bordersColor {
+					if fg == textColor || fg == t.cellBorderColor {
 						fg = backgroundColor
 					}
 					if fg == tcell.ColorDefault {
@@ -1195,7 +1212,8 @@ ColumnLoop:
 	}
 	cellsByBackgroundColor := make(map[tcell.Color][]*cellInfo)
 	var backgroundColors []tcell.Color
-	for rowY, row := range rows {
+	for i, row := range rows {
+		rowY := i + (t.rowPadding * i)
 		columnX := 0
 		rowSelected := t.rowsSelectable && !t.columnsSelectable && row == t.selectedRow
 		for columnIndex, column := range columns {
@@ -1205,8 +1223,8 @@ ColumnLoop:
 				continue
 			}
 			bx, by, bw, bh := x+columnX, y+rowY, columnWidth+1, 1
-			if t.borders {
-				by = y + rowY*2
+			if t.cellBorders {
+				by = y + ((t.columnPadding * i) * 2)
 				bw++
 				bh = 3
 			}
@@ -1430,7 +1448,7 @@ func (t *Table) MouseHandler() func(action MouseAction, event *tcell.EventMouse,
 			_, tableY, _, _ := t.GetInnerRect()
 			mul := 1
 			maxY := tableY
-			if t.borders {
+			if t.cellBorders {
 				mul = 2
 				maxY = tableY + 1
 			}
@@ -1465,4 +1483,20 @@ func (t *Table) MouseHandler() func(action MouseAction, event *tcell.EventMouse,
 
 		return
 	})
+}
+
+// SetBorders sets whether or not each cell in the table is surrounded by a border.
+//
+// Deprecated: This function is provided for backwards compatibility.
+// Developers should use SetCellBorder instead.
+func (t *Table) SetBorders(show bool) {
+	t.SetCellBorders(show)
+}
+
+// SetBordersColor sets the color of the cell borders.
+//
+// Deprecated: This function is provided for backwards compatibility.
+// Developers should use SetCellBorderColor instead.
+func (t *Table) SetBordersColor(color tcell.Color) {
+	t.SetCellBorderColor(color)
 }
