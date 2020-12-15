@@ -168,7 +168,11 @@ You can use the Escape() function to insert brackets automatically where needed.
 
 Setting the background color of a primitive to tcell.ColorDefault will use the
 default terminal background color. To enable transparency (allowing one or more
-primitives to display behind a primitive) call SetBackgroundTransparent.
+primitives to display behind a primitive) call SetBackgroundTransparent. The
+screen is not cleared before drawing the application. Overlaying transparent
+widgets directly onto the screen may result in artifacts. To resolve this, add
+a blank, non-transparent Box to the bottom layer of the interface via Panels,
+or set a handler via SetBeforeDrawFunc which clears the screen.
 
 Styles
 
