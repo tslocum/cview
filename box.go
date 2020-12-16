@@ -336,7 +336,11 @@ func (b *Box) GetBackgroundColor() tcell.Color {
 }
 
 // SetBackgroundTransparent sets the flag indicating whether or not the box's
-// background is transparent.
+// background is transparent. The screen is not cleared before drawing the
+// application. Overlaying transparent widgets directly onto the screen may
+// result in artifacts. To resolve this, add a blank, non-transparent Box to
+// the bottom layer of the interface via Panels, or set a handler via
+// SetBeforeDrawFunc which clears the screen.
 func (b *Box) SetBackgroundTransparent(transparent bool) {
 	b.l.Lock()
 	defer b.l.Unlock()
