@@ -1,5 +1,6 @@
 v1.5.3 (WIP)
 - Document how to prevent screen artifacts when using SetBackgroundTransparent
+- Fix incorrect TabbedPanels colors
 
 v1.5.2 (2020-12-04)
 - Handle input events before executing queued update functions

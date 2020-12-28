@@ -58,10 +58,15 @@ func NewTabbedPanels() *TabbedPanels {
 	s.SetWrap(true)
 	s.SetWordWrap(true)
 	s.SetHighlightedFunc(func(added, removed, remaining []string) {
+		if len(added) == 0 {
+			return
+		}
+
 		t.SetCurrentTab(added[0])
 		if t.setFocus != nil {
 			t.setFocus(t.panels)
 		}
+		s.Highlight()
 	})
 
 	t.rebuild()
