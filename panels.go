@@ -75,13 +75,17 @@ func (p *Panels) AddPanel(name string, item Primitive, resize, visible bool) {
 	p.Lock()
 	defer p.Unlock()
 
-	for index, pg := range p.panels {
+	var added bool
+	for i, pg := range p.panels {
 		if pg.Name == name {
-			p.panels = append(p.panels[:index], p.panels[index+1:]...)
+			p.panels[i] = &panel{Item: item, Name: name, Resize: resize, Visible: visible}
+			added = true
 			break
 		}
 	}
-	p.panels = append(p.panels, &panel{Item: item, Name: name, Resize: resize, Visible: visible})
+	if !added {
+		p.panels = append(p.panels, &panel{Item: item, Name: name, Resize: resize, Visible: visible})
+	}
 	if p.changed != nil {
 		p.Unlock()
 		p.changed()
