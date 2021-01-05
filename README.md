@@ -12,8 +12,6 @@ See [FORK.md](https://gitlab.com/tslocum/cview/blob/master/FORK.md) for more inf
 
 [![Recording of presentation demo](https://gitlab.com/tslocum/cview/-/raw/master/cview.svg)](https://gitlab.com/tslocum/cview/tree/master/demos/presentation)
 
-Additional examples are listed on [pkg.go.dev](https://pkg.go.dev/gitlab.com/tslocum/cview?tab=importedby).
-
 ## Features
 
 Available widgets:
@@ -32,6 +30,10 @@ Available widgets:
 Widgets may be customized and extended to suit any application.
 
 [Mouse support](https://docs.rocketnine.space/gitlab.com/tslocum/cview#hdr-Mouse_Support) is available.
+
+## Applications
+
+A list of applications powered by cview is available via [pkg.go.dev](https://pkg.go.dev/gitlab.com/tslocum/cview?tab=importedby).
 
 ## Installation
 
