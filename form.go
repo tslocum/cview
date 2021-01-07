@@ -154,12 +154,12 @@ func NewForm() *Form {
 		fieldBackgroundColor:         Styles.ContrastBackgroundColor,
 		fieldTextColor:               Styles.PrimaryTextColor,
 		buttonBackgroundColor:        Styles.ContrastBackgroundColor,
-		buttonTextColor:              Styles.PrimaryTextColor,
 		buttonBackgroundColorFocused: Styles.PrimaryTextColor,
+		buttonTextColor:              Styles.PrimaryTextColor,
 		buttonTextColorFocused:       Styles.InverseTextColor,
 		labelColorFocused:            ColorUnset,
-		fieldBackgroundColorFocused:  ColorUnset,
 		fieldTextColorFocused:        ColorUnset,
+		fieldBackgroundColorFocused:  ColorUnset,
 	}
 
 	f.focus = f
@@ -627,12 +627,12 @@ func (f *Form) getAttributes() *FormItemAttributes {
 		attrs.LabelColorFocused = f.labelColorFocused
 	}
 	if f.fieldBackgroundColorFocused == ColorUnset {
-		attrs.FieldBackgroundColorFocused = f.fieldBackgroundColor
+		attrs.FieldBackgroundColorFocused = f.fieldTextColor
 	} else {
 		attrs.FieldBackgroundColorFocused = f.fieldBackgroundColorFocused
 	}
 	if f.fieldTextColorFocused == ColorUnset {
-		attrs.FieldTextColorFocused = f.fieldTextColor
+		attrs.FieldTextColorFocused = f.fieldBackgroundColor
 	} else {
 		attrs.FieldTextColorFocused = f.fieldTextColorFocused
 	}
