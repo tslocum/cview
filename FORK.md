@@ -83,11 +83,15 @@ remaining unchanged.
 
 This greatly improves buffer efficiency. [TextView.Write](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#TextView.Write)
 is 90% faster and [TextView.Draw](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#TextView.Draw)
-is 50% faster.    
+is 50% faster.
 
 ## `Pages` has been renamed as `Panels`
 
 This is for consistency with `TabbedPanels`, which is built on top of `Panels`.
+
+## `Panels.AddPanel` preserves order of panels when updating existing panel
+
+tview moves the updated panel to the end.
 
 ## `Application.ForceDraw` has been removed
 
