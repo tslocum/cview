@@ -72,9 +72,6 @@ const (
 func init() {
 	runewidth.EastAsianWidth = true
 
-	// We'll use zero width joiners.
-	runewidth.ZeroWidthJoiner = true
-
 	// Initialize the predefined input field handlers.
 	InputFieldInteger = func(text string, ch rune) bool {
 		if text == "-" {
