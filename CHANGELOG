@@ -1,4 +1,4 @@
-v1.5.3 (WIP)
+v1.5.3 (2020-01-14)
 - Document how to prevent screen artifacts when using SetBackgroundTransparent
 - Fix highlighting focused Form element
 - Fix incorrect TabbedPanels colors
