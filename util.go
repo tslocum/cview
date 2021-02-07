@@ -25,7 +25,7 @@ const (
 
 // Common regular expressions.
 var (
-	colorPattern     = regexp.MustCompile(`\[([a-zA-Z]+|#[0-9a-zA-Z]{6}|\-)?(:([a-zA-Z]+|#[0-9a-zA-Z]{6}|\-)?(:([lbdiru]+|\-)?)?)?\]`)
+	colorPattern     = regexp.MustCompile(`\[([a-zA-Z]+|#[0-9a-zA-Z]{6}|\-)?(:([a-zA-Z]+|#[0-9a-zA-Z]{6}|\-)?(:([bdilrsu]+|\-)?)?)?\]`)
 	regionPattern    = regexp.MustCompile(`\["([a-zA-Z0-9_,;: \-\.]*)"\]`)
 	escapePattern    = regexp.MustCompile(`\[([a-zA-Z0-9_,;: \-\."#]+)\[(\[*)\]`)
 	nonEscapePattern = regexp.MustCompile(`(\[[a-zA-Z0-9_,;: \-\."#]+\[*)\]`)
@@ -55,7 +55,7 @@ var (
 	InputFieldMaxLength func(maxLength int) func(text string, ch rune) bool
 )
 
-// Transformation describes a widget modification.
+// Transformation describes a widget state modification.
 type Transformation int
 
 // Widget transformations.
@@ -192,30 +192,30 @@ func overlayStyle(background tcell.Color, defaultStyle tcell.Style, fgColor, bgC
 
 	if attributes == "-" {
 		style = style.Bold(defAttr&tcell.AttrBold > 0)
-		style = style.Blink(defAttr&tcell.AttrBlink > 0)
 		style = style.Dim(defAttr&tcell.AttrDim > 0)
 		style = style.Italic(defAttr&tcell.AttrItalic > 0)
+		style = style.Blink(defAttr&tcell.AttrBlink > 0)
 		style = style.Reverse(defAttr&tcell.AttrReverse > 0)
-		style = style.Underline(defAttr&tcell.AttrUnderline > 0)
 		style = style.StrikeThrough(defAttr&tcell.AttrStrikeThrough > 0)
+		style = style.Underline(defAttr&tcell.AttrUnderline > 0)
 	} else if attributes != "" {
 		style = style.Normal()
 		for _, flag := range attributes {
 			switch flag {
-			case 'l':
-				style = style.Blink(true)
 			case 'b':
 				style = style.Bold(true)
 			case 'd':
 				style = style.Dim(true)
 			case 'i':
 				style = style.Italic(true)
+			case 'l':
+				style = style.Blink(true)
 			case 'r':
 				style = style.Reverse(true)
-			case 'u':
-				style = style.Underline(true)
 			case 's':
 				style = style.StrikeThrough(true)
+			case 'u':
+				style = style.Underline(true)
 			}
 		}
 	}
@@ -226,11 +226,12 @@ func overlayStyle(background tcell.Color, defaultStyle tcell.Style, fgColor, bgC
 // SetAttributes sets attributes on a style.
 func SetAttributes(style tcell.Style, attrs tcell.AttrMask) tcell.Style {
 	return style.
-		Blink(attrs&tcell.AttrBlink != 0).
 		Bold(attrs&tcell.AttrBold != 0).
 		Dim(attrs&tcell.AttrDim != 0).
 		Italic(attrs&tcell.AttrItalic != 0).
+		Blink(attrs&tcell.AttrBlink != 0).
 		Reverse(attrs&tcell.AttrReverse != 0).
+		StrikeThrough(attrs&tcell.AttrStrikeThrough != 0).
 		Underline(attrs&tcell.AttrUnderline != 0)
 }
 

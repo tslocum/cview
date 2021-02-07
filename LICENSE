@@ -39,6 +39,8 @@ Bugfixes in ANSI escape sequence handling as well as TextView
 Sun Jul 12 13:34:19 2020 +0200
 TextView.GetText() and .GetRegionText() didn't filter out empty colour tags. Fixes #453
 
+The cview license applies to all other commits.
+
 ----------
 
 cview license:
