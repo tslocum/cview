@@ -1322,7 +1322,7 @@ func (t *TextView) MouseHandler() func(action MouseAction, event *tcell.EventMou
 // of the longest line in the buffer. This is the dimensions of the text buffer.
 // This is not the dimensions of the TextView on the screen.
 func (t *TextView) TextDimensions() (int, int) {
-	t.Lock()
-	defer t.Unlock()
+	t.RLock()
+	defer t.RUnlock()
 	return t.longestLine, len(t.buffer)
 }
