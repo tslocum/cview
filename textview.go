@@ -343,6 +343,15 @@ func (t *TextView) GetText(stripTags bool) string {
 	return string(t.GetBytes(stripTags))
 }
 
+// GetBufferSize returns the number of lines and the length of the longest line
+// in the text buffer. The screen size of the widget is available via GetRect.
+func (t *TextView) GetBufferSize() (rows int, maxLen int) {
+	t.RLock()
+	defer t.RUnlock()
+
+	return t.longestLine, len(t.buffer)
+}
+
 // SetDynamicColors sets the flag that allows the text color to be changed
 // dynamically. See class description for details.
 func (t *TextView) SetDynamicColors(dynamic bool) {
@@ -1316,13 +1325,4 @@ func (t *TextView) MouseHandler() func(action MouseAction, event *tcell.EventMou
 
 		return
 	})
-}
-
-// TextDimensions returns the number of lines in the text buffer and the length
-// of the longest line in the buffer. This is the dimensions of the text buffer.
-// This is not the dimensions of the TextView on the screen.
-func (t *TextView) TextDimensions() (int, int) {
-	t.RLock()
-	defer t.RUnlock()
-	return t.longestLine, len(t.buffer)
 }
