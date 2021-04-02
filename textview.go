@@ -349,7 +349,7 @@ func (t *TextView) GetBufferSize() (rows int, maxLen int) {
 	t.RLock()
 	defer t.RUnlock()
 
-	return t.longestLine, len(t.buffer)
+	return len(t.buffer), t.longestLine
 }
 
 // SetDynamicColors sets the flag that allows the text color to be changed

@@ -70,7 +70,7 @@ EventKeys. It also translates between EventKeys and human-readable strings such
 as "Alt+Enter". This makes it possible to store keybindings in a configuration
 file.
 
-cbind: https://gitlab.com/tslocum/cbind
+cbind: https://code.rocketnine.space/tslocum/cbind
 
 Bracketed Paste Mode
 
