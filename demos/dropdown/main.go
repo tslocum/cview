@@ -1,7 +1,7 @@
 // Demo code for the DropDown primitive.
 package main
 
-import "gitlab.com/tslocum/cview"
+import "code.rocketnine.space/tslocum/cview"
 
 func main() {
 	app := cview.NewApplication()

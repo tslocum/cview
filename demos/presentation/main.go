@@ -20,8 +20,8 @@ import (
 	_ "net/http/pprof"
 	"strconv"
 
+	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
-	"gitlab.com/tslocum/cview"
 )
 
 // Slide is a function which returns the slide's main primitive and its title.

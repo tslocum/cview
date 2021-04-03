@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
-	"gitlab.com/tslocum/cview"
 )
 
 const logo = `

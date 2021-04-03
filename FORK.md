@@ -1,5 +1,5 @@
 This document explains why [tview](https://github.com/rivo/tview) was forked to
-create [cview](https://gitlab.com/tslocum/cview). It also explains any
+create [cview](https://code.rocketnine.space/tslocum/cview). It also explains any
 differences between the projects and tracks which tview pull requests have been
 merged into cview.
 
@@ -33,11 +33,11 @@ might accidentally end the chain with a different return type than the first
 method call. This could result in unexpected return types. For example, ending
 a chain with `SetTitle` would result in a `Box` rather than the original primitive.
 
-## cview is [thread-safe](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#hdr-Concurrency)
+## cview is [thread-safe](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview/#hdr-Concurrency)
 
 tview [is not thread-safe](https://godoc.org/github.com/rivo/tview#hdr-Concurrency).
 
-## [Application.QueueUpdate](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Application.QueueUpdate) and [Application.QueueUpdateDraw](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Application.QueueUpdateDraw) do not block
+## [Application.QueueUpdate](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview/#Application.QueueUpdate) and [Application.QueueUpdateDraw](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview/#Application.QueueUpdateDraw) do not block
 
 tview [blocks until the queued function returns](https://github.com/rivo/tview/blob/fe3052019536251fd145835dbaa225b33b7d3088/application.go#L510).
 
@@ -58,16 +58,16 @@ func (w *Widget) Draw(screen tcell.Screen) {
 
 ## Setting a primitive's background color to `tcell.ColorDefault` does not result in transparency
 
-Call [Box.SetBackgroundTransparent](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Box.SetBackgroundTransparent)
+Call [Box.SetBackgroundTransparent](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview/#Box.SetBackgroundTransparent)
 to enable background transparency.
 
 ## Double clicks are not handled by default
 
-All clicks are handled as single clicks until an interval is set with [Application.SetDoubleClickInterval](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Application.SetDoubleClickInterval).
+All clicks are handled as single clicks until an interval is set with [Application.SetDoubleClickInterval](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview/#Application.SetDoubleClickInterval).
 
 ## Tables are sorted when a fixed row is clicked by default
 
-Call [Table.SetSortClicked](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#Table.SetSortClicked)
+Call [Table.SetSortClicked](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview/#Table.SetSortClicked)
 to disable this behavior.
 
 ## Lists and Forms do not wrap around by default
@@ -81,8 +81,8 @@ remaining unchanged.
 
 ## TextViews store their text as []byte instead of string
 
-This greatly improves buffer efficiency. [TextView.Write](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#TextView.Write)
-is 90% faster and [TextView.Draw](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#TextView.Draw)
+This greatly improves buffer efficiency. [TextView.Write](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview/#TextView.Write)
+is 90% faster and [TextView.Draw](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview/#TextView.Draw)
 is 50% faster.
 
 ## `Pages` has been renamed as `Panels`
@@ -95,7 +95,7 @@ tview moves the updated panel to the end.
 
 ## `Application.ForceDraw` has been removed
 
-Because cview is [thread-safe](https://docs.rocketnine.space/gitlab.com/tslocum/cview/#hdr-Concurrency),
+Because cview is [thread-safe](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview/#hdr-Concurrency),
 application draws must be queued. Call `Application.QueueUpdateDraw` to queue
 an update that requires the application to be drawn when completed.
 

@@ -1,16 +1,22 @@
+!!! cview has moved to [code.rocketnine.space](https://code.rocketnine.space/tslocum/cview) !!!
+====
+
+Please visit https://code.rocketnine.space/tslocum/cview
+
+------------
+
 # cview - Terminal-based user interface toolkit
-[![GoDoc](https://gitlab.com/tslocum/godoc-static/-/raw/master/badge.svg)](https://docs.rocketnine.space/gitlab.com/tslocum/cview)
-[![CI status](https://gitlab.com/tslocum/cview/badges/master/pipeline.svg)](https://gitlab.com/tslocum/cview/commits/master)
+[![GoDoc](https://code.rocketnine.space/tslocum/godoc-static/raw/branch/master/badge.svg)](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview)
 [![Donate](https://img.shields.io/liberapay/receives/rocketnine.space.svg?logo=liberapay)](https://liberapay.com/rocketnine.space)
 
 This package is a fork of [tview](https://github.com/rivo/tview).
-See [FORK.md](https://gitlab.com/tslocum/cview/blob/master/FORK.md) for more information.
+See [FORK.md](https://code.rocketnine.space/tslocum/cview/src/branch/master/FORK.md) for more information.
 
 ## Demo
 
 `ssh cview.rocketnine.space -p 20000`
 
-[![Recording of presentation demo](https://gitlab.com/tslocum/cview/-/raw/master/cview.svg)](https://gitlab.com/tslocum/cview/tree/master/demos/presentation)
+[![Recording of presentation demo](https://code.rocketnine.space/tslocum/cview/raw/branch/master/cview.svg)](https://code.rocketnine.space/tslocum/cview/src/branch/master/demos/presentation)
 
 ## Features
 
@@ -29,16 +35,16 @@ Available widgets:
 
 Widgets may be customized and extended to suit any application.
 
-[Mouse support](https://docs.rocketnine.space/gitlab.com/tslocum/cview#hdr-Mouse_Support) is available.
+[Mouse support](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview#hdr-Mouse_Support) is available.
 
 ## Applications
 
-A list of applications powered by cview is available via [pkg.go.dev](https://pkg.go.dev/gitlab.com/tslocum/cview?tab=importedby).
+A list of applications powered by cview is available via [pkg.go.dev](https://pkg.go.dev/code.rocketnine.space/tslocum/cview?tab=importedby).
 
 ## Installation
 
 ```bash
-go get gitlab.com/tslocum/cview
+go get code.rocketnine.space/tslocum/cview
 ```
 
 ## Hello World
@@ -49,7 +55,7 @@ This basic example creates a TextView titled "Hello, World!" and displays it in 
 package main
 
 import (
-	"gitlab.com/tslocum/cview"
+	"code.rocketnine.space/tslocum/cview"
 )
 
 func main() {
@@ -67,7 +73,7 @@ func main() {
 }
 ```
 
-Examples are available via [godoc](https://docs.rocketnine.space/gitlab.com/tslocum/cview#pkg-examples)
+Examples are available via [godoc](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview#pkg-examples)
 and in the "demos" subdirectory.
 
 For a presentation highlighting the features of this package, compile and run
@@ -75,7 +81,7 @@ the program in the "demos/presentation" subdirectory.
 
 ## Documentation
 
-Package documentation is available via [godoc](https://docs.rocketnine.space/gitlab.com/tslocum/cview).
+Package documentation is available via [godoc](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview).
 
 An [introduction tutorial](https://rocketnine.space/post/tview-and-you/) is also available.
 
@@ -86,5 +92,5 @@ This package is based on [github.com/gdamore/tcell](https://github.com/gdamore/t
 
 ## Support
 
-[CONTRIBUTING.md](https://gitlab.com/tslocum/cview/blob/master/CONTRIBUTING.md) describes how to share
+[CONTRIBUTING.md](https://code.rocketnine.space/tslocum/cview/src/branch/master/CONTRIBUTING.md) describes how to share
 issues, suggestions and patches (pull requests).

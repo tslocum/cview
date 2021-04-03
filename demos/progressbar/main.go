@@ -4,7 +4,7 @@ package main
 import (
 	"time"
 
-	"gitlab.com/tslocum/cview"
+	"code.rocketnine.space/tslocum/cview"
 )
 
 func main() {

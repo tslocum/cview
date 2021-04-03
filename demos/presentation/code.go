@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"gitlab.com/tslocum/cview"
+	"code.rocketnine.space/tslocum/cview"
 )
 
 // The width of the code window.

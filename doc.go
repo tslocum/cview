@@ -194,7 +194,7 @@ containing the text "Hello, world!":
   package main
 
   import (
-    "gitlab.com/tslocum/cview"
+    "code.rocketnine.space/tslocum/cview"
   )
 
   func main() {

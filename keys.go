@@ -1,8 +1,8 @@
 package cview
 
 import (
-	"github.com/gdamore/tcell/v2"
 	"code.rocketnine.space/tslocum/cbind"
+	"github.com/gdamore/tcell/v2"
 )
 
 // Key defines the keyboard shortcuts of an application.

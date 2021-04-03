@@ -1,8 +1,8 @@
 package main
 
 import (
+	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
-	"gitlab.com/tslocum/cview"
 )
 
 const inputField = `[green]package[white] main
@@ -11,7 +11,7 @@ const inputField = `[green]package[white] main
     [red]"strconv"[white]
 
     [red]"github.com/gdamore/tcell/v2"[white]
-    [red]"gitlab.com/tslocum/cview"[white]
+    [red]"code.rocketnine.space/tslocum/cview"[white]
 )
 
 [green]func[white] [yellow]main[white]() {

@@ -4,8 +4,8 @@ package main
 import (
 	"fmt"
 
+	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
-	"gitlab.com/tslocum/cview"
 )
 
 // RadioButtons implements a simple primitive for radio button selections.

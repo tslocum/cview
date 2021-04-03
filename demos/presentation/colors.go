@@ -1,8 +1,8 @@
 package main
 
 import (
+	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
-	"gitlab.com/tslocum/cview"
 )
 
 const colorsText = `You can use color tags almost everywhere to partially change the color of a string.

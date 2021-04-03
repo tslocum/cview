@@ -1,8 +1,8 @@
 package main
 
 import (
+	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
-	"gitlab.com/tslocum/cview"
 )
 
 // Grid demonstrates the grid layout.

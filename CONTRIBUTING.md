@@ -5,11 +5,11 @@ suggestions and patches.
 
 Please include as much relevant information as possible.
 
-Review project [documentation](https://docs.rocketnine.space/gitlab.com/tslocum/cview)
+Review project [documentation](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview)
 before submitting an issue.
 
-Share issues and suggestions on the [issue tracker](https://gitlab.com/tslocum/cview/issues).
+Share issues and suggestions on the [issue tracker](https://code.rocketnine.space/tslocum/cview/issues).
 
 # Patches (pull requests)
 
-Submit patches as [pull requests](https://gitlab.com/tslocum/cview/merge_requests).
+Submit patches as [pull requests](https://code.rocketnine.space/tslocum/cview/pulls).

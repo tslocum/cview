@@ -3,8 +3,8 @@ package main
 import (
 	"strings"
 
+	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
-	"gitlab.com/tslocum/cview"
 )
 
 // 1,000 most common English words.
