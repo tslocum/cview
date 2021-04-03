@@ -1,10 +1,3 @@
-!!! cview has moved to [code.rocketnine.space](https://code.rocketnine.space/tslocum/cview) !!!
-====
-
-Please visit https://code.rocketnine.space/tslocum/cview
-
-------------
-
 # cview - Terminal-based user interface toolkit
 [![GoDoc](https://code.rocketnine.space/tslocum/godoc-static/raw/branch/master/badge.svg)](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview)
 [![Donate](https://img.shields.io/liberapay/receives/rocketnine.space.svg?logo=liberapay)](https://liberapay.com/rocketnine.space)
