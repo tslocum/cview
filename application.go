@@ -350,6 +350,7 @@ func (a *Application) Run() error {
 			if a.enableMouse {
 				screen.EnableMouse()
 			}
+
 			a.draw()
 		}
 	}()
@@ -588,28 +589,26 @@ func (a *Application) Stop() {
 // was called. If false is returned, the application was already suspended,
 // terminal UI mode was not exited, and "f" was not called.
 func (a *Application) Suspend(f func()) bool {
-	a.RLock()
-	screen := a.screen
-	a.RUnlock()
-	if screen == nil {
+	a.Lock()
+	defer a.Unlock()
+
+	if a.screen == nil {
 		return false // Screen has not yet been initialized.
 	}
 
-	// Enter suspended mode.
-	screen.Fini()
+	err := a.screen.Suspend()
+	if err != nil {
+		panic(err)
+	}
 
 	// Wait for "f" to return.
 	f()
 
-	// Make a new screen.
-	var err error
-	screen, err = tcell.NewScreen()
+	err = a.screen.Resume()
 	if err != nil {
 		panic(err)
 	}
-	a.screenReplacement <- screen
 
-	// Continue application loop.
 	return true
 }
 
