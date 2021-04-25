@@ -1,3 +1,6 @@
+v1.5.5 (WIP)
+- Restructure event loop to only poll screen between updates
+
 v1.5.4 (2020-04-03)
 - Add TextView.GetBufferSize
 - Fix strikethrough support

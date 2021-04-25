@@ -304,7 +304,7 @@ func (a *Application) Run() error {
 	a.Unlock()
 	a.draw()
 
-	// Separate loop to wait for screen events.
+	// Separate loop to wait for screen replacement events.
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
@@ -317,14 +317,6 @@ func (a *Application) Run() error {
 				// We have no screen. Let's stop.
 				a.QueueEvent(nil)
 				break
-			}
-
-			// Wait for next event and queue it.
-			event := screen.PollEvent()
-			if event != nil {
-				// Regular event. Queue.
-				a.QueueEvent(event)
-				continue
 			}
 
 			// A screen was finalized (event is nil). Wait for a new screen.
@@ -436,32 +428,38 @@ func (a *Application) Run() error {
 		}
 	}
 
-	// Start event loop.
-EventLoop:
+	semaphore := &sync.Mutex{}
+
+	go func() {
+		for update := range a.updates {
+			semaphore.Lock()
+			update()
+			semaphore.Unlock()
+		}
+	}()
+
+	// Start screen event loop.
 	for {
-		// Handle events before executing updates
-		select {
-		case event := <-a.events:
-			if event == nil {
-				break EventLoop
-			}
-			handle(event)
-			continue
-		default:
+		a.Lock()
+		screen := a.screen
+		a.Unlock()
+
+		if screen == nil {
+			break
 		}
 
-		select {
-		case event := <-a.events:
-			if event == nil {
-				break EventLoop
-			}
-			handle(event)
-		case update := <-a.updates:
-			update()
+		// Wait for next event.
+		event := screen.PollEvent()
+		if event == nil {
+			break
 		}
+
+		semaphore.Lock()
+		handle(event)
+		semaphore.Unlock()
 	}
 
-	// Wait for the event loop to finish.
+	// Wait for the screen replacement event loop to finish.
 	wg.Wait()
 	a.screen = nil
 
@@ -590,13 +588,12 @@ func (a *Application) Stop() {
 // terminal UI mode was not exited, and "f" was not called.
 func (a *Application) Suspend(f func()) bool {
 	a.Lock()
-	defer a.Unlock()
-
 	if a.screen == nil {
+		a.Unlock()
 		return false // Screen has not yet been initialized.
 	}
-
 	err := a.screen.Suspend()
+	a.Unlock()
 	if err != nil {
 		panic(err)
 	}
@@ -604,7 +601,9 @@ func (a *Application) Suspend(f func()) bool {
 	// Wait for "f" to return.
 	f()
 
+	a.Lock()
 	err = a.screen.Resume()
+	a.Unlock()
 	if err != nil {
 		panic(err)
 	}
