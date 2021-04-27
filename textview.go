@@ -1171,14 +1171,22 @@ func (t *TextView) Draw(screen tcell.Screen) {
 		backgroundColor := index.BackgroundColor
 		attributes := index.Attributes
 		regionID := index.Region
-		if t.regions && len(regionID) > 0 && (len(t.regionInfos) == 0 || !bytes.Equal(t.regionInfos[len(t.regionInfos)-1].ID, regionID)) {
-			t.regionInfos = append(t.regionInfos, &textViewRegion{
-				ID:    regionID,
-				FromX: x,
-				FromY: y + line - t.lineOffset,
-				ToX:   -1,
-				ToY:   -1,
-			})
+		if t.regions {
+			if len(t.regionInfos) > 0 && !bytes.Equal(t.regionInfos[len(t.regionInfos)-1].ID, regionID) {
+				// End last region.
+				t.regionInfos[len(t.regionInfos)-1].ToX = x
+				t.regionInfos[len(t.regionInfos)-1].ToY = y + line - t.lineOffset
+			}
+			if len(regionID) > 0 && (len(t.regionInfos) == 0 || !bytes.Equal(t.regionInfos[len(t.regionInfos)-1].ID, regionID)) {
+				// Start a new region.
+				t.regionInfos = append(t.regionInfos, &textViewRegion{
+					ID:    regionID,
+					FromX: x,
+					FromY: y + line - t.lineOffset,
+					ToX:   -1,
+					ToY:   -1,
+				})
+			}
 		}
 
 		// Process tags.
