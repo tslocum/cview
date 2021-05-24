@@ -1,4 +1,4 @@
-v1.5.5 (WIP)
+v1.5.5 (2020-05-24)
 - Fix Application.Suspend by restructuring event loop (queued updates will now only run between draws)
 
 v1.5.4 (2020-04-03)
