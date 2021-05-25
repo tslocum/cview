@@ -29,6 +29,7 @@ type TabbedPanels struct {
 
 	switcherVertical     bool
 	switcherAfterContent bool
+	switcherHeight       int
 
 	width, lastWidth int
 
@@ -55,6 +56,7 @@ func NewTabbedPanels() *TabbedPanels {
 	s := t.Switcher
 	s.SetDynamicColors(true)
 	s.SetRegions(true)
+	s.SetScrollable(true)
 	s.SetWrap(true)
 	s.SetWordWrap(true)
 	s.SetHighlightedFunc(func(added, removed, remaining []string) {
@@ -62,11 +64,11 @@ func NewTabbedPanels() *TabbedPanels {
 			return
 		}
 
+		s.ScrollToHighlight()
 		t.SetCurrentTab(added[0])
 		if t.setFocus != nil {
 			t.setFocus(t.panels)
 		}
-		s.Highlight()
 	})
 
 	t.rebuild()
@@ -122,6 +124,7 @@ func (t *TabbedPanels) SetCurrentTab(name string) {
 	t.Unlock()
 
 	t.Switcher.Highlight(t.currentTab)
+	t.Switcher.ScrollToHighlight()
 }
 
 // GetCurrentTab returns the currently visible tab.
@@ -180,6 +183,17 @@ func (t *TabbedPanels) SetTabSwitcherDivider(start, mid, end string) {
 	t.dividerStart, t.dividerMid, t.dividerEnd = start, mid, end
 }
 
+// SetTabSwitcherHeight sets the tab switcher height. This setting only applies
+// when rendering horizontally. A value of 0 (the default) indicates the height
+// should automatically adjust to fit all of the tab labels.
+func (t *TabbedPanels) SetTabSwitcherHeight(height int) {
+	t.Lock()
+	defer t.Unlock()
+
+	t.switcherHeight = height
+	t.rebuild()
+}
+
 // SetTabSwitcherVertical sets the orientation of the tab switcher.
 func (t *TabbedPanels) SetTabSwitcherVertical(vertical bool) {
 	t.Lock()
@@ -224,6 +238,8 @@ func (t *TabbedPanels) rebuild() {
 	}
 
 	t.updateTabLabels()
+
+	t.Switcher.SetMaxLines(t.switcherHeight)
 }
 
 func (t *TabbedPanels) updateTabLabels() {
@@ -287,9 +303,13 @@ func (t *TabbedPanels) updateTabLabels() {
 	if t.switcherVertical {
 		reqLines = maxWidth + 2
 	} else {
-		reqLines = len(WordWrap(t.Switcher.GetText(true), t.width))
-		if reqLines < 1 {
-			reqLines = 1
+		if t.switcherHeight > 0 {
+			reqLines = t.switcherHeight
+		} else {
+			reqLines = len(WordWrap(t.Switcher.GetText(true), t.width))
+			if reqLines < 1 {
+				reqLines = 1
+			}
 		}
 	}
 	t.Flex.ResizeItem(t.Switcher, reqLines, 1)
