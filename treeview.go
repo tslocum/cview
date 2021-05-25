@@ -905,9 +905,9 @@ func (t *TreeView) InputHandler() func(event *tcell.EventKey, setFocus func(p Pr
 			t.movement = treeHome
 		} else if HitShortcut(event, Keys.MoveLast, Keys.MoveLast2) {
 			t.movement = treeEnd
-		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2, Keys.MovePreviousField) {
+		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2) {
 			t.movement = treeUp
-		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2, Keys.MoveNextField) {
+		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2) {
 			t.movement = treeDown
 		} else if HitShortcut(event, Keys.MovePreviousPage) {
 			t.movement = treePageUp

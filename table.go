@@ -1388,9 +1388,9 @@ func (t *Table) InputHandler() func(event *tcell.EventKey, setFocus func(p Primi
 			home()
 		} else if HitShortcut(event, Keys.MoveLast, Keys.MoveLast2) {
 			end()
-		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2, Keys.MovePreviousField) {
+		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2) {
 			up()
-		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2, Keys.MoveNextField) {
+		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2) {
 			down()
 		} else if HitShortcut(event, Keys.MoveLeft, Keys.MoveLeft2) {
 			left()

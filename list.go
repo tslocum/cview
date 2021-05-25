@@ -927,8 +927,8 @@ func (l *List) Draw(screen tcell.Screen) {
 		}
 
 		if len(item.mainText) == 0 && len(item.secondaryText) == 0 && item.shortcut == 0 { // Divider
-			Print(screen, bytes.Repeat([]byte(string(tcell.RuneHLine)), fullWidth), leftEdge-1, y, fullWidth, AlignLeft, l.mainTextColor)
 			Print(screen, []byte(string(tcell.RuneLTee)), leftEdge-2, y, 1, AlignLeft, l.mainTextColor)
+			Print(screen, bytes.Repeat([]byte(string(tcell.RuneHLine)), fullWidth), leftEdge-1, y, fullWidth, AlignLeft, l.mainTextColor)
 			Print(screen, []byte(string(tcell.RuneRTee)), leftEdge+fullWidth-1, y, 1, AlignLeft, l.mainTextColor)
 
 			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.itemOffset, l.hasFocus, l.scrollBarColor)
@@ -1145,9 +1145,9 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 			l.transform(TransformFirstItem)
 		} else if HitShortcut(event, Keys.MoveLast, Keys.MoveLast2) {
 			l.transform(TransformLastItem)
-		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2, Keys.MovePreviousField) {
+		} else if HitShortcut(event, Keys.MoveUp, Keys.MoveUp2) {
 			l.transform(TransformPreviousItem)
-		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2, Keys.MoveNextField) {
+		} else if HitShortcut(event, Keys.MoveDown, Keys.MoveDown2) {
 			l.transform(TransformNextItem)
 		} else if HitShortcut(event, Keys.MoveLeft, Keys.MoveLeft2) {
 			l.columnOffset--
