@@ -865,6 +865,8 @@ func (l *List) Draw(screen tcell.Screen) {
 
 	// Determine the dimensions.
 	x, y, width, height := l.GetInnerRect()
+	leftEdge := x
+	fullWidth := width + l.paddingLeft + l.paddingRight
 	bottomLimit := y + height
 
 	l.height = height
@@ -925,7 +927,9 @@ func (l *List) Draw(screen tcell.Screen) {
 		}
 
 		if len(item.mainText) == 0 && len(item.secondaryText) == 0 && item.shortcut == 0 { // Divider
-			Print(screen, bytes.Repeat([]byte(string(tcell.RuneHLine)), width+l.paddingLeft+l.paddingRight), x-l.paddingLeft, y, width+l.paddingLeft+l.paddingRight, AlignLeft, l.mainTextColor)
+			Print(screen, bytes.Repeat([]byte(string(tcell.RuneHLine)), fullWidth), leftEdge-1, y, fullWidth, AlignLeft, l.mainTextColor)
+			Print(screen, []byte(string(tcell.RuneLTee)), leftEdge-2, y, 1, AlignLeft, l.mainTextColor)
+			Print(screen, []byte(string(tcell.RuneRTee)), leftEdge+fullWidth-1, y, 1, AlignLeft, l.mainTextColor)
 
 			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.itemOffset, l.hasFocus, l.scrollBarColor)
 			y++
