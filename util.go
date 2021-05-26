@@ -12,6 +12,11 @@ import (
 	"github.com/rivo/uniseg"
 )
 
+// TrueColorTags is a flag which controls whether color tags should render as
+// the specific colors defined by tcell, or as the colors defined by the user's
+// terminal configuration (the default).
+var TrueColorTags = false
+
 // ColorUnset represents an unset color. This is necessary because the zero
 // value of color, ColorDefault, results in default terminal colors.
 var ColorUnset = tcell.ColorSpecial | 108
@@ -180,14 +185,22 @@ func overlayStyle(background tcell.Color, defaultStyle tcell.Style, fgColor, bgC
 		if fgColor == "-" {
 			style = style.Foreground(defFg)
 		} else {
-			style = style.Foreground(tcell.GetColor(fgColor).TrueColor())
+			c := tcell.GetColor(fgColor)
+			if TrueColorTags {
+				c = c.TrueColor()
+			}
+			style = style.Foreground(c)
 		}
 	}
 
 	if bgColor == "-" || bgColor == "" && defBg != tcell.ColorDefault {
 		style = style.Background(defBg)
 	} else if bgColor != "" {
-		style = style.Background(tcell.GetColor(bgColor).TrueColor())
+		c := tcell.GetColor(bgColor)
+		if TrueColorTags {
+			c = c.TrueColor()
+		}
+		style = style.Background(c)
 	}
 
 	if attributes == "-" {
