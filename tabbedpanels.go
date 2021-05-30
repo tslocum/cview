@@ -69,6 +69,7 @@ func NewTabbedPanels() *TabbedPanels {
 		if t.setFocus != nil {
 			t.setFocus(t.panels)
 		}
+		s.Highlight()
 	})
 
 	t.rebuild()
