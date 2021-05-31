@@ -151,15 +151,15 @@ func NewForm() *Form {
 		Box:                          box,
 		itemPadding:                  1,
 		labelColor:                   Styles.SecondaryTextColor,
-		fieldBackgroundColor:         Styles.ContrastBackgroundColor,
-		fieldTextColor:               Styles.PrimaryTextColor,
-		fieldTextColorFocused:        Styles.ContrastPrimaryTextColor,
-		buttonBackgroundColor:        Styles.ContrastBackgroundColor,
-		buttonBackgroundColorFocused: Styles.PrimaryTextColor,
-		buttonTextColor:              Styles.PrimaryTextColor,
-		buttonTextColorFocused:       Styles.InverseTextColor,
+		fieldBackgroundColor:         Styles.PrimaryTextColor,
+		fieldBackgroundColorFocused:  Styles.ContrastBackgroundColor,
+		fieldTextColor:               Styles.ContrastPrimaryTextColor,
+		fieldTextColorFocused:        Styles.PrimaryTextColor,
+		buttonBackgroundColor:        Styles.PrimaryTextColor,
+		buttonBackgroundColorFocused: Styles.ContrastBackgroundColor,
+		buttonTextColor:              Styles.InverseTextColor,
+		buttonTextColorFocused:       Styles.PrimaryTextColor,
 		labelColorFocused:            ColorUnset,
-		fieldBackgroundColorFocused:  ColorUnset,
 	}
 
 	f.focus = f

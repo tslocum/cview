@@ -144,18 +144,18 @@ func NewInputField() *InputField {
 	return &InputField{
 		Box:                                     NewBox(),
 		labelColor:                              Styles.SecondaryTextColor,
-		fieldBackgroundColor:                    Styles.ContrastBackgroundColor,
-		fieldTextColor:                          Styles.PrimaryTextColor,
+		fieldBackgroundColor:                    Styles.PrimaryTextColor,
+		fieldBackgroundColorFocused:             Styles.ContrastBackgroundColor,
+		fieldTextColor:                          Styles.ContrastPrimaryTextColor,
+		fieldTextColorFocused:                   Styles.PrimaryTextColor,
 		placeholderTextColor:                    Styles.ContrastSecondaryTextColor,
 		autocompleteListTextColor:               Styles.PrimitiveBackgroundColor,
 		autocompleteListBackgroundColor:         Styles.MoreContrastBackgroundColor,
 		autocompleteListSelectedTextColor:       Styles.PrimitiveBackgroundColor,
 		autocompleteListSelectedBackgroundColor: Styles.PrimaryTextColor,
-		autocompleteSuggestionTextColor:         Styles.ContrastPrimaryTextColor,
+		autocompleteSuggestionTextColor:         Styles.ContrastSecondaryTextColor,
 		fieldNoteTextColor:                      Styles.SecondaryTextColor,
 		labelColorFocused:                       ColorUnset,
-		fieldBackgroundColorFocused:             ColorUnset,
-		fieldTextColorFocused:                   ColorUnset,
 		placeholderTextColorFocused:             ColorUnset,
 	}
 }

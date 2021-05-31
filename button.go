@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/lucasb-eyer/go-colorful"
 )
 
 // Button is labeled box that triggers an action when selected.
@@ -35,14 +36,25 @@ type Button struct {
 // NewButton returns a new input field.
 func NewButton(label string) *Button {
 	box := NewBox()
-	box.SetBackgroundColor(Styles.ContrastBackgroundColor)
 	box.SetRect(0, 0, TaggedStringWidth(label)+4, 1)
+	bg := Styles.PrimaryTextColor
+	if bg == tcell.ColorDefault {
+		r, g, b := Styles.InverseTextColor.RGB()
+		c := colorful.Color{R: float64(r) / 255, G: float64(g) / 255, B: float64(b) / 255}
+		_, _, li := c.Hcl()
+		if li < .5 {
+			bg = tcell.ColorWhite.TrueColor()
+		} else {
+			bg = tcell.ColorBlack.TrueColor()
+		}
+	}
+	box.SetBackgroundColor(bg)
 	return &Button{
 		Box:                    box,
 		label:                  []byte(label),
-		labelColor:             Styles.PrimaryTextColor,
-		labelColorFocused:      Styles.InverseTextColor,
-		backgroundColorFocused: Styles.PrimaryTextColor,
+		labelColor:             Styles.InverseTextColor,
+		labelColorFocused:      Styles.PrimaryTextColor,
+		backgroundColorFocused: Styles.ContrastBackgroundColor,
 	}
 }
 

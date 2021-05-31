@@ -56,7 +56,7 @@ var Styles = Theme{
 	TertiaryTextColor:          tcell.ColorGreen.TrueColor(),
 	InverseTextColor:           tcell.ColorBlack.TrueColor(),
 	ContrastPrimaryTextColor:   tcell.ColorBlack.TrueColor(),
-	ContrastSecondaryTextColor: tcell.ColorDimGray.TrueColor(),
+	ContrastSecondaryTextColor: tcell.ColorLightSlateGray.TrueColor(),
 
 	PrimitiveBackgroundColor:    tcell.ColorBlack.TrueColor(),
 	ContrastBackgroundColor:     tcell.ColorBlue.TrueColor(),
