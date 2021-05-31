@@ -18,11 +18,6 @@ type TabbedPanels struct {
 	tabLabels  map[string]string
 	currentTab string
 
-	tabTextColor              tcell.Color
-	tabTextColorFocused       tcell.Color
-	tabBackgroundColor        tcell.Color
-	tabBackgroundColorFocused tcell.Color
-
 	dividerStart string
 	dividerMid   string
 	dividerEnd   string
@@ -41,20 +36,18 @@ type TabbedPanels struct {
 // NewTabbedPanels returns a new TabbedPanels object.
 func NewTabbedPanels() *TabbedPanels {
 	t := &TabbedPanels{
-		Flex:                      NewFlex(),
-		Switcher:                  NewTextView(),
-		panels:                    NewPanels(),
-		tabTextColor:              Styles.PrimaryTextColor,
-		tabTextColorFocused:       Styles.InverseTextColor,
-		tabBackgroundColor:        ColorUnset,
-		tabBackgroundColorFocused: Styles.PrimaryTextColor,
-		dividerMid:                string(BoxDrawingsDoubleVertical),
-		dividerEnd:                string(BoxDrawingsLightVertical),
-		tabLabels:                 make(map[string]string),
+		Flex:       NewFlex(),
+		Switcher:   NewTextView(),
+		panels:     NewPanels(),
+		dividerMid: string(BoxDrawingsDoubleVertical),
+		dividerEnd: string(BoxDrawingsLightVertical),
+		tabLabels:  make(map[string]string),
 	}
 
 	s := t.Switcher
 	s.SetDynamicColors(true)
+	s.SetHighlightForegroundColor(Styles.InverseTextColor)
+	s.SetHighlightBackgroundColor(Styles.PrimaryTextColor)
 	s.SetRegions(true)
 	s.SetScrollable(true)
 	s.SetWrap(true)
@@ -69,7 +62,6 @@ func NewTabbedPanels() *TabbedPanels {
 		if t.setFocus != nil {
 			t.setFocus(t.panels)
 		}
-		s.Highlight()
 	})
 
 	t.rebuild()
@@ -124,7 +116,17 @@ func (t *TabbedPanels) SetCurrentTab(name string) {
 
 	t.Unlock()
 
-	t.Switcher.Highlight(t.currentTab)
+	h := t.Switcher.GetHighlights()
+	var found bool
+	for _, hl := range h {
+		if hl == name {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Switcher.Highlight(t.currentTab)
+	}
 	t.Switcher.ScrollToHighlight()
 }
 
@@ -150,31 +152,23 @@ func (t *TabbedPanels) SetTabLabel(name, label string) {
 
 // SetTabTextColor sets the color of the tab text.
 func (t *TabbedPanels) SetTabTextColor(color tcell.Color) {
-	t.Lock()
-	defer t.Unlock()
-	t.tabTextColor = color
+	t.Switcher.SetTextColor(color)
 }
 
 // SetTabTextColorFocused sets the color of the tab text when the tab is in focus.
 func (t *TabbedPanels) SetTabTextColorFocused(color tcell.Color) {
-	t.Lock()
-	defer t.Unlock()
-	t.tabTextColorFocused = color
+	t.Switcher.SetHighlightForegroundColor(color)
 }
 
 // SetTabBackgroundColor sets the background color of the tab.
 func (t *TabbedPanels) SetTabBackgroundColor(color tcell.Color) {
-	t.Lock()
-	defer t.Unlock()
-	t.tabBackgroundColor = color
+	t.Switcher.SetBackgroundColor(color)
 }
 
 // SetTabBackgroundColorFocused sets the background color of the tab when the
 // tab is in focus.
 func (t *TabbedPanels) SetTabBackgroundColorFocused(color tcell.Color) {
-	t.Lock()
-	defer t.Unlock()
-	t.tabBackgroundColorFocused = color
+	t.Switcher.SetHighlightBackgroundColor(color)
 }
 
 // SetTabSwitcherDivider sets the tab switcher divider text. Color tags are supported.
@@ -274,13 +268,6 @@ func (t *TabbedPanels) updateTabLabels() {
 			b.WriteRune(' ')
 		}
 
-		textColor := t.tabTextColor
-		backgroundColor := t.tabBackgroundColor
-		if panel.Name == t.currentTab {
-			textColor = t.tabTextColorFocused
-			backgroundColor = t.tabBackgroundColorFocused
-		}
-
 		label := t.tabLabels[panel.Name]
 		if !t.switcherVertical {
 			label = " " + label
@@ -290,7 +277,7 @@ func (t *TabbedPanels) updateTabLabels() {
 			spacer = bytes.Repeat([]byte(" "), maxWidth-len(label)+1)
 		}
 
-		b.WriteString(fmt.Sprintf(`["%s"][%s:%s]%s%s[-:-][""]`, panel.Name, ColorHex(textColor), ColorHex(backgroundColor), label, spacer))
+		b.WriteString(fmt.Sprintf(`["%s"]%s%s[""]`, panel.Name, label, spacer))
 
 		if i == l-1 && !t.switcherVertical {
 			b.WriteString(t.dividerEnd)

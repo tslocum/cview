@@ -153,12 +153,12 @@ func NewForm() *Form {
 		labelColor:                   Styles.SecondaryTextColor,
 		fieldBackgroundColor:         Styles.ContrastBackgroundColor,
 		fieldTextColor:               Styles.PrimaryTextColor,
+		fieldTextColorFocused:        Styles.ContrastPrimaryTextColor,
 		buttonBackgroundColor:        Styles.ContrastBackgroundColor,
 		buttonBackgroundColorFocused: Styles.PrimaryTextColor,
 		buttonTextColor:              Styles.PrimaryTextColor,
 		buttonTextColorFocused:       Styles.InverseTextColor,
 		labelColorFocused:            ColorUnset,
-		fieldTextColorFocused:        ColorUnset,
 		fieldBackgroundColorFocused:  ColorUnset,
 	}
 

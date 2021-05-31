@@ -179,6 +179,12 @@ type TextView struct {
 	// The (starting) color of the text.
 	textColor tcell.Color
 
+	// The foreground color of highlighted text.
+	highlightForeground tcell.Color
+
+	// The background color of highlighted text.
+	highlightBackground tcell.Color
+
 	// If set to true, the text color can be changed dynamically by piping color
 	// strings in square brackets to the text view.
 	dynamicColors bool
@@ -222,6 +228,8 @@ func NewTextView() *TextView {
 		align:               AlignLeft,
 		wrap:                true,
 		textColor:           Styles.PrimaryTextColor,
+		highlightForeground: Styles.PrimitiveBackgroundColor,
+		highlightBackground: Styles.PrimaryTextColor,
 	}
 }
 
@@ -302,6 +310,22 @@ func (t *TextView) SetTextColor(color tcell.Color) {
 	defer t.Unlock()
 
 	t.textColor = color
+}
+
+// SetHighlightForegroundColor sets the foreground color of highlighted text.
+func (t *TextView) SetHighlightForegroundColor(color tcell.Color) {
+	t.Lock()
+	defer t.Unlock()
+
+	t.highlightForeground = color
+}
+
+// SetHighlightBackgroundColor sets the foreground color of highlighted text.
+func (t *TextView) SetHighlightBackgroundColor(color tcell.Color) {
+	t.Lock()
+	defer t.Unlock()
+
+	t.highlightBackground = color
 }
 
 // SetBytes sets the text of this text view to the provided byte slice.
@@ -1179,7 +1203,14 @@ func (t *TextView) Draw(screen tcell.Screen) {
 					}
 				}
 				if highlighted {
-					fg, bg, _ := style.Decompose()
+					fg := t.highlightForeground
+					bg := t.highlightBackground
+					if fg == tcell.ColorDefault {
+						fg = Styles.PrimaryTextColor
+						if fg == tcell.ColorDefault {
+							fg = tcell.ColorWhite.TrueColor()
+						}
+					}
 					if bg == tcell.ColorDefault {
 						r, g, b := fg.RGB()
 						c := colorful.Color{R: float64(r) / 255, G: float64(g) / 255, B: float64(b) / 255}
@@ -1190,7 +1221,7 @@ func (t *TextView) Draw(screen tcell.Screen) {
 							bg = tcell.ColorBlack.TrueColor()
 						}
 					}
-					style = style.Background(fg).Foreground(bg)
+					style = style.Foreground(fg).Background(bg)
 				}
 
 				// Skip to the right.
