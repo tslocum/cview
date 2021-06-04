@@ -131,7 +131,7 @@ func TreeView(nextSlide func()) (title string, content cview.Primitive) {
 		node.SetExpanded(target == rootNode)
 		node.SetReference(target)
 		if target.expand {
-			node.SetColor(tcell.ColorGreen.TrueColor())
+			node.SetColor(tcell.ColorLimeGreen.TrueColor())
 		} else if target.selected != nil {
 			node.SetColor(tcell.ColorRed.TrueColor())
 		}

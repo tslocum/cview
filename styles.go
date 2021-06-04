@@ -53,13 +53,13 @@ var Styles = Theme{
 
 	PrimaryTextColor:           tcell.ColorWhite.TrueColor(),
 	SecondaryTextColor:         tcell.ColorYellow.TrueColor(),
-	TertiaryTextColor:          tcell.ColorGreen.TrueColor(),
+	TertiaryTextColor:          tcell.ColorLimeGreen.TrueColor(),
 	InverseTextColor:           tcell.ColorBlack.TrueColor(),
 	ContrastPrimaryTextColor:   tcell.ColorBlack.TrueColor(),
 	ContrastSecondaryTextColor: tcell.ColorLightSlateGray.TrueColor(),
 
 	PrimitiveBackgroundColor:    tcell.ColorBlack.TrueColor(),
-	ContrastBackgroundColor:     tcell.ColorBlue.TrueColor(),
+	ContrastBackgroundColor:     tcell.ColorLimeGreen.TrueColor(),
 	MoreContrastBackgroundColor: tcell.ColorGreen.TrueColor(),
 
 	CheckBoxCheckedRune: 'X',

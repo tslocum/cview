@@ -147,7 +147,7 @@ func NewInputField() *InputField {
 		fieldBackgroundColor:                    Styles.PrimaryTextColor,
 		fieldBackgroundColorFocused:             Styles.ContrastBackgroundColor,
 		fieldTextColor:                          Styles.ContrastPrimaryTextColor,
-		fieldTextColorFocused:                   Styles.PrimaryTextColor,
+		fieldTextColorFocused:                   Styles.ContrastPrimaryTextColor,
 		placeholderTextColor:                    Styles.ContrastSecondaryTextColor,
 		autocompleteListTextColor:               Styles.PrimitiveBackgroundColor,
 		autocompleteListBackgroundColor:         Styles.MoreContrastBackgroundColor,

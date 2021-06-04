@@ -53,13 +53,13 @@ import (
 
 func main() {
 	app := cview.NewApplication()
+
+	tv := cview.NewTextView()
+	tv.SetBorder(true)
+	tv.SetTitle("Hello, world!")
+	tv.SetText("Lorem ipsum dolor sit amet")
 	
-	box := cview.NewTextView()
-	box.SetBorder(true)
-	box.SetTitle("Hello, world!")
-	box.SetText("Lorem ipsum dolor sit amet")
-	
-	app.SetRoot(box, true)
+	app.SetRoot(tv, true)
 	if err := app.Run(); err != nil {
 		panic(err)
 	}

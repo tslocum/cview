@@ -253,11 +253,11 @@ func Table(nextSlide func()) (title string, content cview.Primitive) {
 	table.SetFixed(1, 1)
 	for row, line := range strings.Split(tableData, "\n") {
 		for column, cell := range strings.Split(line, "|") {
-			color := tcell.ColorWhite.TrueColor()
+			color := cview.Styles.PrimaryTextColor
 			if row == 0 {
-				color = tcell.ColorYellow.TrueColor()
+				color = cview.Styles.SecondaryTextColor
 			} else if column == 0 {
-				color = tcell.ColorDarkCyan.TrueColor()
+				color = cview.Styles.TertiaryTextColor
 			}
 			align := cview.AlignLeft
 			if row == 0 {
