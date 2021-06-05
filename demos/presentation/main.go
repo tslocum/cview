@@ -25,12 +25,12 @@ import (
 )
 
 const (
-	appInfo      = "Next slide: Ctrl-N  Previous: Ctrl-P  Exit: Ctrl-C  (Navigate with your keyboard or mouse)"
+	appInfo      = "Next slide: Ctrl-N  Previous: Ctrl-P  Exit: Ctrl-C  (Navigate with your keyboard and mouse)"
 	listInfo     = "Next item: J, Down  Previous item: K, Up  Open context menu: Alt+Enter"
 	textViewInfo = "Scroll down: J, Down, PageDown  Scroll up: K, Up, PageUp"
 	sliderInfo   = "Decrease: H, J, Left, Down  Increase: K, L, Right, Up"
 	formInfo     = "Next field: Tab  Previous field: Shift+Tab  Select: Enter"
-	windowInfo   = "Windows may be dragged an resized using the mouse."
+	windowInfo   = "Windows may be dragged and resized using the mouse."
 )
 
 // Slide is a function which returns the slide's title, any applicable

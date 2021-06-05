@@ -144,8 +144,8 @@ func NewInputField() *InputField {
 	return &InputField{
 		Box:                                     NewBox(),
 		labelColor:                              Styles.SecondaryTextColor,
-		fieldBackgroundColor:                    Styles.ContrastBackgroundColor,
-		fieldBackgroundColorFocused:             Styles.MoreContrastBackgroundColor,
+		fieldBackgroundColor:                    Styles.MoreContrastBackgroundColor,
+		fieldBackgroundColorFocused:             Styles.ContrastBackgroundColor,
 		fieldTextColor:                          Styles.PrimaryTextColor,
 		fieldTextColorFocused:                   Styles.PrimaryTextColor,
 		placeholderTextColor:                    Styles.ContrastSecondaryTextColor,

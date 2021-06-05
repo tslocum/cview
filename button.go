@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/mattn/go-runewidth"
 )
 
 // Button is labeled box that triggers an action when selected.
@@ -154,12 +153,19 @@ func (b *Button) Draw(screen tcell.Screen) {
 		labelColor := b.labelColor
 		if b.focus.HasFocus() {
 			labelColor = b.labelColorFocused
-			// Draw cursor.
-			if b.cursorRune != 0 {
-				Print(screen, []byte(string(b.cursorRune)), x+width-(width-runewidth.StringWidth(string(b.label)))/2+1, y, width, AlignLeft, labelColor)
-			}
 		}
-		Print(screen, b.label, x, y, width, AlignCenter, labelColor)
+		_, pw := Print(screen, b.label, x, y, width, AlignCenter, labelColor)
+
+		// Draw cursor.
+		if b.focus.HasFocus() && b.cursorRune != 0 {
+			cursorX := x + int(float64(width)/2+float64(pw)/2)
+			if cursorX > x+width-1 {
+				cursorX = x + width - 1
+			} else if cursorX < x+width {
+				cursorX++
+			}
+			Print(screen, []byte(string(b.cursorRune)), cursorX, y, width, AlignLeft, labelColor)
+		}
 	}
 }
 
