@@ -67,10 +67,10 @@ func main() {
 ```
 
 Examples are available via [godoc](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview#pkg-examples)
-and in the [demos](https://code.rocketnine.space/tslocum/cview/src/branch/master/demos) subdirectory.
+and in the [demos](https://code.rocketnine.space/tslocum/cview/src/branch/master/demos) directory.
 
 For a presentation highlighting the features of this package, compile and run
-the program in the [demos/presentation](https://code.rocketnine.space/tslocum/cview/src/branch/master/demos/presentation) subdirectory.
+the program in the [demos/presentation](https://code.rocketnine.space/tslocum/cview/src/branch/master/demos/presentation) directory.
 
 ## Documentation
 

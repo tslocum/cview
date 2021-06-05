@@ -8,8 +8,8 @@ func Introduction(nextSlide func()) (title string, info string, content cview.Pr
 
 	listText := [][]string{
 		{"A Go package for terminal based UIs", "with a special focus on rich interactive widgets"},
-		{"Based on github.com/gdamore/tcell", "Like termbox but better (see tcell docs)"},
-		{"Designed to be simple", `"Hello world" is 5 lines of code`},
+		{"Based on github.com/gdamore/tcell", "Supports Linux, FreeBSD, MacOS and Windows"},
+		{"Designed to be simple", `"Hello world" is less than 20 lines of code`},
 		{"Good for data entry", `For charts, use "termui" - for low-level views, use "gocui" - ...`},
 		{"Supports context menus", "Right click on one of these items or press Alt+Enter"},
 		{"Extensive documentation", "Demo code is available for each widget"},

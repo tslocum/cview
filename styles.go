@@ -22,8 +22,12 @@ type Theme struct {
 	ContrastBackgroundColor     tcell.Color // Background color for contrasting elements.
 	MoreContrastBackgroundColor tcell.Color // Background color for even more contrasting elements.
 
+	// Button
+	ButtonCursorRune rune // The symbol to draw at the end of button labels when focused.
+
 	// Check box
 	CheckBoxCheckedRune rune
+	CheckBoxCursorRune  rune // The symbol to draw within the checkbox when focused.
 
 	// Context menu
 	ContextMenuPaddingTop    int
@@ -63,7 +67,10 @@ var Styles = Theme{
 	ContrastBackgroundColor:     tcell.ColorGreen.TrueColor(),
 	MoreContrastBackgroundColor: tcell.ColorDarkGreen.TrueColor(),
 
+	ButtonCursorRune: '◀',
+
 	CheckBoxCheckedRune: 'X',
+	CheckBoxCursorRune:  '◀',
 
 	ContextMenuPaddingTop:    0,
 	ContextMenuPaddingBottom: 0,

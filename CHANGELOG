@@ -1,8 +1,10 @@
 v1.5.6 (WIP)
 - Add TrueColorTags option and do not use TrueColor tag values by default
 - Add TextView.SetHighlightForegroundColor and TextView.SetHighlightBackgroundColor
+- Add Button.SetCursorRune (cursors are now shown within Buttons when focused by default)
+- Add CheckBox.SetCursorRune (cursors are now shown within CheckBoxes when focused by default)
+- Add DropDown.SetAlwaysDrawDropDownSymbol (DropDown symbols are now shown only when focused by default)
 - Add DropDown.SetDropDownOpenSymbolRune
-- Add DropDown.SetAlwaysDrawDropDownSymbol (DropDown symbols are now only drawn when focused by default)
 - Draw additional accents when rendering a list divider
 - Update List, Table and TreeView to not handle Tab or Backtab
 - Allow specifying TabbedPanels switcher height

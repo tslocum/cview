@@ -154,14 +154,14 @@ func NewDropDown() *DropDown {
 	list.SetSelectedTextColor(Styles.PrimitiveBackgroundColor)
 	list.SetSelectedBackgroundColor(Styles.PrimaryTextColor)
 	list.SetHighlightFullLine(true)
-	list.SetBackgroundColor(Styles.MoreContrastBackgroundColor)
+	list.SetBackgroundColor(Styles.ContrastBackgroundColor)
 
 	d := &DropDown{
 		Box:                         NewBox(),
 		currentOption:               -1,
 		list:                        list,
 		labelColor:                  Styles.SecondaryTextColor,
-		fieldBackgroundColor:        Styles.ContrastBackgroundColor,
+		fieldBackgroundColor:        Styles.MoreContrastBackgroundColor,
 		fieldTextColor:              Styles.PrimaryTextColor,
 		prefixTextColor:             Styles.ContrastSecondaryTextColor,
 		dropDownSymbol:              Styles.DropDownSymbol,

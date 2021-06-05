@@ -58,6 +58,9 @@ type CheckBox struct {
 	// The rune to show when the checkbox is checked
 	checkedRune rune
 
+	// An optional rune to show within the checkbox when it is focused
+	cursorRune rune
+
 	sync.RWMutex
 }
 
@@ -66,11 +69,12 @@ func NewCheckBox() *CheckBox {
 	return &CheckBox{
 		Box:                         NewBox(),
 		labelColor:                  Styles.SecondaryTextColor,
-		fieldBackgroundColor:        Styles.ContrastBackgroundColor,
+		fieldBackgroundColor:        Styles.MoreContrastBackgroundColor,
+		fieldBackgroundColorFocused: Styles.ContrastBackgroundColor,
 		fieldTextColor:              Styles.PrimaryTextColor,
 		checkedRune:                 Styles.CheckBoxCheckedRune,
+		cursorRune:                  Styles.CheckBoxCursorRune,
 		labelColorFocused:           ColorUnset,
-		fieldBackgroundColorFocused: ColorUnset,
 		fieldTextColorFocused:       ColorUnset,
 	}
 }
@@ -89,6 +93,14 @@ func (c *CheckBox) SetCheckedRune(rune rune) {
 	defer c.Unlock()
 
 	c.checkedRune = rune
+}
+
+// SetCursorRune sets the rune to show within the checkbox when it is focused.
+func (c *CheckBox) SetCursorRune(rune rune) {
+	c.Lock()
+	defer c.Unlock()
+
+	c.cursorRune = rune
 }
 
 // IsChecked returns whether or not the box is checked.
@@ -248,11 +260,13 @@ func (c *CheckBox) Draw(screen tcell.Screen) {
 	c.Lock()
 	defer c.Unlock()
 
+	hasFocus := c.GetFocusable().HasFocus()
+
 	// Select colors
 	labelColor := c.labelColor
 	fieldBackgroundColor := c.fieldBackgroundColor
 	fieldTextColor := c.fieldTextColor
-	if c.GetFocusable().HasFocus() {
+	if hasFocus {
 		if c.labelColorFocused != ColorUnset {
 			labelColor = c.labelColorFocused
 		}
@@ -291,9 +305,13 @@ func (c *CheckBox) Draw(screen tcell.Screen) {
 	if !c.checked {
 		checkedRune = ' '
 	}
+	rightRune := ' '
+	if c.cursorRune != 0 && hasFocus {
+		rightRune = c.cursorRune
+	}
 	screen.SetContent(x, y, ' ', nil, fieldStyle)
 	screen.SetContent(x+1, y, checkedRune, nil, fieldStyle)
-	screen.SetContent(x+2, y, ' ', nil, fieldStyle)
+	screen.SetContent(x+2, y, rightRune, nil, fieldStyle)
 
 	if len(c.message) > 0 {
 		Print(screen, c.message, x+4, y, len(c.message), AlignLeft, labelColor)

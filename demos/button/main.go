@@ -8,7 +8,6 @@ func main() {
 	app.EnableMouse(true)
 
 	button := cview.NewButton("Hit Enter to close")
-	button.SetBorder(true)
 	button.SetRect(0, 0, 22, 3)
 	button.SetSelectedFunc(func() {
 		app.Stop()

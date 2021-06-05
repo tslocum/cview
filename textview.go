@@ -14,12 +14,13 @@ import (
 )
 
 var (
-	openColorRegex  = regexp.MustCompile(`\[([a-zA-Z]*|#[0-9a-zA-Z]*)$`)
-	openRegionRegex = regexp.MustCompile(`\["[a-zA-Z0-9_,;: \-\.]*"?$`)
-	newLineRegex    = regexp.MustCompile(`\r?\n`)
-
 	// TabSize is the number of spaces with which a tab character will be replaced.
 	TabSize = 4
+)
+
+var (
+	openColorRegex  = regexp.MustCompile(`\[([a-zA-Z]*|#[0-9a-zA-Z]*)$`)
+	openRegionRegex = regexp.MustCompile(`\["[a-zA-Z0-9_,;: \-\.]*"?$`)
 )
 
 // textViewIndex contains information about each line displayed in the text

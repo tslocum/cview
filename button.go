@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/mattn/go-runewidth"
 )
 
 // Button is labeled box that triggers an action when selected.
@@ -29,6 +30,9 @@ type Button struct {
 	// key is provided indicating which key was pressed to leave (tab or backtab).
 	blur func(tcell.Key)
 
+	// An optional rune which is drawn after the label when the button is focused.
+	cursorRune rune
+
 	sync.RWMutex
 }
 
@@ -36,13 +40,14 @@ type Button struct {
 func NewButton(label string) *Button {
 	box := NewBox()
 	box.SetRect(0, 0, TaggedStringWidth(label)+4, 1)
-	box.SetBackgroundColor(Styles.ContrastBackgroundColor)
+	box.SetBackgroundColor(Styles.MoreContrastBackgroundColor)
 	return &Button{
 		Box:                    box,
 		label:                  []byte(label),
 		labelColor:             Styles.PrimaryTextColor,
 		labelColorFocused:      Styles.PrimaryTextColor,
-		backgroundColorFocused: Styles.MoreContrastBackgroundColor,
+		cursorRune:             Styles.ButtonCursorRune,
+		backgroundColorFocused: Styles.ContrastBackgroundColor,
 	}
 }
 
@@ -77,6 +82,14 @@ func (b *Button) SetLabelColorFocused(color tcell.Color) {
 	defer b.Unlock()
 
 	b.labelColorFocused = color
+}
+
+// SetCursorRune sets the rune to show within the button when it is focused.
+func (b *Button) SetCursorRune(rune rune) {
+	b.Lock()
+	defer b.Unlock()
+
+	b.cursorRune = rune
 }
 
 // SetBackgroundColorFocused sets the background color of the button text when
@@ -141,6 +154,10 @@ func (b *Button) Draw(screen tcell.Screen) {
 		labelColor := b.labelColor
 		if b.focus.HasFocus() {
 			labelColor = b.labelColorFocused
+			// Draw cursor.
+			if b.cursorRune != 0 {
+				Print(screen, []byte(string(b.cursorRune)), x+width-(width-runewidth.StringWidth(string(b.label)))/2+1, y, width, AlignLeft, labelColor)
+			}
 		}
 		Print(screen, b.label, x, y, width, AlignCenter, labelColor)
 	}
