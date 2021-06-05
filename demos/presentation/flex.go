@@ -13,7 +13,7 @@ func demoBox(title string) *cview.Box {
 }
 
 // Flex demonstrates flexbox layout.
-func Flex(nextSlide func()) (title string, content cview.Primitive) {
+func Flex(nextSlide func()) (title string, info string, content cview.Primitive) {
 	modalShown := false
 	panels := cview.NewPanels()
 
@@ -50,5 +50,5 @@ func Flex(nextSlide func()) (title string, content cview.Primitive) {
 
 	panels.AddPanel("flex", flex, true, true)
 	panels.AddPanel("modal", modal, false, false)
-	return "Flex", panels
+	return "Flex", "", panels
 }

@@ -118,7 +118,7 @@ var rootNode = &node{
 	}}
 
 // TreeView demonstrates the tree view.
-func TreeView(nextSlide func()) (title string, content cview.Primitive) {
+func TreeView(nextSlide func()) (title string, info string, content cview.Primitive) {
 	treeNextSlide = nextSlide
 	tree.SetBorder(true)
 	tree.SetTitle("TreeView")
@@ -161,5 +161,5 @@ func TreeView(nextSlide func()) (title string, content cview.Primitive) {
 	flex.AddItem(tree, 0, 1, true)
 	flex.AddItem(treeCode, codeWidth, 1, false)
 
-	return "TreeView", flex
+	return "TreeView", "", flex
 }

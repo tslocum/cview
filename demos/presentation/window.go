@@ -7,7 +7,7 @@ import (
 const loremIpsumText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 
 // Window returns the window page.
-func Window(nextSlide func()) (title string, content cview.Primitive) {
+func Window(nextSlide func()) (title string, info string, content cview.Primitive) {
 	wm := cview.NewWindowManager()
 
 	list := cview.NewList()
@@ -34,5 +34,5 @@ func Window(nextSlide func()) (title string, content cview.Primitive) {
 
 	wm.Add(w1, w2)
 
-	return "Window", wm
+	return "Window", windowInfo, wm
 }

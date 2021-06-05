@@ -33,7 +33,8 @@ type Theme struct {
 
 	// Drop down
 	DropDownAbbreviationChars string // The chars to show when the option's text gets shortened.
-	DropDownSymbol            rune   // The symbol to draw at the end of the field.
+	DropDownSymbol            rune   // The symbol to draw at the end of the field when closed.
+	DropDownOpenSymbol        rune   // The symbol to draw at the end of the field when opened.
 
 	// Scroll bar
 	ScrollBarColor tcell.Color
@@ -59,8 +60,8 @@ var Styles = Theme{
 	ContrastSecondaryTextColor: tcell.ColorLightSlateGray.TrueColor(),
 
 	PrimitiveBackgroundColor:    tcell.ColorBlack.TrueColor(),
-	ContrastBackgroundColor:     tcell.ColorLimeGreen.TrueColor(),
-	MoreContrastBackgroundColor: tcell.ColorGreen.TrueColor(),
+	ContrastBackgroundColor:     tcell.ColorGreen.TrueColor(),
+	MoreContrastBackgroundColor: tcell.ColorDarkGreen.TrueColor(),
 
 	CheckBoxCheckedRune: 'X',
 
@@ -70,7 +71,8 @@ var Styles = Theme{
 	ContextMenuPaddingRight:  1,
 
 	DropDownAbbreviationChars: "...",
-	DropDownSymbol:            '▼',
+	DropDownSymbol:            '◀',
+	DropDownOpenSymbol:        '▼',
 
 	ScrollBarColor: tcell.ColorWhite.TrueColor(),
 

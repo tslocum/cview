@@ -32,7 +32,7 @@ const sliderCode = `[green]package[white] main
 }`
 
 // Slider demonstrates the Slider.
-func Slider(nextSlide func()) (title string, content cview.Primitive) {
+func Slider(nextSlide func()) (title string, info string, content cview.Primitive) {
 	slider := cview.NewSlider()
 	slider.SetLabel("Volume:   0%")
 	slider.SetChangedFunc(func(value int) {
@@ -41,5 +41,5 @@ func Slider(nextSlide func()) (title string, content cview.Primitive) {
 	slider.SetDoneFunc(func(key tcell.Key) {
 		nextSlide()
 	})
-	return "Slider", Code(slider, 30, 1, sliderCode)
+	return "Slider", sliderInfo, Code(slider, 30, 1, sliderCode)
 }

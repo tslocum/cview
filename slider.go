@@ -65,9 +65,9 @@ func NewSlider() *Slider {
 		increment:                   10,
 		labelColor:                  Styles.SecondaryTextColor,
 		fieldBackgroundColor:        Styles.ContrastBackgroundColor,
+		fieldBackgroundColorFocused: Styles.MoreContrastBackgroundColor,
 		fieldTextColor:              Styles.PrimaryTextColor,
 		labelColorFocused:           ColorUnset,
-		fieldBackgroundColorFocused: ColorUnset,
 		fieldTextColorFocused:       ColorUnset,
 	}
 	return s

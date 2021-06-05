@@ -29,7 +29,7 @@ const form = `[green]package[white] main
 }`
 
 // Form demonstrates forms.
-func Form(nextSlide func()) (title string, content cview.Primitive) {
+func Form(nextSlide func()) (title string, info string, content cview.Primitive) {
 	f := cview.NewForm()
 	f.AddInputField("First name:", "", 20, nil, nil)
 	f.AddInputField("Last name:", "", 20, nil, nil)
@@ -40,5 +40,5 @@ func Form(nextSlide func()) (title string, content cview.Primitive) {
 	f.AddButton("Cancel", nextSlide)
 	f.SetBorder(true)
 	f.SetTitle("Employee Information")
-	return "Form", Code(f, 36, 15, form)
+	return "Form", formInfo, Code(f, 36, 15, form)
 }

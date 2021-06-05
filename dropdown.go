@@ -134,8 +134,14 @@ type DropDown struct {
 	// The chars to show when the option's text gets shortened.
 	abbreviationChars string
 
-	// The symbol to draw at the end of the field.
+	// The symbol to draw at the end of the field when closed.
 	dropDownSymbol rune
+
+	// The symbol to draw at the end of the field when opened.
+	dropDownOpenSymbol rune
+
+	// A flag that determines whether the drop down symbol is always drawn.
+	alwaysDrawDropDownSymbol bool
 
 	sync.RWMutex
 }
@@ -144,7 +150,7 @@ type DropDown struct {
 func NewDropDown() *DropDown {
 	list := NewList()
 	list.ShowSecondaryText(false)
-	list.SetMainTextColor(Styles.PrimitiveBackgroundColor)
+	list.SetMainTextColor(Styles.SecondaryTextColor)
 	list.SetSelectedTextColor(Styles.PrimitiveBackgroundColor)
 	list.SetSelectedBackgroundColor(Styles.PrimaryTextColor)
 	list.SetHighlightFullLine(true)
@@ -159,6 +165,7 @@ func NewDropDown() *DropDown {
 		fieldTextColor:              Styles.PrimaryTextColor,
 		prefixTextColor:             Styles.ContrastSecondaryTextColor,
 		dropDownSymbol:              Styles.DropDownSymbol,
+		dropDownOpenSymbol:          Styles.DropDownOpenSymbol,
 		abbreviationChars:           Styles.DropDownAbbreviationChars,
 		labelColorFocused:           ColorUnset,
 		fieldBackgroundColorFocused: ColorUnset,
@@ -176,6 +183,22 @@ func (d *DropDown) SetDropDownSymbolRune(symbol rune) {
 	d.Lock()
 	defer d.Unlock()
 	d.dropDownSymbol = symbol
+}
+
+// SetDropDownOpenSymbolRune sets the rune to be drawn at the end of the
+// dropdown field to indicate that the a dropdown is open.
+func (d *DropDown) SetDropDownOpenSymbolRune(symbol rune) {
+	d.Lock()
+	defer d.Unlock()
+	d.dropDownOpenSymbol = symbol
+}
+
+// SetAlwaysDrawDropDownSymbol sets a flad that determines whether the drop
+// down symbol is always drawn. The symbol is normally only drawn when focused.
+func (d *DropDown) SetAlwaysDrawDropDownSymbol(alwaysDraw bool) {
+	d.Lock()
+	defer d.Unlock()
+	d.alwaysDrawDropDownSymbol = alwaysDraw
 }
 
 // SetCurrentOption sets the index of the currently selected option. This may
@@ -594,7 +617,13 @@ func (d *DropDown) Draw(screen tcell.Screen) {
 	}
 
 	// Draw drop-down symbol
-	screen.SetContent(x+fieldWidth-2, y, d.dropDownSymbol, nil, new(tcell.Style).Foreground(fieldTextColor).Background(fieldBackgroundColor))
+	if d.alwaysDrawDropDownSymbol || d._hasFocus() {
+		symbol := d.dropDownSymbol
+		if d.open {
+			symbol = d.dropDownOpenSymbol
+		}
+		screen.SetContent(x+fieldWidth-2, y, symbol, nil, new(tcell.Style).Foreground(fieldTextColor).Background(fieldBackgroundColor))
+	}
 
 	// Draw options list.
 	if hasFocus && d.open {
@@ -742,6 +771,10 @@ func (d *DropDown) HasFocus() bool {
 	d.RLock()
 	defer d.RUnlock()
 
+	return d._hasFocus()
+}
+
+func (d *DropDown) _hasFocus() bool {
 	if d.open {
 		return d.list.HasFocus()
 	}

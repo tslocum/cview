@@ -6,7 +6,7 @@ import (
 )
 
 // Grid demonstrates the grid layout.
-func Grid(nextSlide func()) (title string, content cview.Primitive) {
+func Grid(nextSlide func()) (title string, info string, content cview.Primitive) {
 	modalShown := false
 	panels := cview.NewPanels()
 
@@ -57,5 +57,5 @@ func Grid(nextSlide func()) (title string, content cview.Primitive) {
 	panels.AddPanel("grid", grid, true, true)
 	panels.AddPanel("modal", modal, false, false)
 
-	return "Grid", panels
+	return "Grid", "", panels
 }

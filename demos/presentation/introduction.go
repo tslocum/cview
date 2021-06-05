@@ -3,7 +3,7 @@ package main
 import "code.rocketnine.space/tslocum/cview"
 
 // Introduction returns a cview.List with the highlights of the cview package.
-func Introduction(nextSlide func()) (title string, content cview.Primitive) {
+func Introduction(nextSlide func()) (title string, info string, content cview.Primitive) {
 	list := cview.NewList()
 
 	listText := [][]string{
@@ -58,5 +58,5 @@ func Introduction(nextSlide func()) (title string, content cview.Primitive) {
 	})
 
 	reset()
-	return "Introduction", Center(80, 12, list)
+	return "Introduction", listInfo, Center(80, 12, list)
 }

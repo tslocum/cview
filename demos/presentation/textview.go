@@ -30,7 +30,7 @@ const textView1 = `[green]func[white] [yellow]main[white]() {
 }`
 
 // TextView1 demonstrates the basic text view.
-func TextView1(nextSlide func()) (title string, content cview.Primitive) {
+func TextView1(nextSlide func()) (title string, info string, content cview.Primitive) {
 	textView := cview.NewTextView()
 	textView.SetTextColor(tcell.ColorYellow.TrueColor())
 	textView.SetDoneFunc(func(key tcell.Key) {
@@ -57,7 +57,7 @@ func TextView1(nextSlide func()) (title string, content cview.Primitive) {
 	textView.SetBorder(true)
 	textView.SetTitle("TextView implements io.Writer")
 	textView.ScrollToEnd()
-	return "TextView 1", Code(textView, 36, 13, textView1)
+	return "TextView 1", textViewInfo, Code(textView, 36, 13, textView1)
 }
 
 const textView2 = `[green]package[white] main
@@ -108,7 +108,7 @@ const textView2 = `[green]package[white] main
 }`
 
 // TextView2 demonstrates the extended text view.
-func TextView2(nextSlide func()) (title string, content cview.Primitive) {
+func TextView2(nextSlide func()) (title string, info string, content cview.Primitive) {
 	codeView := cview.NewTextView()
 	codeView.SetWrap(false)
 	fmt.Fprint(codeView, textView2)
@@ -159,5 +159,5 @@ func TextView2(nextSlide func()) (title string, content cview.Primitive) {
 	flex.AddItem(textView, 0, 1, true)
 	flex.AddItem(codeView, 0, 1, false)
 
-	return "TextView 2", flex
+	return "TextView 2", textViewInfo, flex
 }

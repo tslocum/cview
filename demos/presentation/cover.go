@@ -16,14 +16,10 @@ const logo = `
  =======    ==    === ========   ==== ====
 `
 
-const (
-	subtitle   = `Terminal-based user interface toolkit`
-	mouse      = `Navigate with your keyboard or mouse.`
-	navigation = `Next slide: Ctrl-N   Previous: Ctrl-P   Exit: Ctrl-C`
-)
+const subtitle = "Terminal-based user interface toolkit"
 
 // Cover returns the cover page.
-func Cover(nextSlide func()) (title string, content cview.Primitive) {
+func Cover(nextSlide func()) (title string, info string, content cview.Primitive) {
 	// What's the size of the logo?
 	lines := strings.Split(logo, "\n")
 	logoWidth := 0
@@ -43,10 +39,7 @@ func Cover(nextSlide func()) (title string, content cview.Primitive) {
 	// Create a frame for the subtitle and navigation infos.
 	frame := cview.NewFrame(cview.NewBox())
 	frame.SetBorders(0, 0, 0, 0, 0, 0)
-	frame.AddText(subtitle, true, cview.AlignCenter, tcell.ColorWhite.TrueColor())
-	frame.AddText("", true, cview.AlignCenter, tcell.ColorWhite.TrueColor())
-	frame.AddText(mouse, true, cview.AlignCenter, tcell.ColorDarkMagenta.TrueColor())
-	frame.AddText(navigation, true, cview.AlignCenter, tcell.ColorDarkMagenta.TrueColor())
+	frame.AddText(subtitle, true, cview.AlignCenter, tcell.ColorDarkMagenta.TrueColor())
 
 	// Create a Flex layout that centers the logo and subtitle.
 	subFlex := cview.NewFlex()
@@ -60,5 +53,5 @@ func Cover(nextSlide func()) (title string, content cview.Primitive) {
 	flex.AddItem(subFlex, logoHeight, 1, true)
 	flex.AddItem(frame, 0, 10, false)
 
-	return "Start", flex
+	return "Start", appInfo, flex
 }

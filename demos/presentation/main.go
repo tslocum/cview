@@ -24,10 +24,19 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-// Slide is a function which returns the slide's main primitive and its title.
-// It receives a "nextSlide" function which can be called to advance the
-// presentation to the next slide.
-type Slide func(nextSlide func()) (title string, content cview.Primitive)
+const (
+	appInfo      = "Next slide: Ctrl-N  Previous: Ctrl-P  Exit: Ctrl-C  (Navigate with your keyboard or mouse)"
+	listInfo     = "Next item: J, Down  Previous item: K, Up  Open context menu: Alt+Enter"
+	textViewInfo = "Scroll down: J, Down, PageDown  Scroll up: K, Up, PageUp"
+	sliderInfo   = "Decrease: H, J, Left, Down  Increase: K, L, Right, Up"
+	formInfo     = "Next field: Tab  Previous field: Shift+Tab  Select: Enter"
+	windowInfo   = "Windows may be dragged an resized using the mouse."
+)
+
+// Slide is a function which returns the slide's title, any applicable
+// information and its main primitive, its. It receives a "nextSlide" function
+// which can be called to advance the presentation to the next slide.
+type Slide func(nextSlide func()) (title string, info string, content cview.Primitive)
 
 // The application.
 var app = cview.NewApplication()
@@ -83,8 +92,21 @@ func main() {
 	for index, slide := range slides {
 		slideRegions = append(slideRegions, cursor)
 
-		title, primitive := slide(nextSlide)
-		panels.AddTab(strconv.Itoa(index), title, primitive)
+		title, info, primitive := slide(nextSlide)
+
+		h := cview.NewTextView()
+		if info != "" {
+			h.SetDynamicColors(true)
+			h.SetText("  [" + cview.ColorHex(cview.Styles.SecondaryTextColor) + "]Info:[-]  " + info)
+		}
+
+		// Create a Flex layout that centers the logo and subtitle.
+		f := cview.NewFlex()
+		f.SetDirection(cview.FlexRow)
+		f.AddItem(h, 1, 1, false)
+		f.AddItem(primitive, 0, 1, true)
+
+		panels.AddTab(strconv.Itoa(index), title, f)
 
 		cursor += len(title) + 4
 	}
