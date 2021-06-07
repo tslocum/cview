@@ -6,6 +6,7 @@ v1.5.6 (WIP)
 - Add DropDown.SetAlwaysDrawDropDownSymbol (DropDown symbols are now shown only when focused by default)
 - Add DropDown.SetDropDownOpenSymbolRune
 - Draw additional accents when rendering a list divider
+- Update Application.Draw to accept one or more primitives to draw instead of the whole screen
 - Update List, Table and TreeView to not handle Tab or Backtab
 - Allow specifying TabbedPanels switcher height
 - Change default colors (fields and buttons are now green)

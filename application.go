@@ -611,12 +611,31 @@ func (a *Application) Suspend(f func()) bool {
 	return true
 }
 
-// Draw refreshes the screen (during the next update cycle). It calls the Draw()
-// function of the application's root primitive and then syncs the screen
-// buffer.
-func (a *Application) Draw() {
+// Draw draws the provided primitives on the screen, or when no primitives are
+// provided, draws the application's root primitive (i.e. the entire screen).
+//
+// When one or more primitives are supplied, the Draw functions of the
+// primitives are called. Handlers set via BeforeDrawFunc and AfterDrawFunc are
+// not called.
+//
+// When no primitives are provided, the Draw function of the application's root
+// primitive is called. This results in drawing the entire screen. Handlers set
+// via BeforeDrawFunc and AfterDrawFunc are also called.
+func (a *Application) Draw(p ...Primitive) {
 	a.QueueUpdate(func() {
-		a.draw()
+		if len(p) == 0 {
+			a.draw()
+			return
+		}
+
+		a.Lock()
+		if a.screen != nil {
+			for _, primitive := range p {
+				primitive.Draw(a.screen)
+			}
+			a.screen.Show()
+		}
+		a.Unlock()
 	})
 }
 
