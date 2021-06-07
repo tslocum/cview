@@ -862,12 +862,26 @@ func (a *Application) QueueUpdate(f func()) {
 	a.updates <- f
 }
 
-// QueueUpdateDraw works like QueueUpdate() except it refreshes the screen
-// immediately after executing f.
-func (a *Application) QueueUpdateDraw(f func()) {
+// QueueUpdateDraw works like QueueUpdate() except, when one or more primitives
+// are provided, the primitives are drawn after the provided function returns.
+// When no primitives are provided, the entire screen is drawn after the
+// provided function returns.
+func (a *Application) QueueUpdateDraw(f func(), p ...Primitive) {
 	a.QueueUpdate(func() {
 		f()
-		a.draw()
+
+		if len(p) == 0 {
+			a.draw()
+			return
+		}
+		a.Lock()
+		if a.screen != nil {
+			for _, primitive := range p {
+				primitive.Draw(a.screen)
+			}
+			a.screen.Show()
+		}
+		a.Unlock()
 	})
 }
 
