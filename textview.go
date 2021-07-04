@@ -196,6 +196,9 @@ type TextView struct {
 	// If set to true, region tags can be used to define regions.
 	regions bool
 
+	// If set to true, a cursor is drawn.
+	showCursor bool
+
 	// A temporary flag which, when true, will automatically bring the current
 	// highlight(s) into the visible screen.
 	scrollToHighlights bool
@@ -731,6 +734,14 @@ func (t *TextView) GetRegionText(regionID string) string {
 	return escapePattern.ReplaceAllString(buffer.String(), `[$1$2]`)
 }
 
+// SetShowCursor sets a flag controlling whether a cursor is drawn.
+func (t *TextView) SetShowCursor(showCursor bool) {
+	t.Lock()
+	defer t.Unlock()
+
+	t.showCursor = showCursor
+}
+
 // Focus is called when this primitive receives focus.
 func (t *TextView) Focus(delegate func(p Primitive)) {
 	t.Lock()
@@ -818,7 +829,7 @@ func (t *TextView) write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-// SetWrapWidth set the maximum width of lines when wrapping is enabled.
+// SetWrapWidth sets the maximum width of lines when wrapping is enabled.
 // When set to 0 the width of the TextView is used.
 func (t *TextView) SetWrapWidth(width int) {
 	t.Lock()
@@ -827,7 +838,7 @@ func (t *TextView) SetWrapWidth(width int) {
 	t.wrapWidth = width
 }
 
-// SetReindexBuffer set a flag controlling whether the buffer is reindexed when
+// SetReindexBuffer sets a flag controlling whether the buffer is reindexed when
 // it is modified. This improves the performance of TextViews whose contents
 // always have line-breaks in the same location. This must be called after the
 // buffer has been indexed.
@@ -1022,9 +1033,18 @@ func (t *TextView) reindexBuffer(width int) {
 	}
 }
 
+func (t *TextView) updateCursorPos(screen tcell.Screen, x int, y int) {
+	if !t.showCursor || x == -1 {
+		screen.HideCursor()
+		return
+	}
+	screen.ShowCursor(x, y)
+}
+
 // Draw draws this primitive onto the screen.
 func (t *TextView) Draw(screen tcell.Screen) {
 	if !t.GetVisible() {
+		t.updateCursorPos(screen, -1, -1)
 		return
 	}
 
@@ -1036,6 +1056,7 @@ func (t *TextView) Draw(screen tcell.Screen) {
 	// Get the available size.
 	x, y, width, height := t.GetInnerRect()
 	if height == 0 {
+		t.updateCursorPos(screen, -1, -1)
 		return
 	}
 	t.pageSize = height
@@ -1077,6 +1098,7 @@ func (t *TextView) Draw(screen tcell.Screen) {
 
 	// If we don't have an index, there's nothing to draw.
 	if t.index == nil {
+		t.updateCursorPos(screen, x, y)
 		return
 	}
 
@@ -1152,6 +1174,8 @@ func (t *TextView) Draw(screen tcell.Screen) {
 			verticalOffset = height - len(t.index)
 		}
 	}
+	var lastLine int
+	var lastPosX int
 
 	// Draw the buffer.
 	defaultStyle := tcell.StyleDefault.Foreground(t.textColor).Background(t.backgroundColor)
@@ -1160,6 +1184,9 @@ func (t *TextView) Draw(screen tcell.Screen) {
 		if line-t.lineOffset >= height {
 			break
 		}
+
+		lastLine = line
+		lastPosX = -1
 
 		// Get the text for this line.
 		index := t.index[line]
@@ -1293,12 +1320,24 @@ func (t *TextView) Draw(screen tcell.Screen) {
 					}
 				}
 
+				lastPosX = posX
+
 				// Advance.
 				posX += screenWidth
 				return false
 			})
 		}
 	}
+
+	cursorX, cursorY := x+lastPosX+1, y+lastLine-t.lineOffset
+	if cursorX >= x+width {
+		cursorX = x
+		cursorY++
+		if cursorY > height {
+			cursorX = -1
+		}
+	}
+	t.updateCursorPos(screen, cursorX, cursorY)
 
 	// If this view is not scrollable, we'll purge the buffer of lines that have
 	// scrolled out of view.

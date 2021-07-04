@@ -63,6 +63,7 @@ func main() {
 		TextView1,
 		TextView2,
 		InputField,
+		TextArea,
 		Slider,
 		Form,
 		Table,
