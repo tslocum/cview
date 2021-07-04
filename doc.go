@@ -35,6 +35,7 @@ The following widgets are available:
   Modal - A centered window with a text message and one or more buttons.
   Panels - A panel based layout manager.
   ProgressBar - Indicates the progress of an operation.
+  TabbedPanels - Panels widget with tabbed navigation.
   Table - A scrollable display of tabular data. Table cells, rows, or columns
     may also be highlighted.
   TextView - A scrollable window that displays multi-colored text. Text may
