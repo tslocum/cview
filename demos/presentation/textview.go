@@ -32,6 +32,7 @@ const textView1 = `[green]func[white] [yellow]main[white]() {
 // TextView1 demonstrates the basic text view.
 func TextView1(nextSlide func()) (title string, info string, content cview.Primitive) {
 	textView := cview.NewTextView()
+	textView.SetVerticalAlign(cview.AlignBottom)
 	textView.SetTextColor(tcell.ColorYellow.TrueColor())
 	textView.SetDoneFunc(func(key tcell.Key) {
 		nextSlide()

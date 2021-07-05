@@ -21,11 +21,21 @@ var TrueColorTags = false
 // value of color, ColorDefault, results in default terminal colors.
 var ColorUnset = tcell.ColorSpecial | 108
 
-// Text alignment within a box.
+// Horizontal alignment within a box.
 const (
 	AlignLeft = iota
 	AlignCenter
 	AlignRight
+)
+
+// VerticalAlignment represents vertical alignment.
+type VerticalAlignment int
+
+// Vertical alignment within a box.
+const (
+	AlignTop VerticalAlignment = iota
+	AlignMiddle
+	AlignBottom
 )
 
 // Common regular expressions.

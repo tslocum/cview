@@ -119,8 +119,11 @@ type TextView struct {
 	// If set to true, the buffer will be reindexed each time it is modified.
 	reindex bool
 
-	// The text alignment, one of AlignLeft, AlignCenter, or AlignRight.
+	// The horizontal text alignment, one of AlignLeft, AlignCenter, or AlignRight.
 	align int
+
+	// The vertical text alignment, one of AlignTop, AlignMiddle, or AlignBottom.
+	valign VerticalAlignment
 
 	// Information about visible regions as of the last call to Draw().
 	regionInfos []*textViewRegion
@@ -227,6 +230,7 @@ func NewTextView() *TextView {
 		scrollBarVisibility: ScrollBarAuto,
 		scrollBarColor:      Styles.ScrollBarColor,
 		align:               AlignLeft,
+		valign:              AlignTop,
 		wrap:                true,
 		textColor:           Styles.PrimaryTextColor,
 		highlightForeground: Styles.PrimitiveBackgroundColor,
@@ -291,8 +295,8 @@ func (t *TextView) SetWordWrap(wrapOnWords bool) {
 	t.wordWrap = wrapOnWords
 }
 
-// SetTextAlign sets the text alignment within the text view. This must be
-// either AlignLeft, AlignCenter, or AlignRight.
+// SetTextAlign sets the horizontal alignment of the text. This must be either
+// AlignLeft, AlignCenter, or AlignRight.
 func (t *TextView) SetTextAlign(align int) {
 	t.Lock()
 	defer t.Unlock()
@@ -301,6 +305,18 @@ func (t *TextView) SetTextAlign(align int) {
 		t.index = nil
 	}
 	t.align = align
+}
+
+// SetVerticalAlign sets the vertical alignment of the text. This must be
+// either AlignTop, AlignMiddle, or AlignBottom.
+func (t *TextView) SetVerticalAlign(valign VerticalAlignment) {
+	t.Lock()
+	defer t.Unlock()
+
+	if t.valign != valign {
+		t.index = nil
+	}
+	t.valign = valign
 }
 
 // SetTextColor sets the initial color of the text (which can be changed
@@ -1118,6 +1134,16 @@ func (t *TextView) Draw(screen tcell.Screen) {
 		}
 	}
 
+	// Calculate offset to apply vertical alignment
+	verticalOffset := 0
+	if len(t.index) < height {
+		if t.valign == AlignMiddle {
+			verticalOffset = (height - len(t.index)) / 2
+		} else if t.valign == AlignBottom {
+			verticalOffset = height - len(t.index)
+		}
+	}
+
 	// Draw the buffer.
 	defaultStyle := tcell.StyleDefault.Foreground(t.textColor).Background(t.backgroundColor)
 	for line := t.lineOffset; line < len(t.index); line++ {
@@ -1160,8 +1186,10 @@ func (t *TextView) Draw(screen tcell.Screen) {
 			posX = 0
 		}
 
+		drawAtY := y + line - t.lineOffset + verticalOffset
+
 		// Print the line.
-		if y+line-t.lineOffset >= 0 {
+		if drawAtY >= 0 {
 			var colorPos, regionPos, escapePos, tagOffset, skipped int
 			iterateString(string(strippedText), func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
 				// Process tags.
@@ -1203,7 +1231,7 @@ func (t *TextView) Draw(screen tcell.Screen) {
 				}
 
 				// Mix the existing style with the new style.
-				_, _, existingStyle, _ := screen.GetContent(x+posX, y+line-t.lineOffset)
+				_, _, existingStyle, _ := screen.GetContent(x+posX, drawAtY)
 				_, background, _ := existingStyle.Decompose()
 				style := overlayStyle(background, defaultStyle, foregroundColor, backgroundColor, attributes)
 
@@ -1250,9 +1278,9 @@ func (t *TextView) Draw(screen tcell.Screen) {
 				// Draw the character.
 				for offset := screenWidth - 1; offset >= 0; offset-- {
 					if offset == 0 {
-						screen.SetContent(x+posX+offset, y+line-t.lineOffset, main, comb, style)
+						screen.SetContent(x+posX+offset, drawAtY, main, comb, style)
 					} else {
-						screen.SetContent(x+posX+offset, y+line-t.lineOffset, ' ', nil, style)
+						screen.SetContent(x+posX+offset, drawAtY, ' ', nil, style)
 					}
 				}
 
