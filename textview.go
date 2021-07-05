@@ -1039,6 +1039,17 @@ func (t *TextView) Draw(screen tcell.Screen) {
 		t.regionInfos = nil
 	}
 
+	// Draw scroll bar last.
+	defer func() {
+		if !showVerticalScrollBar {
+			return
+		}
+		cursor := int(float64(len(t.index)) * (float64(t.lineOffset) / float64(len(t.index)-height)))
+		for printed := 0; printed < height; printed++ {
+			RenderScrollBar(screen, t.scrollBarVisibility, x+width, y+printed, height, len(t.index), cursor, printed, t.hasFocus, t.scrollBarColor)
+		}
+	}()
+
 	// If we don't have an index, there's nothing to draw.
 	if t.index == nil {
 		return
@@ -1249,14 +1260,6 @@ func (t *TextView) Draw(screen tcell.Screen) {
 				posX += screenWidth
 				return false
 			})
-		}
-	}
-
-	// Draw scroll bar.
-	if showVerticalScrollBar {
-		cursor := int(float64(len(t.index)) * (float64(t.lineOffset) / float64(len(t.index)-height)))
-		for printed := 0; printed < height; printed++ {
-			RenderScrollBar(screen, t.scrollBarVisibility, x+width, y+printed, height, len(t.index), cursor, printed, t.hasFocus, t.scrollBarColor)
 		}
 	}
 
