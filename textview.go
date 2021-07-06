@@ -1060,9 +1060,18 @@ func (t *TextView) Draw(screen tcell.Screen) {
 		if !showVerticalScrollBar {
 			return
 		}
+
+		items := len(t.index)
 		cursor := int(float64(len(t.index)) * (float64(t.lineOffset) / float64(len(t.index)-height)))
+
+		// Render cursor at the bottom when tracking end
+		if t.trackEnd && items <= height {
+			items = height + 1
+			cursor = height
+		}
+
 		for printed := 0; printed < height; printed++ {
-			RenderScrollBar(screen, t.scrollBarVisibility, x+width, y+printed, height, len(t.index), cursor, printed, t.hasFocus, t.scrollBarColor)
+			RenderScrollBar(screen, t.scrollBarVisibility, x+width, y+printed, height, items, cursor, printed, t.hasFocus, t.scrollBarColor)
 		}
 	}()
 

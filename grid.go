@@ -702,8 +702,15 @@ func (g *Grid) MouseHandler() func(action MouseAction, event *tcell.EventMouse, 
 			return false, nil
 		}
 
-		// Pass mouse events along to the first child item that takes it.
+		// Pass mouse events along to the first child item under the mouse that consumes it.
+		x, y := event.Position()
 		for _, item := range g.items {
+			rectX, rectY, width, height := item.Item.GetRect()
+			inRect := x >= rectX && x < rectX+width && y >= rectY && y < rectY+height
+			if !inRect {
+				continue
+			}
+
 			consumed, capture = item.Item.MouseHandler()(action, event, setFocus)
 			if consumed {
 				return
