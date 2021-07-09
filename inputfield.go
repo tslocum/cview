@@ -613,7 +613,7 @@ func (i *InputField) Draw(screen tcell.Screen) {
 			text = bytes.Repeat([]byte(string(i.maskCharacter)), utf8.RuneCount(i.text))
 		}
 		var drawnText []byte
-		if fieldWidth >= runewidth.StringWidth(string(text)) {
+		if fieldWidth > runewidth.StringWidth(string(text)) {
 			// We have enough space for the full text.
 			drawnText = EscapeBytes(text)
 			Print(screen, drawnText, x, y, fieldWidth, AlignLeft, fieldTextColor)
