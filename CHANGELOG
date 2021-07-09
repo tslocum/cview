@@ -1,4 +1,4 @@
-v1.5.6 (WIP)
+v1.5.6 (2020-07-08)
 - Add TrueColorTags option and do not use TrueColor tag values by default
 - Add TextView.SetHighlightForegroundColor and TextView.SetHighlightBackgroundColor
 - Add TextView.SetVerticalAlign
