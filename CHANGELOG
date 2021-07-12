@@ -1,3 +1,6 @@
+v1.5.7 (WIP)
+- Fix TextView.GetRegionText error when text contains color tags
+
 v1.5.6 (2020-07-08)
 - Add TrueColorTags option and do not use TrueColor tag values by default
 - Add TextView.SetHighlightForegroundColor and TextView.SetHighlightBackgroundColor

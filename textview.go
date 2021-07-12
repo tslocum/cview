@@ -697,6 +697,9 @@ func (t *TextView) GetRegionText(regionID string) string {
 			if currentTag < len(colorTagIndices) && pos >= colorTagIndices[currentTag][0] && pos < colorTagIndices[currentTag][1] {
 				if pos == colorTagIndices[currentTag][1]-1 {
 					currentTag++
+					if currentTag == len(colorTagIndices) {
+						continue
+					}
 				}
 				if colorTagIndices[currentTag][1]-colorTagIndices[currentTag][0] > 2 {
 					continue
