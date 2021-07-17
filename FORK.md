@@ -93,6 +93,13 @@ This is for consistency with `TabbedPanels`, which is built on top of `Panels`.
 
 tview moves the updated panel to the end.
 
+## `Application.Draw` may be used to draw the entire screen or a set of primitives
+
+When calling `Application.Draw` without providing any primitives, the entire
+screen is drawn. This behavior matches tview.
+
+When using cview, you may provide one or more primitives to limit drawing.
+
 ## `Application.ForceDraw` has been removed
 
 Because cview is [thread-safe](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cview/#hdr-Concurrency),
