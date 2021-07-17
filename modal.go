@@ -27,6 +27,9 @@ type Modal struct {
 	// The text color.
 	textColor tcell.Color
 
+	// The text alignment.
+	textAlign int
+
 	// The optional callback for when the user clicked one of the buttons. It
 	// receives the index of the clicked button and the button's label.
 	done func(buttonIndex int, buttonLabel string)
@@ -39,13 +42,11 @@ func NewModal() *Modal {
 	m := &Modal{
 		Box:       NewBox(),
 		textColor: Styles.PrimaryTextColor,
+		textAlign: AlignCenter,
 	}
 
 	m.form = NewForm()
 	m.form.SetButtonsAlign(AlignCenter)
-	m.form.SetButtonBackgroundColor(Styles.PrimitiveBackgroundColor)
-	m.form.SetButtonTextColor(Styles.PrimaryTextColor)
-	m.form.SetBackgroundColor(Styles.ContrastBackgroundColor)
 	m.form.SetPadding(0, 0, 0, 0)
 	m.form.SetCancelFunc(func() {
 		if m.done != nil {
@@ -56,7 +57,6 @@ func NewModal() *Modal {
 	m.frame = NewFrame(m.form)
 	m.frame.SetBorder(true)
 	m.frame.SetBorders(0, 0, 1, 0, 0, 0)
-	m.frame.SetBackgroundColor(Styles.ContrastBackgroundColor)
 	m.frame.SetPadding(1, 1, 1, 1)
 
 	m.focus = m
@@ -96,6 +96,15 @@ func (m *Modal) SetButtonTextColor(color tcell.Color) {
 	m.form.SetButtonTextColor(color)
 }
 
+// SetButtonsAlign sets the horizontal alignment of the buttons. This must be
+// either AlignLeft, AlignCenter (the default), or AlignRight.
+func (m *Modal) SetButtonsAlign(align int) {
+	m.Lock()
+	defer m.Unlock()
+
+	m.form.SetButtonsAlign(align)
+}
+
 // SetDoneFunc sets a handler which is called when one of the buttons was
 // pressed. It receives the index of the button as well as its label text. The
 // handler is also called when the user presses the Escape key. The index will
@@ -115,6 +124,15 @@ func (m *Modal) SetText(text string) {
 	defer m.Unlock()
 
 	m.text = text
+}
+
+// SetTextAlign sets the horizontal alignment of the text. This must be either
+// AlignLeft, AlignCenter (the default), or AlignRight.
+func (m *Modal) SetTextAlign(align int) {
+	m.Lock()
+	defer m.Unlock()
+
+	m.textAlign = align
 }
 
 // GetForm returns the Form embedded in the window. The returned Form may be
@@ -215,7 +233,7 @@ func (m *Modal) Draw(screen tcell.Screen) {
 	m.frame.Clear()
 	lines := WordWrap(m.text, width)
 	for _, line := range lines {
-		m.frame.AddText(line, true, AlignCenter, m.textColor)
+		m.frame.AddText(line, true, m.textAlign, m.textColor)
 	}
 
 	// Set the Modal's position and size.
