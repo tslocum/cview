@@ -528,7 +528,10 @@ func TaggedStringWidth(text string) int {
 //
 // Text is always split at newline characters ('\n').
 //
-// Text must not be escaped.
+// BUG(tslocum) Text containing square brackets is not escaped properly.
+// Use TextView.SetWrapWidth where possible.
+//
+// Issue: https://code.rocketnine.space/tslocum/cview/issues/27
 func WordWrap(text string, width int) (lines []string) {
 	colorTagIndices, _, _, _, escapeIndices, strippedText, _ := decomposeText([]byte(text), true, false)
 
@@ -550,7 +553,7 @@ func WordWrap(text string, width int) (lines []string) {
 		for index := escapePos; index >= 0; index-- {
 			if index < len(escapeIndices) && startIndex > escapeIndices[index][0] && startIndex < escapeIndices[index][1]-1 {
 				pos := escapeIndices[index][1] - 2 - startIndex
-				if pos < 0 || pos > len(substr) {
+				if pos < 0 || pos > len(substr) { // Workaround for issue #27
 					return substr
 				}
 				return substr[:pos] + substr[pos+1:]
@@ -575,7 +578,7 @@ func WordWrap(text string, width int) (lines []string) {
 		}
 
 		// Is this a breakpoint?
-		if breakpointPos < len(breakpoints) && textPos+tagOffset == breakpoints[breakpointPos][0]+1 {
+		if breakpointPos < len(breakpoints) && textPos+tagOffset == breakpoints[breakpointPos][0] {
 			// Yes, it is. Set up breakpoint infos depending on its type.
 			lastBreakpoint = breakpoints[breakpointPos][0] + tagOffset
 			lastContinuation = breakpoints[breakpointPos][1] + tagOffset
