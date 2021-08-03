@@ -7,6 +7,8 @@ import (
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
+
 	app.EnableMouse(true)
 
 	newPrimitive := func(text string) cview.Primitive {

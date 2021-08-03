@@ -12,6 +12,8 @@ const loremIpsumText = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
+
 	app.EnableMouse(true)
 
 	table := cview.NewTable()

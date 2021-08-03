@@ -8,6 +8,8 @@ import (
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
+
 	app.EnableMouse(true)
 
 	inputField := cview.NewInputField()

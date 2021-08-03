@@ -12,6 +12,8 @@ import (
 // Show a navigable tree view of the current directory.
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
+
 	app.EnableMouse(true)
 
 	rootDir := "."

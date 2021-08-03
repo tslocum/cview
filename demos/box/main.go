@@ -8,6 +8,7 @@ import (
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
 
 	box := cview.NewBox()
 	box.SetBorder(true)

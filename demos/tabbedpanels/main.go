@@ -11,6 +11,8 @@ const panelCount = 5
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
+
 	app.EnableMouse(true)
 
 	panels := cview.NewTabbedPanels()

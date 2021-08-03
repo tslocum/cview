@@ -1,4 +1,5 @@
 v1.5.7 (WIP)
+- Add Application.HandlePanic
 - Add Modal.SetButtonsAlign and Modal.SetTextAlign
 - Fix TextView.GetRegionText error when text contains color tags
 - Fix TextView region tags when placed at the end of a line

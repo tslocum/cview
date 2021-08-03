@@ -9,6 +9,8 @@ import (
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
+
 	app.EnableMouse(true)
 
 	list := cview.NewList()

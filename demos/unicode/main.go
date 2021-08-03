@@ -9,6 +9,8 @@ import (
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
+
 	panels := cview.NewPanels()
 
 	form := cview.NewForm()

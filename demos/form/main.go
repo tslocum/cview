@@ -7,6 +7,8 @@ import (
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
+
 	app.EnableMouse(true)
 
 	form := cview.NewForm()

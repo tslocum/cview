@@ -18,6 +18,8 @@ func wrap(f func()) func(ev *tcell.EventKey) *tcell.EventKey {
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
+
 	app.EnableMouse(true)
 
 	input1 := cview.NewInputField()

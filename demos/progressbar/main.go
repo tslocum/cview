@@ -9,6 +9,7 @@ import (
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
 
 	grid := cview.NewGrid()
 	grid.SetColumns(-1, 6, 4, 30, -1)

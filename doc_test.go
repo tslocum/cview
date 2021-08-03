@@ -10,6 +10,8 @@ import (
 func ExampleNewApplication() {
 	// Initialize application.
 	app := NewApplication()
+	// Handle panics gracefully.
+	defer app.HandlePanic()
 
 	// Create shared TextView.
 	sharedTextView := NewTextView()
@@ -71,6 +73,8 @@ func ExampleNewApplication() {
 func ExampleApplication_EnableMouse() {
 	// Initialize application.
 	app := NewApplication()
+	// Handle panics gracefully.
+	defer app.HandlePanic()
 
 	// Enable mouse support.
 	app.EnableMouse(true)

@@ -43,6 +43,8 @@ var app = cview.NewApplication()
 
 // Starting point for the presentation.
 func main() {
+	defer app.HandlePanic()
+
 	var debugPort int
 	flag.IntVar(&debugPort, "debug", 0, "port to serve debug info")
 	flag.Parse()

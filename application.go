@@ -125,6 +125,23 @@ func NewApplication() *Application {
 	}
 }
 
+// HandlePanic (when deferred at the start of a goroutine) handles panics
+// gracefully. The terminal is returned to its original state before the panic
+// message is printed.
+//
+// Panics may only be handled by the panicking goroutine. Because of this,
+// HandlePanic must be deferred at the start of each goroutine (including main).
+func (a *Application) HandlePanic() {
+	p := recover()
+	if p == nil {
+		return
+	}
+
+	a.finalizeScreen()
+
+	panic(p)
+}
+
 // SetInputCapture sets a function which captures all key events before they are
 // forwarded to the key event handler of the primitive which currently has
 // focus. This function can then choose to forward that key event (or a
@@ -290,15 +307,7 @@ func (a *Application) Run() error {
 		return err
 	}
 
-	// We catch panics to clean up because they mess up the terminal.
-	defer func() {
-		if p := recover(); p != nil {
-			if a.screen != nil {
-				a.screen.Fini()
-			}
-			panic(p)
-		}
-	}()
+	defer a.HandlePanic()
 
 	// Draw the screen for the first time.
 	a.Unlock()
@@ -308,6 +317,8 @@ func (a *Application) Run() error {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
+		defer a.HandlePanic()
+
 		defer wg.Done()
 		for {
 			a.RLock()
@@ -431,6 +442,8 @@ func (a *Application) Run() error {
 	semaphore := &sync.Mutex{}
 
 	go func() {
+		defer a.HandlePanic()
+
 		for update := range a.updates {
 			semaphore.Lock()
 			update()
@@ -570,13 +583,18 @@ func (a *Application) Stop() {
 	a.Lock()
 	defer a.Unlock()
 
+	a.finalizeScreen()
+	a.screenReplacement <- nil
+}
+
+func (a *Application) finalizeScreen() {
 	screen := a.screen
 	if screen == nil {
 		return
 	}
+
 	a.screen = nil
 	screen.Fini()
-	a.screenReplacement <- nil
 }
 
 // Suspend temporarily suspends the application by exiting terminal UI mode and

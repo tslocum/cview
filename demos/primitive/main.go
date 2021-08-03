@@ -61,6 +61,7 @@ func (r *RadioButtons) InputHandler() func(event *tcell.EventKey, setFocus func(
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
 
 	radioButtons := NewRadioButtons([]string{"Lions", "Elephants", "Giraffes"})
 	radioButtons.SetBorder(true)

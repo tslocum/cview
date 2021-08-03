@@ -17,6 +17,8 @@ type company struct {
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
+
 	inputField := cview.NewInputField()
 	inputField.SetLabel("Enter a company name: ")
 	inputField.SetFieldWidth(30)

@@ -12,6 +12,7 @@ const wordList = "ability,able,about,above,accept,according,account,across,act,a
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
 
 	words := strings.Split(wordList, ",")
 

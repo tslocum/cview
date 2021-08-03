@@ -14,6 +14,8 @@ func demoBox(title string) *cview.Box {
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
+
 	app.EnableMouse(true)
 
 	subFlex := cview.NewFlex()

@@ -5,6 +5,8 @@ import "code.rocketnine.space/tslocum/cview"
 
 func main() {
 	app := cview.NewApplication()
+	defer app.HandlePanic()
+
 	app.EnableMouse(true)
 
 	button := cview.NewButton("Hit Enter to close")
