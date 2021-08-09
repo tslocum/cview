@@ -451,6 +451,16 @@ func (a *Application) Run() error {
 		}
 	}()
 
+	go func() {
+		defer a.HandlePanic()
+
+		for event := range a.events {
+			semaphore.Lock()
+			handle(event)
+			semaphore.Unlock()
+		}
+	}()
+
 	// Start screen event loop.
 	for {
 		a.Lock()
