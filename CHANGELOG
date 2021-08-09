@@ -5,6 +5,7 @@ v1.5.7 (WIP)
 - Fix TextView.GetRegionText error when text contains color tags
 - Fix TextView region tags when placed at the end of a line
 - Do not customize Modal window styling by default (use GetForm and GetFrame to customize)
+- Draw application after updating root primitive via Application.SetRoot
 
 v1.5.6 (2020-07-08)
 - Add TrueColorTags option and do not use TrueColor tag values by default

@@ -762,7 +762,7 @@ func (a *Application) GetAfterDrawFunc() func(screen tcell.Screen) {
 // This function must be called at least once or nothing will be displayed when
 // the application starts.
 //
-// It also calls SetFocus() on the primitive.
+// It also calls SetFocus() on the primitive and draws the application.
 func (a *Application) SetRoot(root Primitive, fullscreen bool) {
 	a.Lock()
 	a.root = root
@@ -773,6 +773,8 @@ func (a *Application) SetRoot(root Primitive, fullscreen bool) {
 	a.Unlock()
 
 	a.SetFocus(root)
+
+	a.Draw()
 }
 
 // ResizeToFullScreen resizes the given primitive such that it fills the entire
