@@ -86,6 +86,7 @@ const (
 // Package initialization.
 func init() {
 	runewidth.EastAsianWidth = true
+	runewidth.CreateLUT() // Create lookup table
 
 	// Initialize the predefined input field handlers.
 	InputFieldInteger = func(text string, ch rune) bool {
