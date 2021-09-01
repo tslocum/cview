@@ -1,4 +1,4 @@
-v1.5.7 (WIP)
+v1.5.7 (2021-09-01)
 - Add Application.HandlePanic
 - Add Modal.SetButtonsAlign and Modal.SetTextAlign
 - Fix Application.QueueEvent
@@ -7,7 +7,7 @@ v1.5.7 (WIP)
 - Do not customize Modal window styling by default (use GetForm and GetFrame to customize)
 - Draw application after updating root primitive via Application.SetRoot
 
-v1.5.6 (2020-07-08)
+v1.5.6 (2021-07-08)
 - Add TrueColorTags option and do not use TrueColor tag values by default
 - Add TextView.SetHighlightForegroundColor and TextView.SetHighlightBackgroundColor
 - Add TextView.SetVerticalAlign
@@ -27,14 +27,14 @@ primitives to draw instead of the whole screen
 - When resetting color with "-" tag, set background color to primitive
 background color, rather than the terminal background color
 
-v1.5.5 (2020-05-24)
+v1.5.5 (2021-05-24)
 - Fix Application.Suspend by restructuring event loop (queued updates will now only run between draws)
 
-v1.5.4 (2020-04-03)
+v1.5.4 (2021-04-03)
 - Add TextView.GetBufferSize
 - Fix strikethrough support
 
-v1.5.3 (2020-01-14)
+v1.5.3 (2021-01-14)
 - Document how to prevent screen artifacts when using SetBackgroundTransparent
 - Fix highlighting focused Form element
 - Fix incorrect TabbedPanels colors
