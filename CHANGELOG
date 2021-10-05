@@ -1,3 +1,6 @@
+v1.5.8 (WIP)
+- Fix some missing ANSI translations 
+
 v1.5.7 (2021-09-01)
 - Add Application.HandlePanic
 - Add Modal.SetButtonsAlign and Modal.SetTextAlign
