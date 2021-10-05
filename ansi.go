@@ -135,6 +135,10 @@ func (a *ansi) Write(text []byte) (int, error) {
 							if strings.IndexRune(a.attributes, 'd') < 0 {
 								a.attributes += "d"
 							}
+						case "3", "03":
+							if strings.IndexRune(a.attributes, 'i') < 0 {
+								a.attributes += "i"
+							}
 						case "4", "04":
 							if strings.IndexRune(a.attributes, 'u') < 0 {
 								a.attributes += "u"
@@ -142,6 +146,14 @@ func (a *ansi) Write(text []byte) (int, error) {
 						case "5", "05":
 							if strings.IndexRune(a.attributes, 'l') < 0 {
 								a.attributes += "l"
+							}
+						case "7", "07":
+							if strings.IndexRune(a.attributes, 'r') < 0 {
+								a.attributes += "r"
+							}
+						case "9", "09":
+							if strings.IndexRune(a.attributes, 's') < 0 {
+								a.attributes += "s"
 							}
 						case "22":
 							if i := strings.IndexRune(a.attributes, 'b'); i >= 0 {
