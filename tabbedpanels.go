@@ -69,6 +69,12 @@ func NewTabbedPanels() *TabbedPanels {
 	return t
 }
 
+// SetChangedFunc sets a handler which is called whenever a tab is added,
+// selected, reordered or removed.
+func (t *TabbedPanels) SetChangedFunc(handler func()) {
+	t.panels.SetChangedFunc(handler)
+}
+
 // AddTab adds a new tab. Tab names should consist only of letters, numbers
 // and spaces.
 func (t *TabbedPanels) AddTab(name, label string, item Primitive) {

@@ -1,4 +1,5 @@
 v1.5.8 (WIP)
+- Add TabbedPanels.SetChangedFunc
 - Fix some missing ANSI translations 
 
 v1.5.7 (2021-09-01)
