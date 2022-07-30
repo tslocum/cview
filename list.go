@@ -194,6 +194,15 @@ type List struct {
 	// The height of the list the last time it was drawn.
 	height int
 
+	// Prefix and suffix strings drawn for unselected elements.
+	unselectedPrefix, unselectedSuffix []byte
+
+	// Prefix and suffix strings drawn for selected elements.
+	selectedPrefix, selectedSuffix []byte
+
+	// Maximum prefix and suffix width.
+	prefixWidth, suffixWidth int
+
 	sync.RWMutex
 }
 
@@ -627,6 +636,24 @@ func (l *List) SetItemEnabled(index int, enabled bool) {
 	item.disabled = !enabled
 }
 
+// SetIndicators is used to set prefix and suffix indicators for selected and unselected items.
+func (l *List) SetIndicators(selectedPrefix, selectedSuffix, unselectedPrefix, unselectedSuffix string) {
+	l.Lock()
+	defer l.Unlock()
+	l.selectedPrefix = []byte(selectedPrefix)
+	l.selectedSuffix = []byte(selectedSuffix)
+	l.unselectedPrefix = []byte(unselectedPrefix)
+	l.unselectedSuffix = []byte(unselectedSuffix)
+	l.prefixWidth = len(selectedPrefix)
+	if len(unselectedPrefix) > l.prefixWidth {
+		l.prefixWidth = len(unselectedPrefix)
+	}
+	l.suffixWidth = len(selectedSuffix)
+	if len(unselectedSuffix) > l.suffixWidth {
+		l.suffixWidth = len(unselectedSuffix)
+	}
+}
+
 // FindItems searches the main and secondary texts for the given strings and
 // returns a list of item indices in which those strings are found. One of the
 // two search strings may be empty, it will then be ignored. Indices are always
@@ -866,7 +893,7 @@ func (l *List) Draw(screen tcell.Screen) {
 	// Determine the dimensions.
 	x, y, width, height := l.GetInnerRect()
 	leftEdge := x
-	fullWidth := width + l.paddingLeft + l.paddingRight
+	fullWidth := width + l.paddingLeft + l.paddingRight + l.prefixWidth + l.suffixWidth
 	bottomLimit := y + height
 
 	l.height = height
@@ -934,7 +961,25 @@ func (l *List) Draw(screen tcell.Screen) {
 			RenderScrollBar(screen, l.scrollBarVisibility, scrollBarX, y, scrollBarHeight, len(l.items), scrollBarCursor, index-l.itemOffset, l.hasFocus, l.scrollBarColor)
 			y++
 			continue
-		} else if item.disabled {
+		}
+
+		if index == l.currentItem {
+			if len(l.selectedPrefix) > 0 {
+				mainText = append(l.selectedPrefix, mainText...)
+			}
+			if len(l.selectedSuffix) > 0 {
+				mainText = append(mainText, l.selectedSuffix...)
+			}
+
+		} else {
+			if len(l.unselectedPrefix) > 0 {
+				mainText = append(l.unselectedPrefix, mainText...)
+			}
+			if len(l.unselectedSuffix) > 0 {
+				mainText = append(mainText, l.unselectedSuffix...)
+			}
+		}
+		if item.disabled {
 			// Shortcuts.
 			if showShortcuts && item.shortcut != 0 {
 				Print(screen, []byte(fmt.Sprintf("(%c)", item.shortcut)), x-5, y, 4, AlignRight, tcell.ColorDarkSlateGray.TrueColor())

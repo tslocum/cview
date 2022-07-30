@@ -39,6 +39,7 @@ type Theme struct {
 	DropDownAbbreviationChars string // The chars to show when the option's text gets shortened.
 	DropDownSymbol            rune   // The symbol to draw at the end of the field when closed.
 	DropDownOpenSymbol        rune   // The symbol to draw at the end of the field when opened.
+	DropDownSelectedSymbol    rune   // The symbol to draw to indicate the selected list item.
 
 	// Scroll bar
 	ScrollBarColor tcell.Color
@@ -80,6 +81,7 @@ var Styles = Theme{
 	DropDownAbbreviationChars: "...",
 	DropDownSymbol:            '◀',
 	DropDownOpenSymbol:        '▼',
+	DropDownSelectedSymbol:    '▶',
 
 	ScrollBarColor: tcell.ColorWhite.TrueColor(),
 
