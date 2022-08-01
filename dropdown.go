@@ -140,6 +140,9 @@ type DropDown struct {
 	// The symbol to draw at the end of the field when opened.
 	dropDownOpenSymbol rune
 
+	// The symbol used to draw the selected item when opened.
+	dropDownSelectedSymbol rune
+
 	// A flag that determines whether the drop down symbol is always drawn.
 	alwaysDrawDropDownSymbol bool
 
@@ -166,12 +169,16 @@ func NewDropDown() *DropDown {
 		prefixTextColor:             Styles.ContrastSecondaryTextColor,
 		dropDownSymbol:              Styles.DropDownSymbol,
 		dropDownOpenSymbol:          Styles.DropDownOpenSymbol,
+		dropDownSelectedSymbol:      Styles.DropDownSelectedSymbol,
 		abbreviationChars:           Styles.DropDownAbbreviationChars,
 		labelColorFocused:           ColorUnset,
 		fieldBackgroundColorFocused: ColorUnset,
 		fieldTextColorFocused:       ColorUnset,
 	}
 
+	if sym := d.dropDownSelectedSymbol; sym != 0 {
+		list.SetIndicators(" "+string(sym)+" ", "", "   ", "")
+	}
 	d.focus = d
 
 	return d
@@ -191,6 +198,21 @@ func (d *DropDown) SetDropDownOpenSymbolRune(symbol rune) {
 	d.Lock()
 	defer d.Unlock()
 	d.dropDownOpenSymbol = symbol
+
+	if symbol != 0 {
+		d.list.SetIndicators(" "+string(symbol)+" ", "", "   ", "")
+	} else {
+		d.list.SetIndicators("", "", "", "")
+	}
+
+}
+
+// SetDropDownSelectedSymbolRune sets the rune to be drawn at the start of the
+// selected list item.
+func (d *DropDown) SetDropDownSelectedSymbolRune(symbol rune) {
+	d.Lock()
+	defer d.Unlock()
+	d.dropDownSelectedSymbol = symbol
 }
 
 // SetAlwaysDrawDropDownSymbol sets a flad that determines whether the drop
@@ -415,7 +437,8 @@ func (d *DropDown) getFieldWidth() int {
 	}
 	fieldWidth += len(d.optionPrefix) + len(d.optionSuffix)
 	fieldWidth += len(d.currentOptionPrefix) + len(d.currentOptionSuffix)
-	fieldWidth += 3 // space + dropDownSymbol + space
+	// space <text> space + dropDownSymbol + space
+	fieldWidth += 4
 	return fieldWidth
 }
 
