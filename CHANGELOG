@@ -1,6 +1,8 @@
-v1.5.8 (WIP)
+v1.5.8 (2022-08-01)
 - Add TabbedPanels.SetChangedFunc
-- Fix some missing ANSI translations 
+- Add DropDown.SetDropDownSelectedSymbolRune (PR by gdamore)
+- Add List.SetIndicators (PR by gdamore)
+- Fix some missing ANSI translations
 
 v1.5.7 (2021-09-01)
 - Add Application.HandlePanic
