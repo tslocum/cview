@@ -228,8 +228,6 @@ func (d *DropDown) SetAlwaysDrawDropDownSymbol(alwaysDraw bool) {
 // this function will also trigger the "selected" callback (if there is one).
 func (d *DropDown) SetCurrentOption(index int) {
 	d.Lock()
-	defer d.Unlock()
-
 	if index >= 0 && index < len(d.options) {
 		d.currentOption = index
 		d.list.SetCurrentItem(index)
@@ -252,6 +250,7 @@ func (d *DropDown) SetCurrentOption(index int) {
 			d.Lock()
 		}
 	}
+	d.Unlock()
 }
 
 // GetCurrentOption returns the index of the currently selected option as well
