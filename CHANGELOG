@@ -1,4 +1,5 @@
-v1.5.9 (WIP)
+v1.5.9 (2022-02-02)
+- Fix unlocking application mutex when failing to initialize the screen
 - Fix DropDown.SetCurrentOption Unlock of unlocked RWMutex panic
 
 v1.5.8 (2022-08-01)

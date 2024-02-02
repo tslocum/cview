@@ -25,9 +25,9 @@ const (
 // The following command displays a primitive p on the screen until Ctrl-C is
 // pressed:
 //
-//   if err := cview.NewApplication().SetRoot(p, true).Run(); err != nil {
-//       panic(err)
-//   }
+//	if err := cview.NewApplication().SetRoot(p, true).Run(); err != nil {
+//	    panic(err)
+//	}
 type Application struct {
 	// The application's screen. Apart from Run(), this variable should never be
 	// set directly. Always use the screenReplacement channel after calling
@@ -251,11 +251,9 @@ func (a *Application) init() error {
 	var err error
 	a.screen, err = tcell.NewScreen()
 	if err != nil {
-		a.Unlock()
 		return err
 	}
 	if err = a.screen.Init(); err != nil {
-		a.Unlock()
 		return err
 	}
 	a.width, a.height = a.screen.Size()
@@ -304,6 +302,7 @@ func (a *Application) Run() error {
 	// Initialize screen
 	err := a.init()
 	if err != nil {
+		a.Unlock()
 		return err
 	}
 
