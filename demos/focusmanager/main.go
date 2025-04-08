@@ -4,8 +4,8 @@ package main
 import (
 	"log"
 
-	"code.rocketnine.space/tslocum/cbind"
-	"code.rocketnine.space/tslocum/cview"
+	"codeberg.org/tslocum/cbind"
+	"codeberg.org/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
 

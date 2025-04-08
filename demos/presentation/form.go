@@ -1,13 +1,13 @@
 package main
 
 import (
-	"code.rocketnine.space/tslocum/cview"
+	"codeberg.org/tslocum/cview"
 )
 
 const form = `[green]package[white] main
 
 [green]import[white] (
-    [red]"code.rocketnine.space/tslocum/cview"[white]
+    [red]"codeberg.org/tslocum/cview"[white]
 )
 
 [green]func[white] [yellow]main[white]() {

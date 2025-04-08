@@ -4,7 +4,7 @@ package main
 import (
 	"fmt"
 
-	"code.rocketnine.space/tslocum/cview"
+	"codeberg.org/tslocum/cview"
 )
 
 func main() {

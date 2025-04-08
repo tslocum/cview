@@ -3,13 +3,13 @@ package main
 import (
 	"strings"
 
-	"code.rocketnine.space/tslocum/cview"
+	"codeberg.org/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
 
 const treeAllCode = `[green]package[white] main
 
-[green]import[white] [red]"code.rocketnine.space/tslocum/cview"[white]
+[green]import[white] [red]"codeberg.org/tslocum/cview"[white]
 
 [green]func[white] [yellow]main[white]() {
 	$$$

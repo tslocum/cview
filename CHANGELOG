@@ -1,3 +1,6 @@
+v1.6.0 (2025-04-08)
+- Migrate to codeberg.org
+
 v1.5.9 (2022-02-02)
 - Fix unlocking application mutex when failing to initialize the screen
 - Fix DropDown.SetCurrentOption Unlock of unlocked RWMutex panic

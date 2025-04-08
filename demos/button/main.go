@@ -1,7 +1,7 @@
 // Demo code for the Button primitive.
 package main
 
-import "code.rocketnine.space/tslocum/cview"
+import "codeberg.org/tslocum/cview"
 
 func main() {
 	app := cview.NewApplication()
