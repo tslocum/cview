@@ -227,6 +227,147 @@ func BenchmarkTextViewGetText(b *testing.B) {
 	}
 }
 
+type textViewResult struct {
+	x         int
+	y         int
+	primary   rune
+	combining []rune
+	width     int
+}
+
+type textViewRegionsTestCase struct {
+	text    string           // Text to test with.
+	normal  []textViewResult // How the text should appear normally.
+	escaped []textViewResult // How the text should appear when escaped.
+}
+
+var textViewHelloWorldResult = []textViewResult{
+	{x: 0, y: 0, primary: 'H', combining: nil, width: 1},
+	{x: 1, y: 0, primary: 'e', combining: nil, width: 1},
+	{x: 2, y: 0, primary: 'l', combining: nil, width: 1},
+	{x: 3, y: 0, primary: 'l', combining: nil, width: 1},
+	{x: 4, y: 0, primary: 'o', combining: nil, width: 1},
+	{x: 5, y: 0, primary: ',', combining: nil, width: 1},
+	{x: 6, y: 0, primary: ' ', combining: nil, width: 1},
+	{x: 7, y: 0, primary: 'w', combining: nil, width: 1},
+	{x: 8, y: 0, primary: 'o', combining: nil, width: 1},
+	{x: 9, y: 0, primary: 'r', combining: nil, width: 1},
+	{x: 10, y: 0, primary: 'l', combining: nil, width: 1},
+	{x: 11, y: 0, primary: 'd', combining: nil, width: 1},
+	{x: 12, y: 0, primary: '!', combining: nil, width: 1},
+}
+
+var textViewRegionsTestCases = []textViewRegionsTestCase{
+	{
+		text:    `Hello, world!`,
+		normal:  textViewHelloWorldResult,
+		escaped: textViewHelloWorldResult,
+	}, {
+		text: "[TEST\033[0m]\033[36mTEST",
+		normal: []textViewResult{
+			{x: 0, y: 0, primary: '[', combining: nil, width: 1},
+			{x: 1, y: 0, primary: 'T', combining: nil, width: 1},
+			{x: 2, y: 0, primary: 'E', combining: nil, width: 1},
+			{x: 3, y: 0, primary: 'S', combining: nil, width: 1},
+			{x: 4, y: 0, primary: 'T', combining: nil, width: 1},
+			{x: 5, y: 0, primary: ']', combining: nil, width: 1},
+			{x: 6, y: 0, primary: 'T', combining: nil, width: 1},
+			{x: 7, y: 0, primary: 'E', combining: nil, width: 1},
+			{x: 8, y: 0, primary: 'S', combining: nil, width: 1},
+			{x: 9, y: 0, primary: 'T', combining: nil, width: 1},
+		},
+		escaped: []textViewResult{
+			{x: 0, y: 0, primary: '[', combining: nil, width: 1},
+			{x: 1, y: 0, primary: 'T', combining: nil, width: 1},
+			{x: 2, y: 0, primary: 'E', combining: nil, width: 1},
+			{x: 3, y: 0, primary: 'S', combining: nil, width: 1},
+			{x: 4, y: 0, primary: 'T', combining: nil, width: 1},
+			{x: 5, y: 0, primary: '[', combining: nil, width: 1},
+			{x: 6, y: 0, primary: ']', combining: nil, width: 1},
+			{x: 7, y: 0, primary: 'T', combining: nil, width: 1},
+			{x: 8, y: 0, primary: 'E', combining: nil, width: 1},
+			{x: 9, y: 0, primary: 'S', combining: nil, width: 1},
+			{x: 10, y: 0, primary: 'T', combining: nil, width: 1},
+		},
+	},
+}
+
+func TestTextViewANSI(t *testing.T) {
+	t.Parallel()
+
+	const screenW, screenH = 80, 80
+	for j := 0; j < 2; j++ {
+		for i, c := range textViewRegionsTestCases {
+			label := "Normal"
+			expectedResult := c.normal
+			if j == 1 {
+				label = "Escaped"
+				expectedResult = c.escaped
+			}
+
+			t.Run(fmt.Sprintf("%s/%d", label, i+1), func(t *testing.T) {
+				t.Parallel()
+
+				tv := NewTextView()
+				tv.SetDynamicColors(true)
+
+				app, err := newTestApp(tv)
+				if err != nil {
+					t.Errorf("failed to initialize Application: %s", err)
+				}
+				app.screen.SetSize(screenW, screenH)
+				tv.SetRect(0, 0, screenW, screenH)
+
+				content := c.text
+				if j == 1 {
+					content = Escape(content)
+				}
+
+				content = TranslateANSI(content)
+
+				tv.SetText(content)
+
+				tv.Draw(app.screen)
+				for y := 0; y < screenH; y++ {
+					for x := 0; x < screenW; x++ {
+						expected := textViewResult{
+							primary: ' ',
+							width:   1,
+						}
+						for _, nc := range expectedResult {
+							if nc.x == x && nc.y == y {
+								expected = nc
+								break
+							}
+						}
+
+						primary, combining, _, width := app.screen.GetContent(x, y)
+						if primary != expected.primary {
+							t.Errorf("unexpected primary at %d, %d: expected %c, got %c", x, y, expected.primary, primary)
+						}
+
+						var combiningEqual bool
+						if len(combining) == len(expected.combining) {
+							for i, r := range combining {
+								if r != expected.combining[i] {
+									break
+								}
+							}
+							combiningEqual = true
+						}
+						if !combiningEqual {
+							t.Errorf("unexpected combining at %d, %d: expected %v, got %v", x, y, expected.combining, combining)
+						}
+						if width != expected.width {
+							t.Errorf("unexpected width at %d, %d: expected %d, got %d", x, y, expected.width, width)
+						}
+					}
+				}
+			})
+		}
+	}
+}
+
 func TestTextViewDraw(t *testing.T) {
 	t.Parallel()
 

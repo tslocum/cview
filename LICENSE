@@ -39,9 +39,13 @@ Bugfixes in ANSI escape sequence handling as well as TextView
 Sun Jul 12 13:34:19 2020 +0200
 TextView.GetText() and .GetRegionText() didn't filter out empty colour tags. Fixes #453
 
-d689098cf1ab89315db61d7020efa5bf4c0c1b44 (HEAD -> master)
+d689098cf1ab89315db61d7020efa5bf4c0c1b44
 Tue Apr 27 09:08:36 2021 +0200
 Fixed missed tag at EOL in TextView
+
+cf5d920ae7d00b795414cb42f654b544b1c092c6
+Thu May 28 10:36:26 2020 +0200
+Bugfix in string decomposition: Escape sequences cannot be handled after the fact.
 
 The cview license applies to all other commits.
 

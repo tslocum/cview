@@ -1,3 +1,6 @@
+v1.6.2 (2025-11-24)
+- Fix escaping bracket characters in text
+
 v1.6.1 (2025-11-19)
 - Swap text region foreground and background colors when highlighted
 
