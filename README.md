@@ -1,5 +1,5 @@
 # cview - Terminal-based user interface toolkit
-[![GoDoc](https://codeberg.org/tslocum/godoc-static/raw/branch/master/badge.svg)](https://docs.rocket9labs.com/codeberg.org/tslocum/cview)
+[![GoDoc](https://codeberg.org/tslocum/godoc-static/raw/branch/main/badge.svg)](https://docs.rocket9labs.com/codeberg.org/tslocum/cview)
 [![Donate](https://img.shields.io/liberapay/receives/rocket9labs.com.svg?logo=liberapay)](https://liberapay.com/rocket9labs.com)
 
 This package is a fork of [tview](https://github.com/rivo/tview).
@@ -9,7 +9,7 @@ See [FORK.md](https://codeberg.org/tslocum/cview/src/branch/master/FORK.md) for 
 
 `ssh cview.rocket9labs.com -p 20000`
 
-[![Recording of presentation demo](https://codeberg.org/tslocum/cview/raw/branch/master/cview.svg)](https://codeberg.org/tslocum/cview/src/branch/master/demos/presentation)
+[![Screenshot of presentation demo](https://codeberg.org/tslocum/cview/raw/branch/master/screenshot.png)](https://codeberg.org/tslocum/cview/src/branch/master/demos/presentation)
 
 ## Features
 
