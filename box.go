@@ -44,6 +44,9 @@ type Box struct {
 	// The title. Only visible if there is a border, too.
 	title []byte
 
+	// The title buffer. When a title is set, the title buffer contains the padded title.
+	titleBuffer []byte
+
 	// The color of the title.
 	titleColor tcell.Color
 
@@ -400,7 +403,9 @@ func (b *Box) SetTitle(title string) {
 
 	// Pad title to improve readability.
 	if title != "" {
-		title = " " + title + "[-:-:-] "
+		b.titleBuffer = []byte(" " + title + "[-:-:-] ")
+	} else {
+		b.titleBuffer = nil
 	}
 
 	b.title = []byte(title)
@@ -504,8 +509,8 @@ func (b *Box) Draw(screen tcell.Screen) {
 
 		// Draw title.
 		if len(b.title) > 0 && b.width >= 4 {
-			printed, _ := Print(screen, b.title, b.x+1, b.y, b.width-2, b.titleAlign, b.titleColor)
-			if len(b.title)-printed > 0 && printed > 0 {
+			printed, _ := Print(screen, b.titleBuffer, b.x+1, b.y, b.width-2, b.titleAlign, b.titleColor)
+			if len(b.titleBuffer)-printed > 0 && printed > 0 {
 				_, style, _ := screen.Get(b.x+b.width-2, b.y)
 				fg := style.GetForeground()
 				Print(screen, []byte(string(SemigraphicsHorizontalEllipsis)), b.x+b.width-2, b.y, 1, AlignLeft, fg)
