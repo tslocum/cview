@@ -1,52 +1,9 @@
 package main
 
 import (
-	"strings"
-
 	"codeberg.org/tslocum/cview"
 	"github.com/gdamore/tcell/v3"
 )
-
-const treeAllCode = `[green]package[white] main
-
-[green]import[white] [red]"codeberg.org/tslocum/cview"[white]
-
-[green]func[white] [yellow]main[white]() {
-	$$$
-
-	root := cview.[yellow]NewTreeNode[white]([red]"Root"[white]).
-		[yellow]AddChild[white](cview.[yellow]NewTreeNode[white]([red]"First child"[white]).
-			[yellow]AddChild[white](cview.[yellow]NewTreeNode[white]([red]"Grandchild A"[white])).
-			[yellow]AddChild[white](cview.[yellow]NewTreeNode[white]([red]"Grandchild B"[white]))).
-		[yellow]AddChild[white](cview.[yellow]NewTreeNode[white]([red]"Second child"[white]).
-			[yellow]AddChild[white](cview.[yellow]NewTreeNode[white]([red]"Grandchild C"[white])).
-			[yellow]AddChild[white](cview.[yellow]NewTreeNode[white]([red]"Grandchild D"[white]))).
-		[yellow]AddChild[white](cview.[yellow]NewTreeNode[white]([red]"Third child"[white]))
-
-	tree.[yellow]SetRoot[white](root).
-		[yellow]SetCurrentNode[white](root)
-
-	cview.[yellow]NewApplication[white]().
-		[yellow]SetRoot[white](tree, true).
-		[yellow]Run[white]()
-}`
-
-const treeBasicCode = `tree := cview.[yellow]NewTreeView[white]()`
-
-const treeTopLevelCode = `tree := cview.[yellow]NewTreeView[white]().
-		[yellow]SetTopLevel[white]([red]1[white])`
-
-const treeAlignCode = `tree := cview.[yellow]NewTreeView[white]().
-		[yellow]SetAlign[white](true)`
-
-const treePrefixCode = `tree := cview.[yellow]NewTreeView[white]().
-		[yellow]SetGraphics[white](false).
-		[yellow]SetTopLevel[white]([red]1[white]).
-		[yellow]SetPrefixes[white]([][green]string[white]{
-			[red]"[red[]* "[white],
-			[red]"[darkcyan[]- "[white],
-			[red]"[darkmagenta[]- "[white],
-		})`
 
 type node struct {
 	text     string
@@ -78,7 +35,6 @@ var rootNode = &node{
 				tree.SetTopLevel(1)
 				tree.SetGraphics(true)
 				tree.SetPrefixes(nil)
-				treeCode.SetText(strings.Replace(treeAllCode, "$$$", treeTopLevelCode, -1))
 			}},
 		}},
 		{text: "Align node text", expand: true, children: []*node{
@@ -89,7 +45,6 @@ var rootNode = &node{
 				tree.SetTopLevel(0)
 				tree.SetGraphics(true)
 				tree.SetPrefixes(nil)
-				treeCode.SetText(strings.Replace(treeAllCode, "$$$", treeAlignCode, -1))
 			}},
 		}},
 		{text: "Prefixes", expand: true, children: []*node{
@@ -100,7 +55,6 @@ var rootNode = &node{
 				tree.SetTopLevel(1)
 				tree.SetGraphics(false)
 				tree.SetPrefixes([]string{"[red]* ", "[darkcyan]- ", "[darkmagenta]- "})
-				treeCode.SetText(strings.Replace(treeAllCode, "$$$", treePrefixCode, -1))
 			}},
 		}},
 		{text: "Basic tree with graphics", expand: true, children: []*node{
@@ -111,7 +65,6 @@ var rootNode = &node{
 				tree.SetTopLevel(0)
 				tree.SetGraphics(true)
 				tree.SetPrefixes(nil)
-				treeCode.SetText(strings.Replace(treeAllCode, "$$$", treeBasicCode, -1))
 			}},
 		}},
 		{text: "Next slide", selected: func() { treeNextSlide() }},
@@ -152,10 +105,11 @@ func TreeView(nextSlide func()) (title string, info string, content cview.Primit
 		}
 	})
 
-	treeCode.SetWrap(false)
-	treeCode.SetDynamicColors(true)
-	treeCode.SetText(strings.Replace(treeAllCode, "$$$", treeBasicCode, -1))
+	treeCode.SetWrap(true)
+	treeCode.SetWordWrap(true)
+	treeCode.SetDynamicColors(false)
 	treeCode.SetPadding(1, 1, 2, 0)
+	treeCode.Write(exampleCode("treeview"))
 
 	flex := cview.NewFlex()
 	flex.AddItem(tree, 0, 1, true)

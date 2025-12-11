@@ -5,30 +5,6 @@ import (
 	"github.com/gdamore/tcell/v3"
 )
 
-const inputField = `[green]package[white] main
-
-[green]import[white] (
-    [red]"strconv"[white]
-
-    [red]"github.com/gdamore/tcell/v3"[white]
-    [red]"codeberg.org/tslocum/cview"[white]
-)
-
-[green]func[white] [yellow]main[white]() {
-    input := cview.[yellow]NewInputField[white]().
-        [yellow]SetLabel[white]([red]"Enter a number: "[white]).
-        [yellow]SetAcceptanceFunc[white](
-            cview.InputFieldInteger,
-        ).[yellow]SetDoneFunc[white]([yellow]func[white](key tcell.Key) {
-            text := input.[yellow]GetText[white]()
-            n, _ := strconv.[yellow]Atoi[white](text)
-            [blue]// We have a number.[white]
-        })
-    cview.[yellow]NewApplication[white]().
-        [yellow]SetRoot[white](input, true).
-        [yellow]Run[white]()
-}`
-
 // InputField demonstrates the InputField.
 func InputField(nextSlide func()) (title string, info string, content cview.Primitive) {
 	input := cview.NewInputField()
@@ -37,5 +13,5 @@ func InputField(nextSlide func()) (title string, info string, content cview.Prim
 	input.SetDoneFunc(func(key tcell.Key) {
 		nextSlide()
 	})
-	return "InputField", "", Code(input, 30, 1, inputField)
+	return "InputField", "", Code(input, 30, 1, "inputfield")
 }

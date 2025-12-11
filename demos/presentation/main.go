@@ -13,6 +13,8 @@ the following shortcuts can be used:
 package main
 
 import (
+	"bytes"
+	"embed"
 	"flag"
 	"fmt"
 	"log"
@@ -41,6 +43,18 @@ type Slide func(nextSlide func()) (title string, info string, content cview.Prim
 // The application.
 var app = cview.NewApplication()
 
+//go:embed *.go
+var embedFS embed.FS
+
+// exampleCode returns the content of the specified example file.
+func exampleCode(name string) []byte {
+	buf, err := embedFS.ReadFile(name + ".go")
+	if err != nil {
+		log.Panicf("failed to open %s.go: %s", name, err)
+	}
+	return bytes.TrimSpace(buf)
+}
+
 // Starting point for the presentation.
 func main() {
 	defer app.HandlePanic()
@@ -62,8 +76,7 @@ func main() {
 		Cover,
 		Introduction,
 		Colors,
-		TextView1,
-		TextView2,
+		TextView,
 		InputField,
 		Slider,
 		Form,
