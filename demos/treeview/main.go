@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"codeberg.org/tslocum/cview"
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // Show a navigable tree view of the current directory.

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"codeberg.org/tslocum/cview"
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 const sliderCode = `[green]package[white] main
@@ -12,7 +12,7 @@ const sliderCode = `[green]package[white] main
 [green]import[white] (
     [red]"fmt"[white]
 
-    [red]"github.com/gdamore/tcell/v2"[white]
+    [red]"github.com/gdamore/tcell/v3"[white]
     [red]"codeberg.org/tslocum/cview"[white]
 )
 

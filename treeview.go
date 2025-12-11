@@ -3,7 +3,7 @@ package cview
 import (
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // Tree navigation events.
@@ -426,8 +426,8 @@ func (t *TreeView) SetTopLevel(topLevel int) {
 //
 // For example, to display a hierarchical list with bullet points:
 //
-//   treeView.SetGraphics(false).
-//     SetPrefixes([]string{"* ", "- ", "x "})
+//	treeView.SetGraphics(false).
+//	  SetPrefixes([]string{"* ", "- ", "x "})
 func (t *TreeView) SetPrefixes(prefixes []string) {
 	t.Lock()
 	defer t.Unlock()
@@ -812,7 +812,7 @@ func (t *TreeView) Draw(screen tcell.Screen) {
 						PrintJoinedSemigraphics(screen, x+ancestor.graphicsX, posY-1, Borders.Vertical, t.graphicsColor)
 					}
 					if posY < y+height {
-						screen.SetContent(x+ancestor.graphicsX, posY, Borders.Vertical, nil, lineStyle)
+						screen.Put(x+ancestor.graphicsX, posY, string(Borders.Vertical), lineStyle)
 					}
 				}
 				ancestor = ancestor.parent
@@ -826,9 +826,9 @@ func (t *TreeView) Draw(screen tcell.Screen) {
 
 				// Join this node.
 				if posY < y+height {
-					screen.SetContent(x+node.graphicsX, posY, Borders.BottomLeft, nil, lineStyle)
+					screen.Put(x+node.graphicsX, posY, string(Borders.BottomLeft), lineStyle)
 					for pos := node.graphicsX + 1; pos < node.textX && pos < width; pos++ {
-						screen.SetContent(x+pos, posY, Borders.Horizontal, nil, lineStyle)
+						screen.Put(x+pos, posY, string(Borders.Horizontal), lineStyle)
 					}
 				}
 			}

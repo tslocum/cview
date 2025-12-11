@@ -106,6 +106,10 @@ Because cview is [thread-safe](https://docs.rocket9labs.com/codeberg.org/tslocum
 application draws must be queued. Call `Application.QueueUpdateDraw` to queue
 an update that requires the application to be drawn when completed.
 
+## cview imports tcell/v3
+
+tview imports tcell/v2.
+
 # Merged pull requests
 
 The following tview pull requests have been merged into cview:

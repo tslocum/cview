@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"codeberg.org/tslocum/cview"
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // End shows the final slide.

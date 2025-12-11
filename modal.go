@@ -3,7 +3,7 @@ package cview
 import (
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // Modal is a centered message window used to inform the user or prompt them
@@ -169,9 +169,9 @@ func (m *Modal) AddButtons(labels []string) {
 			button.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 				switch event.Key() {
 				case tcell.KeyDown, tcell.KeyRight:
-					return tcell.NewEventKey(tcell.KeyTab, 0, tcell.ModNone)
+					return tcell.NewEventKey(tcell.KeyTab, "", tcell.ModNone)
 				case tcell.KeyUp, tcell.KeyLeft:
-					return tcell.NewEventKey(tcell.KeyBacktab, 0, tcell.ModNone)
+					return tcell.NewEventKey(tcell.KeyBacktab, "", tcell.ModNone)
 				}
 				return event
 			})

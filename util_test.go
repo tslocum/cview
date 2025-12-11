@@ -1,7 +1,7 @@
 package cview
 
 import (
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // newTestApp returns a new application connected to a simulation screen.

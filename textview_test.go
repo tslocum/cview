@@ -228,11 +228,10 @@ func BenchmarkTextViewGetText(b *testing.B) {
 }
 
 type textViewResult struct {
-	x         int
-	y         int
-	primary   rune
-	combining []rune
-	width     int
+	x     int
+	y     int
+	str   string
+	width int
 }
 
 type textViewRegionsTestCase struct {
@@ -242,19 +241,19 @@ type textViewRegionsTestCase struct {
 }
 
 var textViewHelloWorldResult = []textViewResult{
-	{x: 0, y: 0, primary: 'H', combining: nil, width: 1},
-	{x: 1, y: 0, primary: 'e', combining: nil, width: 1},
-	{x: 2, y: 0, primary: 'l', combining: nil, width: 1},
-	{x: 3, y: 0, primary: 'l', combining: nil, width: 1},
-	{x: 4, y: 0, primary: 'o', combining: nil, width: 1},
-	{x: 5, y: 0, primary: ',', combining: nil, width: 1},
-	{x: 6, y: 0, primary: ' ', combining: nil, width: 1},
-	{x: 7, y: 0, primary: 'w', combining: nil, width: 1},
-	{x: 8, y: 0, primary: 'o', combining: nil, width: 1},
-	{x: 9, y: 0, primary: 'r', combining: nil, width: 1},
-	{x: 10, y: 0, primary: 'l', combining: nil, width: 1},
-	{x: 11, y: 0, primary: 'd', combining: nil, width: 1},
-	{x: 12, y: 0, primary: '!', combining: nil, width: 1},
+	{x: 0, y: 0, str: "H", width: 1},
+	{x: 1, y: 0, str: "e", width: 1},
+	{x: 2, y: 0, str: "l", width: 1},
+	{x: 3, y: 0, str: "l", width: 1},
+	{x: 4, y: 0, str: "o", width: 1},
+	{x: 5, y: 0, str: ",", width: 1},
+	{x: 6, y: 0, str: " ", width: 1},
+	{x: 7, y: 0, str: "w", width: 1},
+	{x: 8, y: 0, str: "o", width: 1},
+	{x: 9, y: 0, str: "r", width: 1},
+	{x: 10, y: 0, str: "l", width: 1},
+	{x: 11, y: 0, str: "d", width: 1},
+	{x: 12, y: 0, str: "!", width: 1},
 }
 
 var textViewRegionsTestCases = []textViewRegionsTestCase{
@@ -265,29 +264,29 @@ var textViewRegionsTestCases = []textViewRegionsTestCase{
 	}, {
 		text: "[TEST\033[0m]\033[36mTEST",
 		normal: []textViewResult{
-			{x: 0, y: 0, primary: '[', combining: nil, width: 1},
-			{x: 1, y: 0, primary: 'T', combining: nil, width: 1},
-			{x: 2, y: 0, primary: 'E', combining: nil, width: 1},
-			{x: 3, y: 0, primary: 'S', combining: nil, width: 1},
-			{x: 4, y: 0, primary: 'T', combining: nil, width: 1},
-			{x: 5, y: 0, primary: ']', combining: nil, width: 1},
-			{x: 6, y: 0, primary: 'T', combining: nil, width: 1},
-			{x: 7, y: 0, primary: 'E', combining: nil, width: 1},
-			{x: 8, y: 0, primary: 'S', combining: nil, width: 1},
-			{x: 9, y: 0, primary: 'T', combining: nil, width: 1},
+			{x: 0, y: 0, str: "[", width: 1},
+			{x: 1, y: 0, str: "T", width: 1},
+			{x: 2, y: 0, str: "E", width: 1},
+			{x: 3, y: 0, str: "S", width: 1},
+			{x: 4, y: 0, str: "T", width: 1},
+			{x: 5, y: 0, str: "]", width: 1},
+			{x: 6, y: 0, str: "T", width: 1},
+			{x: 7, y: 0, str: "E", width: 1},
+			{x: 8, y: 0, str: "S", width: 1},
+			{x: 9, y: 0, str: "T", width: 1},
 		},
 		escaped: []textViewResult{
-			{x: 0, y: 0, primary: '[', combining: nil, width: 1},
-			{x: 1, y: 0, primary: 'T', combining: nil, width: 1},
-			{x: 2, y: 0, primary: 'E', combining: nil, width: 1},
-			{x: 3, y: 0, primary: 'S', combining: nil, width: 1},
-			{x: 4, y: 0, primary: 'T', combining: nil, width: 1},
-			{x: 5, y: 0, primary: '[', combining: nil, width: 1},
-			{x: 6, y: 0, primary: ']', combining: nil, width: 1},
-			{x: 7, y: 0, primary: 'T', combining: nil, width: 1},
-			{x: 8, y: 0, primary: 'E', combining: nil, width: 1},
-			{x: 9, y: 0, primary: 'S', combining: nil, width: 1},
-			{x: 10, y: 0, primary: 'T', combining: nil, width: 1},
+			{x: 0, y: 0, str: "[", width: 1},
+			{x: 1, y: 0, str: "T", width: 1},
+			{x: 2, y: 0, str: "E", width: 1},
+			{x: 3, y: 0, str: "S", width: 1},
+			{x: 4, y: 0, str: "T", width: 1},
+			{x: 5, y: 0, str: "[", width: 1},
+			{x: 6, y: 0, str: "]", width: 1},
+			{x: 7, y: 0, str: "T", width: 1},
+			{x: 8, y: 0, str: "E", width: 1},
+			{x: 9, y: 0, str: "S", width: 1},
+			{x: 10, y: 0, str: "T", width: 1},
 		},
 	},
 }
@@ -331,8 +330,8 @@ func TestTextViewANSI(t *testing.T) {
 				for y := 0; y < screenH; y++ {
 					for x := 0; x < screenW; x++ {
 						expected := textViewResult{
-							primary: ' ',
-							width:   1,
+							str:   " ",
+							width: 1,
 						}
 						for _, nc := range expectedResult {
 							if nc.x == x && nc.y == y {
@@ -341,22 +340,9 @@ func TestTextViewANSI(t *testing.T) {
 							}
 						}
 
-						primary, combining, _, width := app.screen.GetContent(x, y)
-						if primary != expected.primary {
-							t.Errorf("unexpected primary at %d, %d: expected %c, got %c", x, y, expected.primary, primary)
-						}
-
-						var combiningEqual bool
-						if len(combining) == len(expected.combining) {
-							for i, r := range combining {
-								if r != expected.combining[i] {
-									break
-								}
-							}
-							combiningEqual = true
-						}
-						if !combiningEqual {
-							t.Errorf("unexpected combining at %d, %d: expected %v, got %v", x, y, expected.combining, combining)
+						str, _, width := app.screen.Get(x, y)
+						if str != expected.str {
+							t.Errorf("unexpected str at %d, %d: expected %s, got %s", x, y, expected.str, str)
 						}
 						if width != expected.width {
 							t.Errorf("unexpected width at %d, %d: expected %d, got %d", x, y, expected.width, width)

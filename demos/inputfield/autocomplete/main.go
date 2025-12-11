@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"codeberg.org/tslocum/cview"
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // 1,000 most common English words.

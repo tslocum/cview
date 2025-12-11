@@ -5,7 +5,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 	colorful "github.com/lucasb-eyer/go-colorful"
 )
 
@@ -150,7 +150,7 @@ func (c *TableCell) SetBackgroundColor(color tcell.Color) {
 // SetAttributes sets the cell's text attributes. You can combine different
 // attributes using bitmask operations:
 //
-//   cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
+//	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 func (c *TableCell) SetAttributes(attr tcell.AttrMask) {
 	c.Lock()
 	defer c.Unlock()
@@ -164,7 +164,7 @@ func (c *TableCell) SetStyle(style tcell.Style) {
 	c.Lock()
 	defer c.Unlock()
 
-	c.Color, c.BackgroundColor, c.Attributes = style.Decompose()
+	c.Color, c.BackgroundColor, c.Attributes = style.GetForeground(), style.GetBackground(), style.GetAttributes()
 }
 
 // SetSelectable sets whether or not this cell can be selected by the user.
@@ -226,13 +226,13 @@ func (c *TableCell) GetLastPosition() (x, y, width int) {
 // Columns will use as much horizontal space as they need. You can constrain
 // their size with the MaxWidth parameter of the TableCell type.
 //
-// Fixed Columns
+// # Fixed Columns
 //
 // You can define fixed rows and rolumns via SetFixed(). They will always stay
 // in their place, even when the table is scrolled. Fixed rows are always the
 // top rows. Fixed columns are always the leftmost columns.
 //
-// Selections
+// # Selections
 //
 // You can call SetSelectable() to set columns and/or rows to "selectable". If
 // the flag is set only for columns, entire columns can be selected by the user.
@@ -240,7 +240,7 @@ func (c *TableCell) GetLastPosition() (x, y, width int) {
 // set, individual cells can be selected. The "selected" handler set via
 // SetSelectedFunc() is invoked when the user presses Enter on a selection.
 //
-// Navigation
+// # Navigation
 //
 // If the table extends beyond the available space, it can be navigated with
 // key bindings similar to Vim:
@@ -408,7 +408,7 @@ func (t *Table) SetScrollBarColor(color tcell.Color) {
 //
 // To reset a previous setting to its default, make the following call:
 //
-//   table.SetSelectedStyle(tcell.ColorDefault, tcell.ColorDefault, 0)
+//	table.SetSelectedStyle(tcell.ColorDefault, tcell.ColorDefault, 0)
 func (t *Table) SetSelectedStyle(foregroundColor, backgroundColor tcell.Color, attributes tcell.AttrMask) {
 	t.Lock()
 	defer t.Unlock()
@@ -1028,7 +1028,7 @@ ColumnLoop:
 	// Helper function which draws border runes.
 	borderStyle := tcell.StyleDefault.Background(t.backgroundColor).Foreground(t.bordersColor)
 	drawBorder := func(colX, rowY int, ch rune) {
-		screen.SetContent(x+colX, y+rowY, ch, nil, borderStyle)
+		screen.Put(x+colX, y+rowY, string(ch), borderStyle)
 	}
 
 	// Draw the cells (and borders).
@@ -1080,7 +1080,7 @@ ColumnLoop:
 			cell.x, cell.y, cell.width = x+columnX+1, y+rowY, finalWidth
 			_, printed := PrintStyle(screen, cell.Text, x+columnX+1, y+rowY, finalWidth, cell.Align, SetAttributes(tcell.StyleDefault.Foreground(cell.Color), cell.Attributes))
 			if TaggedTextWidth(cell.Text)-printed > 0 && printed > 0 {
-				_, _, style, _ := screen.GetContent(x+columnX+finalWidth, y+rowY)
+				_, style, _ := screen.Get(x+columnX+finalWidth, y+rowY)
 				PrintStyle(screen, []byte(string(SemigraphicsHorizontalEllipsis)), x+columnX+finalWidth, y+rowY, 1, AlignLeft, style)
 			}
 		}
@@ -1159,8 +1159,8 @@ ColumnLoop:
 	colorBackground := func(fromX, fromY, w, h int, backgroundColor, textColor tcell.Color, attr tcell.AttrMask, invert bool) {
 		for by := 0; by < h && fromY+by < y+height; by++ {
 			for bx := 0; bx < w && fromX+bx < x+width; bx++ {
-				m, c, style, _ := screen.GetContent(fromX+bx, fromY+by)
-				fg, bg, a := style.Decompose()
+				str, style, _ := screen.Get(fromX+bx, fromY+by)
+				fg, bg, a := style.GetForeground(), style.GetBackground(), style.GetAttributes()
 				if invert {
 					if fg == textColor || fg == t.bordersColor {
 						fg = backgroundColor
@@ -1181,7 +1181,7 @@ ColumnLoop:
 					}
 					style = SetAttributes(style.Background(bg).Foreground(fg), a)
 				}
-				screen.SetContent(fromX+bx, fromY+by, m, c, style)
+				screen.Put(fromX+bx, fromY+by, str, style)
 			}
 		}
 	}
@@ -1237,7 +1237,7 @@ ColumnLoop:
 		_, _, lj := c.Hcl()
 		return li < lj
 	})
-	selFg, selBg, selAttr := t.selectedStyle.Decompose()
+	selFg, selBg, selAttr := t.selectedStyle.GetForeground(), t.selectedStyle.GetBackground(), t.selectedStyle.GetAttributes()
 	for _, bgColor := range backgroundColors {
 		entries := cellsByBackgroundColor[bgColor]
 		for _, cell := range entries {

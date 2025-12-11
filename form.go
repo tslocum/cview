@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // DefaultFormFieldWidth is the default field screen width of form elements
@@ -740,9 +740,10 @@ func (f *Form) Draw(screen tcell.Screen) {
 
 	// Where do we place them?
 	if !f.horizontal && x+buttonsWidth < rightLimit {
-		if f.buttonsAlign == AlignRight {
+		switch f.buttonsAlign {
+		case AlignRight:
 			x = rightLimit - buttonsWidth
-		} else if f.buttonsAlign == AlignCenter {
+		case AlignCenter:
 			x = (x + rightLimit - buttonsWidth) / 2
 		}
 

@@ -3,7 +3,7 @@ package main
 
 import (
 	"codeberg.org/tslocum/cview"
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 func main() {

@@ -3,7 +3,7 @@ package cview
 import (
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // WindowManager provides an area which windows may be added to.
@@ -132,7 +132,8 @@ func (wm *WindowManager) MouseHandler() func(action MouseAction, event *tcell.Ev
 			return false, nil
 		}
 
-		if action == MouseMove {
+		switch action {
+		case MouseMove:
 			mouseX, mouseY := event.Position()
 
 			for _, w := range wm.windows {
@@ -187,7 +188,7 @@ func (wm *WindowManager) MouseHandler() func(action MouseAction, event *tcell.Ev
 					consumed = true
 				}
 			}
-		} else if action == MouseLeftUp {
+		case MouseLeftUp:
 			for _, w := range wm.windows {
 				w.dragX, w.dragY = 0, 0
 				w.dragWX, w.dragWY = -1, -1

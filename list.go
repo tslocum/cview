@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // ListItem represents an item in a List.
@@ -456,7 +456,6 @@ func (l *List) ShowSecondaryText(show bool) {
 	defer l.Unlock()
 
 	l.showSecondaryText = show
-	return
 }
 
 // SetScrollBarVisibility specifies the display of the scroll bar.
@@ -1011,13 +1010,13 @@ func (l *List) Draw(screen tcell.Screen) {
 			}
 
 			for bx := 0; bx < textWidth; bx++ {
-				m, c, style, _ := screen.GetContent(x+bx, y)
-				fg, _, _ := style.Decompose()
+				m, style, _ := screen.Get(x+bx, y)
+				fg := style.GetForeground()
 				if fg == l.mainTextColor {
 					fg = l.selectedTextColor
 				}
 				style = SetAttributes(style.Background(l.selectedBackgroundColor).Foreground(fg), l.selectedTextAttributes)
-				screen.SetContent(x+bx, y, m, c, style)
+				screen.Put(x+bx, y, m, style)
 			}
 		}
 
@@ -1049,8 +1048,6 @@ func (l *List) Draw(screen tcell.Screen) {
 	// Draw context menu.
 	if hasFocus && l.ContextMenu.open {
 		ctx := l.ContextMenuList()
-
-		x, y, width, height = l.GetInnerRect()
 
 		// What's the longest option text?
 		maxWidth := 0
@@ -1157,11 +1154,11 @@ func (l *List) InputHandler() func(event *tcell.EventKey, setFocus func(p Primit
 		}
 
 		if event.Key() == tcell.KeyRune {
-			ch := event.Rune()
-			if ch != ' ' {
+			str := event.Str()
+			if str != " " {
 				// It's not a space bar. Is it a shortcut?
 				for index, item := range l.items {
-					if !item.disabled && item.shortcut == ch {
+					if !item.disabled && str == string(item.shortcut) {
 						// We have a shortcut.
 						l.currentItem = index
 

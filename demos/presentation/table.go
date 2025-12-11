@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"codeberg.org/tslocum/cview"
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 const tableData = `OrderDate|Region|Rep|Item|Units|UnitCost|Total

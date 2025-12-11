@@ -4,7 +4,7 @@ import (
 	"math"
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // ProgressBar indicates the progress of an operation.
@@ -176,16 +176,16 @@ func (p *ProgressBar) Draw(screen tcell.Screen) {
 	for i := 0; i < barSize; i++ {
 		for j := 0; j < barLength; j++ {
 			if p.vertical {
-				screen.SetContent(x+i, y+(height-1-j), p.filledRune, nil, tcell.StyleDefault.Foreground(p.filledColor).Background(p.backgroundColor))
+				screen.Put(x+i, y+(height-1-j), string(p.filledRune), tcell.StyleDefault.Foreground(p.filledColor).Background(p.backgroundColor))
 			} else {
-				screen.SetContent(x+j, y+i, p.filledRune, nil, tcell.StyleDefault.Foreground(p.filledColor).Background(p.backgroundColor))
+				screen.Put(x+j, y+i, string(p.filledRune), tcell.StyleDefault.Foreground(p.filledColor).Background(p.backgroundColor))
 			}
 		}
 		for j := barLength; j < maxLength; j++ {
 			if p.vertical {
-				screen.SetContent(x+i, y+(height-1-j), p.emptyRune, nil, tcell.StyleDefault.Foreground(p.emptyColor).Background(p.backgroundColor))
+				screen.Put(x+i, y+(height-1-j), string(p.emptyRune), tcell.StyleDefault.Foreground(p.emptyColor).Background(p.backgroundColor))
 			} else {
-				screen.SetContent(x+j, y+i, p.emptyRune, nil, tcell.StyleDefault.Foreground(p.emptyColor).Background(p.backgroundColor))
+				screen.Put(x+j, y+i, string(p.emptyRune), tcell.StyleDefault.Foreground(p.emptyColor).Background(p.backgroundColor))
 			}
 		}
 	}

@@ -3,7 +3,7 @@ package cview
 import (
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // Box is the base Primitive for all widgets. It has a background color and
@@ -448,7 +448,7 @@ func (b *Box) Draw(screen tcell.Screen) {
 	if !b.backgroundTransparent {
 		for y := b.y; y < b.y+b.height; y++ {
 			for x := b.x; x < b.x+b.width; x++ {
-				screen.SetContent(x, y, ' ', nil, background)
+				screen.Put(x, y, " ", background)
 			}
 		}
 	}
@@ -485,24 +485,24 @@ func (b *Box) Draw(screen tcell.Screen) {
 			bottomRight = Borders.BottomRight
 		}
 		for x := b.x + 1; x < b.x+b.width-1; x++ {
-			screen.SetContent(x, b.y, horizontal, nil, border)
-			screen.SetContent(x, b.y+b.height-1, horizontal, nil, border)
+			screen.Put(x, b.y, string(horizontal), border)
+			screen.Put(x, b.y+b.height-1, string(horizontal), border)
 		}
 		for y := b.y + 1; y < b.y+b.height-1; y++ {
-			screen.SetContent(b.x, y, vertical, nil, border)
-			screen.SetContent(b.x+b.width-1, y, vertical, nil, border)
+			screen.Put(b.x, y, string(vertical), border)
+			screen.Put(b.x+b.width-1, y, string(vertical), border)
 		}
-		screen.SetContent(b.x, b.y, topLeft, nil, border)
-		screen.SetContent(b.x+b.width-1, b.y, topRight, nil, border)
-		screen.SetContent(b.x, b.y+b.height-1, bottomLeft, nil, border)
-		screen.SetContent(b.x+b.width-1, b.y+b.height-1, bottomRight, nil, border)
+		screen.Put(b.x, b.y, string(topLeft), border)
+		screen.Put(b.x+b.width-1, b.y, string(topRight), border)
+		screen.Put(b.x, b.y+b.height-1, string(bottomLeft), border)
+		screen.Put(b.x+b.width-1, b.y+b.height-1, string(bottomRight), border)
 
 		// Draw title.
 		if len(b.title) > 0 && b.width >= 4 {
 			printed, _ := Print(screen, b.title, b.x+1, b.y, b.width-2, b.titleAlign, b.titleColor)
 			if len(b.title)-printed > 0 && printed > 0 {
-				_, _, style, _ := screen.GetContent(b.x+b.width-2, b.y)
-				fg, _, _ := style.Decompose()
+				_, style, _ := screen.Get(b.x+b.width-2, b.y)
+				fg := style.GetForeground()
 				Print(screen, []byte(string(SemigraphicsHorizontalEllipsis)), b.x+b.width-2, b.y, 1, AlignLeft, fg)
 			}
 		}

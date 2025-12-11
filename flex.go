@@ -3,7 +3,7 @@ package cview
 import (
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // Configuration values.
@@ -48,7 +48,7 @@ type Flex struct {
 // flex items will show primitives behind the Flex.
 // To disable this transparency:
 //
-//   flex.SetBackgroundTransparent(false)
+//	flex.SetBackgroundTransparent(false)
 func NewFlex() *Flex {
 	f := &Flex{
 		Box:       NewBox(),

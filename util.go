@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 	"github.com/mattn/go-runewidth"
 	"github.com/rivo/uniseg"
 )
@@ -89,14 +89,14 @@ func init() {
 	runewidth.CreateLUT() // Create lookup table
 
 	// Initialize the predefined input field handlers.
-	InputFieldInteger = func(text string, ch rune) bool {
+	InputFieldInteger = func(text string, _ rune) bool {
 		if text == "-" {
 			return true
 		}
 		_, err := strconv.Atoi(text)
 		return err == nil
 	}
-	InputFieldFloat = func(text string, ch rune) bool {
+	InputFieldFloat = func(text string, _ rune) bool {
 		if text == "-" || text == "." || text == "-." {
 			return true
 		}
@@ -188,7 +188,7 @@ func styleFromTag(fgColor, bgColor, attributes string, tagSubstrings [][]byte) (
 // see styleFromTag(). Reset instructions cause the corresponding part of the
 // default style to be used.
 func overlayStyle(background tcell.Color, defaultStyle tcell.Style, fgColor, bgColor, attributes string) tcell.Style {
-	defFg, defBg, defAttr := defaultStyle.Decompose()
+	defFg, defBg, defAttr := defaultStyle.GetForeground(), defaultStyle.GetBackground(), defaultStyle.GetAttributes()
 	style := defaultStyle.Background(background)
 
 	style = style.Foreground(defFg)
@@ -221,7 +221,7 @@ func overlayStyle(background tcell.Color, defaultStyle tcell.Style, fgColor, bgC
 		style = style.Blink(defAttr&tcell.AttrBlink > 0)
 		style = style.Reverse(defAttr&tcell.AttrReverse > 0)
 		style = style.StrikeThrough(defAttr&tcell.AttrStrikeThrough > 0)
-		style = style.Underline(defAttr&tcell.AttrUnderline > 0)
+		style = style.Underline(defaultStyle.GetUnderlineColor(), defaultStyle.GetUnderlineStyle())
 	} else if attributes != "" {
 		style = style.Normal()
 		for _, flag := range attributes {
@@ -255,8 +255,7 @@ func SetAttributes(style tcell.Style, attrs tcell.AttrMask) tcell.Style {
 		Italic(attrs&tcell.AttrItalic != 0).
 		Blink(attrs&tcell.AttrBlink != 0).
 		Reverse(attrs&tcell.AttrReverse != 0).
-		StrikeThrough(attrs&tcell.AttrStrikeThrough != 0).
-		Underline(attrs&tcell.AttrUnderline != 0)
+		StrikeThrough(attrs&tcell.AttrStrikeThrough != 0)
 }
 
 // decomposeText returns information about a string which may contain color
@@ -359,7 +358,7 @@ func PrintStyle(screen tcell.Screen, text []byte, x, y, maxWidth, align int, sty
 			bytes, width, colorPos, escapePos, tagOffset int
 			foregroundColor, backgroundColor, attributes string
 		)
-		_, originalBackground, _ := style.Decompose()
+		originalBackground := style.GetBackground()
 		iterateString(string(strippedText), func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
 			// Update color/escape tag offset and style.
 			if colorPos < len(colorIndices) && textPos+tagOffset >= colorIndices[colorPos][0] && textPos+tagOffset < colorIndices[colorPos][1] {
@@ -421,7 +420,7 @@ func PrintStyle(screen tcell.Screen, text []byte, x, y, maxWidth, align int, sty
 				colorPos, escapePos, tagOffset               int
 				foregroundColor, backgroundColor, attributes string
 			)
-			_, originalBackground, _ := style.Decompose()
+			originalBackground := style.GetBackground()
 			for index := range strippedText {
 				// We only need the offset of the left index.
 				if index > leftIndex {
@@ -480,15 +479,15 @@ func PrintStyle(screen tcell.Screen, text []byte, x, y, maxWidth, align int, sty
 
 		// Print the rune sequence.
 		finalX := x + drawnWidth
-		_, _, finalStyle, _ := screen.GetContent(finalX, y)
-		_, background, _ := finalStyle.Decompose()
+		_, finalStyle, _ := screen.Get(finalX, y)
+		background := finalStyle.GetBackground()
 		finalStyle = overlayStyle(background, style, foregroundColor, backgroundColor, attributes)
 		for offset := screenWidth - 1; offset >= 0; offset-- {
 			// To avoid undesired effects, we populate all cells.
 			if offset == 0 {
-				screen.SetContent(finalX+offset, y, main, comb, finalStyle)
+				screen.Put(finalX+offset, y, string(append([]rune{main}, comb...)), finalStyle)
 			} else {
-				screen.SetContent(finalX+offset, y, ' ', nil, finalStyle)
+				screen.Put(finalX+offset, y, " ", finalStyle)
 			}
 		}
 

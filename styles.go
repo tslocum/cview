@@ -1,6 +1,6 @@
 package cview
 
-import "github.com/gdamore/tcell/v2"
+import "github.com/gdamore/tcell/v3"
 
 // Theme defines the colors used when primitives are initialized.
 type Theme struct {

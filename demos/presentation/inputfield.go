@@ -2,7 +2,7 @@ package main
 
 import (
 	"codeberg.org/tslocum/cview"
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 const inputField = `[green]package[white] main
@@ -10,7 +10,7 @@ const inputField = `[green]package[white] main
 [green]import[white] (
     [red]"strconv"[white]
 
-    [red]"github.com/gdamore/tcell/v2"[white]
+    [red]"github.com/gdamore/tcell/v3"[white]
     [red]"codeberg.org/tslocum/cview"[white]
 )
 

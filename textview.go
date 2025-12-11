@@ -7,7 +7,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/mattn/go-runewidth"
 	"github.com/rivo/uniseg"
@@ -1120,21 +1120,22 @@ func (t *TextView) Draw(screen tcell.Screen) {
 	}
 
 	// Adjust column offset.
-	if t.align == AlignLeft {
+	switch t.align {
+	case AlignLeft:
 		if t.columnOffset+width > t.longestLine {
 			t.columnOffset = t.longestLine - width
 		}
 		if t.columnOffset < 0 {
 			t.columnOffset = 0
 		}
-	} else if t.align == AlignRight {
+	case AlignRight:
 		if t.columnOffset-width < -t.longestLine {
 			t.columnOffset = width - t.longestLine
 		}
 		if t.columnOffset > 0 {
 			t.columnOffset = 0
 		}
-	} else { // AlignCenter.
+	default: // AlignCenter.
 		half := (t.longestLine - width) / 2
 		if half > 0 {
 			if t.columnOffset > half {
@@ -1151,9 +1152,10 @@ func (t *TextView) Draw(screen tcell.Screen) {
 	// Calculate offset to apply vertical alignment
 	verticalOffset := 0
 	if len(t.index) < height {
-		if t.valign == AlignMiddle {
+		switch t.valign {
+		case AlignMiddle:
 			verticalOffset = (height - len(t.index)) / 2
-		} else if t.valign == AlignBottom {
+		case AlignBottom:
 			verticalOffset = height - len(t.index)
 		}
 	}
@@ -1196,11 +1198,12 @@ func (t *TextView) Draw(screen tcell.Screen) {
 
 		// Calculate the position of the line.
 		var skip, posX int
-		if t.align == AlignLeft {
+		switch t.align {
+		case AlignLeft:
 			posX = -t.columnOffset
-		} else if t.align == AlignRight {
+		case AlignRight:
 			posX = width - index.Width - t.columnOffset
-		} else { // AlignCenter.
+		default: // AlignCenter.
 			posX = (width-index.Width)/2 - t.columnOffset
 		}
 		if posX < 0 {
@@ -1253,8 +1256,8 @@ func (t *TextView) Draw(screen tcell.Screen) {
 				}
 
 				// Mix the existing style with the new style.
-				_, _, existingStyle, _ := screen.GetContent(x+posX, drawAtY)
-				_, background, _ := existingStyle.Decompose()
+				_, existingStyle, _ := screen.Get(x+posX, drawAtY)
+				background := existingStyle.GetBackground()
 				style := overlayStyle(background, defaultStyle, foregroundColor, backgroundColor, attributes)
 
 				// Do we highlight this character?
@@ -1269,7 +1272,7 @@ func (t *TextView) Draw(screen tcell.Screen) {
 					bg := t.highlightBackground
 					if (fg == tcell.ColorDefault || fg == tcell.ColorNone) && (bg == tcell.ColorDefault || bg == tcell.ColorNone) {
 						// Swap foreground and background colors.
-						bg, fg, _ = style.Decompose()
+						fg, bg = style.GetBackground(), style.GetForeground()
 					} else {
 						// Use custom highlight colors.
 						if fg == tcell.ColorDefault {
@@ -1306,9 +1309,9 @@ func (t *TextView) Draw(screen tcell.Screen) {
 				// Draw the character.
 				for offset := screenWidth - 1; offset >= 0; offset-- {
 					if offset == 0 {
-						screen.SetContent(x+posX+offset, drawAtY, main, comb, style)
+						screen.Put(x+posX+offset, drawAtY, string(append([]rune{main}, comb...)), style)
 					} else {
-						screen.SetContent(x+posX+offset, drawAtY, ' ', nil, style)
+						screen.Put(x+posX+offset, drawAtY, " ", style)
 					}
 				}
 

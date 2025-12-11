@@ -4,7 +4,7 @@ import (
 	"math"
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // Slider is a progress bar which may be modified via keyboard and mouse.

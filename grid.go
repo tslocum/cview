@@ -4,7 +4,7 @@ import (
 	"math"
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // gridItem represents one primitive and its possible position on a grid.
@@ -65,7 +65,7 @@ type Grid struct {
 // areas not covered by any primitives will show primitives behind the Grid.
 // To disable this transparency:
 //
-//   grid.SetBackgroundTransparent(false)
+//	grid.SetBackgroundTransparent(false)
 func NewGrid() *Grid {
 	g := &Grid{
 		Box:          NewBox(),
@@ -94,14 +94,14 @@ func NewGrid() *Grid {
 // following call will result in columns with widths of 30, 10, 15, 15, and 30
 // cells:
 //
-//   grid.SetColumns(30, 10, -1, -1, -2)
+//	grid.SetColumns(30, 10, -1, -1, -2)
 //
 // If a primitive were then placed in the 6th and 7th column, the resulting
 // widths would be: 30, 10, 10, 10, 20, 10, and 10 cells.
 //
 // If you then called SetMinSize() as follows:
 //
-//   grid.SetMinSize(15, 20)
+//	grid.SetMinSize(15, 20)
 //
 // The resulting widths would be: 30, 15, 15, 15, 20, 15, and 15 cells, a total
 // of 125 cells, 25 cells wider than the available grid width.
@@ -189,7 +189,7 @@ func (g *Grid) SetBordersColor(color tcell.Color) {
 // the given row and column and will span "rowSpan" rows and "colSpan" columns.
 // For example, for a primitive to occupy rows 2, 3, and 4 and columns 5 and 6:
 //
-//   grid.AddItem(p, 2, 5, 3, 2, 0, 0, true)
+//	grid.AddItem(p, 2, 5, 3, 2, 0, 0, true)
 //
 // If rowSpan or colSpan is 0, the primitive will not be drawn.
 //
@@ -200,9 +200,9 @@ func (g *Grid) SetBordersColor(color tcell.Color) {
 // primitive apply, the one that has at least one highest minimum value will be
 // used, or the primitive added last if those values are the same. Example:
 //
-//   grid.AddItem(p, 0, 0, 0, 0, 0, 0, true). // Hide in small grids.
-//     AddItem(p, 0, 0, 1, 2, 100, 0, true).  // One-column layout for medium grids.
-//     AddItem(p, 1, 1, 3, 2, 300, 0, true)   // Multi-column layout for large grids.
+//	grid.AddItem(p, 0, 0, 0, 0, 0, 0, true). // Hide in small grids.
+//	  AddItem(p, 0, 0, 1, 2, 100, 0, true).  // One-column layout for medium grids.
+//	  AddItem(p, 1, 1, 3, 2, 300, 0, true)   // Multi-column layout for large grids.
 //
 // To use the same grid layout for all sizes, simply set minGridWidth and
 // minGridHeight to 0.
@@ -432,9 +432,6 @@ func (g *Grid) Draw(screen tcell.Screen) {
 			row = g.rows[index]
 		}
 		if row > 0 {
-			if row < g.minHeight {
-				row = g.minHeight
-			}
 			continue // Not proportional. We already know the width.
 		} else if row == 0 {
 			row = 1
@@ -455,9 +452,6 @@ func (g *Grid) Draw(screen tcell.Screen) {
 			column = g.columns[index]
 		}
 		if column > 0 {
-			if column < g.minWidth {
-				column = g.minWidth
-			}
 			continue // Not proportional. We already know the height.
 		} else if column == 0 {
 			column = 1

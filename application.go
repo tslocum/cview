@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 const (
@@ -461,24 +461,19 @@ func (a *Application) Run() error {
 	}()
 
 	// Start screen event loop.
-	for {
-		a.Lock()
-		screen := a.screen
-		a.Unlock()
+	a.Lock()
+	screen := a.screen
+	a.Unlock()
+	if screen != nil {
+		for event := range screen.EventQ() {
+			if event == nil {
+				break
+			}
 
-		if screen == nil {
-			break
+			semaphore.Lock()
+			handle(event)
+			semaphore.Unlock()
 		}
-
-		// Wait for next event.
-		event := screen.PollEvent()
-		if event == nil {
-			break
-		}
-
-		semaphore.Lock()
-		handle(event)
-		semaphore.Unlock()
 	}
 
 	// Wait for the screen replacement event loop to finish.

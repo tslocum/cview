@@ -3,7 +3,7 @@ package cview
 import (
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // CheckBox implements a simple box for boolean values which can be checked and
@@ -309,9 +309,9 @@ func (c *CheckBox) Draw(screen tcell.Screen) {
 	if c.cursorRune != 0 && hasFocus {
 		rightRune = c.cursorRune
 	}
-	screen.SetContent(x, y, ' ', nil, fieldStyle)
-	screen.SetContent(x+1, y, checkedRune, nil, fieldStyle)
-	screen.SetContent(x+2, y, rightRune, nil, fieldStyle)
+	screen.Put(x, y, " ", fieldStyle)
+	screen.Put(x+1, y, string(checkedRune), fieldStyle)
+	screen.Put(x+2, y, string(rightRune), fieldStyle)
 
 	if len(c.message) > 0 {
 		Print(screen, c.message, x+4, y, len(c.message), AlignLeft, labelColor)

@@ -3,7 +3,7 @@ package cview
 import (
 	"sync"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 // panel represents a single panel of a Panels object.
@@ -380,9 +380,6 @@ func (p *Panels) MouseHandler() func(action MouseAction, event *tcell.EventMouse
 		return
 	})
 }
-
-// Support backwards compatibility with Pages.
-type page = panel
 
 // Pages is a wrapper around Panels.
 //

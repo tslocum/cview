@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"codeberg.org/tslocum/cview"
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 const treeAllCode = `[green]package[white] main

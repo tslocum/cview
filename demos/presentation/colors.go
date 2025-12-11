@@ -2,7 +2,7 @@ package main
 
 import (
 	"codeberg.org/tslocum/cview"
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 const colorsText = `You can use color tags almost everywhere to partially change the color of a string.

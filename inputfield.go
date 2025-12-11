@@ -7,7 +7,7 @@ import (
 	"sync"
 	"unicode/utf8"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 	"github.com/mattn/go-runewidth"
 )
 
@@ -593,7 +593,7 @@ func (i *InputField) Draw(screen tcell.Screen) {
 	}
 	fieldStyle := tcell.StyleDefault.Background(fieldBackgroundColor)
 	for index := 0; index < fieldWidth; index++ {
-		screen.SetContent(x+index, y, ' ', nil, fieldStyle)
+		screen.Put(x+index, y, " ", fieldStyle)
 	}
 
 	// Text.
@@ -774,26 +774,30 @@ func (i *InputField) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 		// Process key event.
 		switch key := event.Key(); key {
 		case tcell.KeyRune: // Regular character.
+			var r rune
+			if len(event.Str()) > 0 {
+				r = []rune(event.Str())[0]
+			}
 			if event.Modifiers()&tcell.ModAlt > 0 {
 				// We accept some Alt- key combinations.
-				switch event.Rune() {
-				case 'a': // Home.
+				switch event.Str() {
+				case "a": // Home.
 					home()
-				case 'e': // End.
+				case "e": // End.
 					end()
-				case 'b': // Move word left.
+				case "b": // Move word left.
 					moveWordLeft()
-				case 'f': // Move word right.
+				case "f": // Move word right.
 					moveWordRight()
 				default:
-					if !add(event.Rune()) {
+					if !add(r) {
 						i.Unlock()
 						return
 					}
 				}
 			} else {
 				// Other keys are simply accepted as regular characters.
-				if !add(event.Rune()) {
+				if !add(r) {
 					i.Unlock()
 					return
 				}
