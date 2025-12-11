@@ -1273,6 +1273,12 @@ func (t *TextView) Draw(screen tcell.Screen) {
 					if (fg == tcell.ColorDefault || fg == tcell.ColorNone) && (bg == tcell.ColorDefault || bg == tcell.ColorNone) {
 						// Swap foreground and background colors.
 						fg, bg = style.GetBackground(), style.GetForeground()
+						if fg == tcell.ColorDefault {
+							fg = Styles.PrimaryTextColor
+							if fg == tcell.ColorDefault {
+								fg = tcell.ColorWhite.TrueColor()
+							}
+						}
 					} else {
 						// Use custom highlight colors.
 						if fg == tcell.ColorDefault {
