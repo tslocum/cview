@@ -398,6 +398,11 @@ func (b *Box) SetTitle(title string) {
 	b.l.Lock()
 	defer b.l.Unlock()
 
+	// Pad title to improve readability.
+	if title != "" {
+		title = " " + title + "[-:-:-] "
+	}
+
 	b.title = []byte(title)
 }
 
