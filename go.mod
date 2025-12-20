@@ -6,7 +6,7 @@ toolchain go1.24.9
 
 require (
 	codeberg.org/tslocum/cbind v0.1.8
-	github.com/gdamore/tcell/v3 v3.0.3
+	github.com/gdamore/tcell/v3 v3.0.4
 	github.com/lucasb-eyer/go-colorful v1.3.0
 	github.com/mattn/go-runewidth v0.0.19
 	github.com/rivo/uniseg v0.4.7
