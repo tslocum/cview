@@ -478,7 +478,9 @@ func (a *Application) Run() error {
 
 	// Wait for the screen replacement event loop to finish.
 	wg.Wait()
+	a.Lock()
 	a.screen = nil
+	a.Unlock()
 
 	return nil
 }
