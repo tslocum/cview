@@ -247,7 +247,6 @@ var textViewHelloWorldResult = []textViewResult{
 	{x: 3, y: 0, str: "l", width: 1},
 	{x: 4, y: 0, str: "o", width: 1},
 	{x: 5, y: 0, str: ",", width: 1},
-	{x: 6, y: 0, str: " ", width: 1},
 	{x: 7, y: 0, str: "w", width: 1},
 	{x: 8, y: 0, str: "o", width: 1},
 	{x: 9, y: 0, str: "r", width: 1},
@@ -294,7 +293,6 @@ var textViewRegionsTestCases = []textViewRegionsTestCase{
 func TestTextViewANSI(t *testing.T) {
 	t.Parallel()
 
-	const screenW, screenH = 80, 80
 	for j := 0; j < 2; j++ {
 		for i, c := range textViewRegionsTestCases {
 			label := "Normal"
@@ -327,9 +325,10 @@ func TestTextViewANSI(t *testing.T) {
 				tv.SetText(content)
 
 				tv.Draw(app.screen)
+				var expected textViewResult
 				for y := 0; y < screenH; y++ {
 					for x := 0; x < screenW; x++ {
-						expected := textViewResult{
+						expected = textViewResult{
 							str:   " ",
 							width: 1,
 						}
@@ -342,7 +341,7 @@ func TestTextViewANSI(t *testing.T) {
 
 						str, _, width := app.screen.Get(x, y)
 						if str != expected.str {
-							t.Errorf("unexpected str at %d, %d: expected %s, got %s", x, y, expected.str, str)
+							t.Errorf("unexpected str at %d, %d: expected '%s', got '%s'", x, y, expected.str, str)
 						}
 						if width != expected.width {
 							t.Errorf("unexpected width at %d, %d: expected %d, got %d", x, y, expected.width, width)
